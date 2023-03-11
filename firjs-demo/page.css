@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+
+.root {
+  width: 100%;
+  height: calc(100vh - 54px);
+}
+
+.draggable {
+  cursor: move;
+}

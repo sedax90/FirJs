@@ -1,0 +1,24 @@
+{
+    "name": "firjs",
+    "version": "0.0.1-dev",
+    "author": {
+        "name": "Cristian Sedaboni"
+    },
+    "scripts": {
+        "clean": "rm -rf lib && rm -rf build && rm -rf dist",
+        "start": "rollup -c --watch",
+        "build": "npm run clean && rollup -c"
+    },
+    "devDependencies": {
+        "@rollup/plugin-typescript": "^11.0.0",
+        "rollup": "^3.10.0",
+        "rollup-plugin-copy": "^3.4.0",
+        "rollup-plugin-dts": "^5.1.1",
+        "rollup-plugin-typescript2": "^0.34.1",
+        "tslib": "^2.4.1",
+        "typescript": "^4.9.4"
+    },
+    "main": "./index.js",
+    "types": "./index.d.ts",
+    "module": "./es/index.js"
+}

@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"outDir": "./build/",
+		"noImplicitAny": true,
+		"target": "es2020",
+		"module": "es2020",
+		"sourceMap": true,
+		"strict": true,
+		"allowJs": false,
+		"declaration": true,
+		"declarationDir": "./build/",
+		"moduleResolution": "node",
+		"lib": [
+			"es2020",
+			"es2020.string",
+			"dom"
+		],
+	},
+	"include": [
+		"src/**/*",
+		"globals.d.ts"
+	]
+}

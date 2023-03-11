@@ -1,0 +1,45 @@
+import { DomHelper } from "../utils/dom-helper";
+import { Vector, ElementView, Context } from "../models";
+import { buttonIndexToType, MouseButton, readMousePosition } from "../utils/event-utils";
+import { Background } from "./background";
+import { Workflow } from "./workflow";
+
+export class WorkspaceView implements ElementView {
+    private constructor(
+        readonly element: HTMLElement,
+        readonly parent: HTMLElement,
+        readonly context: Context,
+    ) { }
+
+    workflow!: Workflow;
+
+    public static create(parent: HTMLElement, context: Context): WorkspaceView {
+        const workspace = DomHelper.element('div', {
+            id: "workspace-root",
+            class: "workspace-root",
+        });
+
+        parent.appendChild(workspace);
+        Background.create(workspace);
+        const workflow = Workflow.create(workspace, context);
+
+        const wsv = new WorkspaceView(workspace, parent, context);
+        wsv.workflow = workflow;
+        return wsv;
+    }
+
+    public bindClick(handler: (position: Vector, target: Element, buttonIndex: MouseButton) => void) {
+        this.element.addEventListener('mousedown', (e) => {
+            handler(readMousePosition(e as MouseEvent), e.target as Element, buttonIndexToType((<MouseEvent>e).button));
+        });
+    }
+
+    public bindWheel(handler: (e: WheelEvent) => void) {
+        this.element.addEventListener("wheel", handler, false);
+    }
+
+    public bindKeyboard(handler: (e: KeyboardEvent) => void) {
+        window.addEventListener('keydown', handler, false);
+        window.addEventListener('keyup', handler, false);
+    }
+}

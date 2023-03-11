@@ -1,0 +1,17 @@
+{
+    "name": "firjs",
+    "version": "0.0.1",
+    "scripts": {
+        "run-demo": "http-server -p 8080 -a 127.0.0.1 -d false -c-1 -o /firjs-demo/index.html",
+        "start": "npm run run-demo & npm run start --prefix ./firjs-lib"
+    },
+    "devDependencies": {
+        "http-server": "^14.1.1",
+        "@rollup/plugin-image": "^3.0.2",
+        "@rollup/plugin-url": "^8.0.1",
+        "rollup-plugin-typescript2": "^0.34.1",
+        "toastify-js": "^1.12.0",
+        "tslib": "^2.4.1",
+        "typescript": "^4.9.4"
+    }
+}

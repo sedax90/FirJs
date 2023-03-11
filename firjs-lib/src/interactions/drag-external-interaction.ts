@@ -1,0 +1,88 @@
+import { Placeholder } from "../components/placeholder/placeholder";
+import { ClickInteraction, Context, Vector } from "../models";
+import { getElementPositionInWorkspace } from "../utils/component-position-utils";
+import { PlaceholderFinder } from "../utils/placeholder-finder";
+import { SequenceModifier } from "../utils/sequence-modifier";
+import { subtract } from "../utils/vector-utils";
+
+export class DragExternalInteraction implements ClickInteraction {
+
+    private constructor(
+        readonly element: HTMLElement | SVGElement,
+        readonly context: Context,
+        readonly placeholderFinder: PlaceholderFinder,
+    ) { }
+
+    private _mouseClickOffsetFromComponent!: Vector;
+    private _startPosition!: Vector;
+    private _currentPlaceholder: Placeholder | null = null;
+
+    static create(element: HTMLElement | SVGElement, context: Context): DragExternalInteraction {
+        const placeholderFinder = PlaceholderFinder.create(context.designerState?.placeholders ? context.designerState.placeholders : []);
+        return new DragExternalInteraction(element, context, placeholderFinder);
+    }
+
+    onStart(startMousePosition: Vector): void {
+        this._startPosition = startMousePosition;
+
+        const componentPosition = getElementPositionInWorkspace(this.element, this.context);
+        this._mouseClickOffsetFromComponent = subtract(startMousePosition, {
+            x: componentPosition.x,
+            y: componentPosition.y,
+        });
+
+        if (this.context.designerState.placeholders) {
+            for (const placeholder of this.context.designerState.placeholders) {
+                placeholder.show();
+            }
+        }
+    }
+
+    onMove(delta: Vector): void | ClickInteraction {
+        let newPosition = subtract(this._startPosition, delta);
+        newPosition = subtract(newPosition, this._mouseClickOffsetFromComponent);
+
+        const elementRect = this.element.getBoundingClientRect();
+
+        const placeholder = this.placeholderFinder.findByPosition(newPosition, elementRect.width, elementRect.height);
+
+        // This is a workaround for the dragend event because when you are dragging an HtmlElement and you release the mouse a last drag event is emitted before dragend and it could override the placeholder value.
+        setTimeout(() => {
+            if (placeholder) {
+                if (this._currentPlaceholder) {
+                    this._currentPlaceholder.setIsHover(false);
+                    this._currentPlaceholder = placeholder;
+                }
+                else {
+                    this._currentPlaceholder = placeholder;
+                }
+
+                this._currentPlaceholder.setIsHover(true);
+            }
+            else {
+                if (this._currentPlaceholder) {
+                    this._currentPlaceholder.setIsHover(false);
+                }
+
+                this._currentPlaceholder = null;
+            }
+        });
+    }
+
+    onEnd(): void {
+        if (this._currentPlaceholder && this.context.designerState.tempNodeToDrop) {
+            const targetSequence = this._currentPlaceholder.parentSequence;
+            SequenceModifier.add(targetSequence, {
+                node: this.context.designerState.tempNodeToDrop,
+                parentNode: null,
+            }, this._currentPlaceholder.index);
+        }
+
+        if (this.context.designerState.placeholders) {
+            for (const placeholder of this.context.designerState.placeholders) {
+                placeholder.hide();
+            }
+        }
+    }
+
+}
