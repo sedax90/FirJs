@@ -1,6 +1,9 @@
 # FirJs
 ![](https://user-images.githubusercontent.com/5001801/224503499-9dd881a7-028f-4b16-824b-b689770bdc0d.png)
 
+## How to install
+`npm i @sedax90/firjs`
+
 ## Why
 I state that this project is freely inspired by the amazing Sequential Workflow Designer: https://github.com/nocode-js/sequential-workflow-designer.c
 
