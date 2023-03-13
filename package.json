@@ -1,5 +1,5 @@
 {
-    "name": "firjs",
+    "name": "firjs-demo",
     "version": "0.0.1",
     "scripts": {
         "run-demo": "http-server -p 8080 -a 127.0.0.1 -d false -c-1 -o /firjs-demo/index.html",
