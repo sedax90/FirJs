@@ -1,5 +1,5 @@
 {
-    "name": "firjs",
+    "name": "@sedax90/firjs",
     "version": "0.0.1-dev",
     "author": {
         "name": "Cristian Sedaboni"
@@ -20,5 +20,18 @@
     },
     "main": "./index.js",
     "types": "./index.d.ts",
-    "module": "./es/index.js"
+    "module": "./es/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sedax90/FirJs.git"
+    },
+    "keywords": [
+        "workflow",
+        "workflow-designer"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/sedax90/FirJs/issues"
+    },
+    "homepage": "https://github.com/sedax90/FirJs#readme"
 }
