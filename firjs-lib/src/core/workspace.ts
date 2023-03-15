@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, ComponentWithNode, WorkspaceInit, Node } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, WorkspaceStyleOptions } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -53,7 +53,12 @@ export class Workspace implements ComponentWithView {
 
     // Public methods
 
-    static init(options: WorkspaceInit): Workspace {
+    static async init(options: WorkspaceInit): Promise<Workspace> {
+        let defaultStyle: WorkspaceStyleOptions = {
+            fontSize: "1em",
+            fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+        }
+
         const context: Context = {
             tree: options.tree,
             designerState: {
@@ -61,18 +66,12 @@ export class Workspace implements ComponentWithView {
                 selectedNode: new Observable<ComponentInstance | null>(),
                 deselectedNode: new Observable<ComponentInstance>,
                 zoomLevel: 1,
+            },
+            style: {
+                ...defaultStyle,
+                ...options?.style,
             }
         };
-        const view = WorkspaceView.create(options.parent, context);
-        const workspace = new Workspace(view, context, options.parent);
-
-        context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
-
-        context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
-
-        view.bindClick((position: Vector, target: Element, button: MouseButton) => workspace._onClick(position, target, button));
-        view.bindWheel((e: WheelEvent) => workspace._onWheel(e));
-        view.bindKeyboard((e: KeyboardEvent) => workspace._onKeyboard(e));
 
         if (!context.userDefinedListeners) {
             context.userDefinedListeners = {};
@@ -98,6 +97,10 @@ export class Workspace implements ComponentWithView {
             context.userDefinedListeners.onNodeRemoveRequest = options.onNodeRemoveRequest;
         }
 
+        if (options.onNodeDropAllowed) {
+            context.userDefinedListeners.onNodeDropAllowed = options.onNodeDropAllowed;
+        }
+
         if (!context.userDefinedOverriders) {
             context.userDefinedOverriders = {};
         }
@@ -106,9 +109,20 @@ export class Workspace implements ComponentWithView {
             context.userDefinedOverriders.overrideLabel = options.overrideLabel;
         }
 
-        if (options.overrideLabel) {
+        if (options.overrideIcon) {
             context.userDefinedOverriders.overrideIcon = options.overrideIcon;
         }
+
+        const view = await WorkspaceView.create(options.parent, context);
+        const workspace = new Workspace(view, context, options.parent);
+
+        context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
+
+        context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
+
+        view.bindClick((position: Vector, target: Element, button: MouseButton) => workspace._onClick(position, target, button));
+        view.bindWheel((e: WheelEvent) => workspace._onWheel(e));
+        view.bindKeyboard((e: KeyboardEvent) => workspace._onKeyboard(e));
 
         return workspace;
     }
@@ -132,7 +146,7 @@ export class Workspace implements ComponentWithView {
 
     private _userInteractionController!: UserInteractionController;
 
-    private _onDefinitionChange(tree: Node[], preservePositionAndScale: boolean = false): void {
+    private async _onDefinitionChange(tree: Node[], preservePositionAndScale: boolean = false): Promise<void> {
         this.context.tree = tree;
 
         if (!preservePositionAndScale) {
@@ -141,7 +155,7 @@ export class Workspace implements ComponentWithView {
         }
 
         this.parent.removeChild(this.view.element);
-        const view = WorkspaceView.create(this.parent, this.context);
+        const view = await WorkspaceView.create(this.parent, this.context);
         this.view = view;
 
         view.bindClick((position: Vector, target: Element, button: MouseButton) => this._onClick(position, target, button));

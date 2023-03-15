@@ -21,7 +21,7 @@ export class WorkflowView implements ElementView {
     wrapper!: SVGElement;
     mainSequence!: Sequence;
 
-    public static create(parent: HTMLElement, context: Context): WorkflowView {
+    public static async create(parent: HTMLElement, context: Context): Promise<WorkflowView> {
         const svg = DomHelper.svg('svg', {
             class: "workflow-root",
             width: '100%',
@@ -40,7 +40,7 @@ export class WorkflowView implements ElementView {
         let maxJoinX = start.view.joinX;
 
         const nodes = context.tree;
-        const sequence = Sequence.create(nodes, null, workflowWrapper, context);
+        const sequence = await Sequence.create(nodes, null, workflowWrapper, context);
         const sequenceCenter = sequence.view.joinX;
         if (sequenceCenter > maxJoinX) {
             maxJoinX = sequenceCenter;

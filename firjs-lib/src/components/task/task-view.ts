@@ -1,6 +1,7 @@
 import { StepView } from "../common/step/step-view";
 import { DomHelper } from "../../utils/dom-helper";
 import { ComponentView, Context, Node } from "../../models";
+import { getNodeClasses } from "../../utils/node-utils";
 
 export class TaskView implements ComponentView {
     private constructor(
@@ -10,15 +11,17 @@ export class TaskView implements ComponentView {
         readonly joinX: number,
     ) { }
 
-    public static create(parent: SVGElement, node: Node, context: Context): TaskView {
+    public static async create(parent: SVGElement, node: Node, context: Context): Promise<TaskView> {
         const element = DomHelper.svg('g', {
             class: "task",
         });
+        element.classList.add(...getNodeClasses(node));
 
-        element.appendChild(StepView.create(node, context));
+        const stepView = await StepView.create(node, context);
+        element.appendChild(stepView.element);
         parent.appendChild(element);
 
-        return new TaskView(element, StepView.width, StepView.height, StepView.width / 2);
+        return new TaskView(element, stepView.width, stepView.height, stepView.width / 2);
     }
 
     setDragging(value: boolean): void {

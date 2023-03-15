@@ -1,69 +1,64 @@
+import { Context } from "../../../models";
 import { DomHelper } from "../../../utils/dom-helper";
-import { StepView } from "../step/step-view";
 
 export class LabelView {
+    private constructor(
+        public element: SVGElement,
+        public textLength: number,
+    ) { }
+
     public static defaultWidth: number = 200;
 
-    public static create(text: string, props: LabelViewProps): SVGElement {
+    public static create(text: string, context: Context, props?: LabelViewProps): LabelView {
         let classes = ['label'];
 
-        if (props.class) {
+        if (props?.class) {
             classes = [
                 ...classes,
                 ...props.class,
             ];
         }
 
-        const labelContainerWidth = props?.containerWidth ? props.containerWidth : LabelView.defaultWidth;
-        const labelContainerHeight = props?.containerHeight ? props.containerHeight : StepView.height;
-
-        const labelContainer = DomHelper.svg('svg', {
-            class: "label-svg",
-            width: '100%',
-            height: labelContainerHeight,
-        });
-
-        const foreignObject = DomHelper.svg('foreignObject', {
-            class: "label-foreign-obj",
-            x: 0,
-            y: 0,
-            width: labelContainerWidth,
-            height: labelContainerHeight,
-        });
-        const div = DomHelper.element('div', {
-            class: "text-html",
-            xmlns: "http://www.w3.org/1999/xhtml",
-            style: `text-align: ${props?.textAlign ? props.textAlign : 'center'};`,
-        });
-        div.append(text);
-
         const label = DomHelper.svg("text", {
             class: classes.join(' '),
             stroke: props?.color ? props.color : "currentColor",
             fill: props?.color ? props.color : "currentColor",
-            "text-anchor": "center",
+            "text-anchor": "middle",
             "dominant-baseline": "middle",
+            "font-size": context.style.fontSize,
+            'font-family': context.style.fontFamily,
         });
-
-        label.append(text);
-        foreignObject.append(div);
-        labelContainer.append(foreignObject);
+        label.append(text.trim());
 
         const parentG = DomHelper.svg('g', {
-            class: "label-container",
+            class: "label-text-container",
         });
-        parentG.appendChild(labelContainer);
 
-        return parentG;
+        parentG.appendChild(label);
+        const textLength = LabelView._calculateTextLenght(label);
+
+        return new LabelView(parentG, textLength);
+    }
+
+    /**
+     * This is a workaround to pre calculate the label size.
+     */
+    private static _calculateTextLenght(label: SVGElement): number {
+        const temporarySvg = DomHelper.svg('svg', {
+            class: "label-svg",
+            width: '100%',
+        });
+
+        temporarySvg.appendChild(label.cloneNode(true));
+        document.body.appendChild(temporarySvg);
+        const textLength = (<SVGTextElement>temporarySvg.firstChild)?.getComputedTextLength();
+        document.body.removeChild(temporarySvg);
+
+        return textLength;
     }
 }
 
 export interface LabelViewProps {
-    containerWidth?: number,
-    containerHeight?: number,
-    x?: number;
-    y?: number;
     class?: string[];
     color?: string;
-    textAlign?: string;
 }

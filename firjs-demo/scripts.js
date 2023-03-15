@@ -2,7 +2,7 @@ let = i = 0;
 const tree = [
     {
         id: i++,
-        label: "Lorem ipsum dolor sit amet, consectetur",
+        label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
         type: "task",
     },
     {
@@ -168,9 +168,12 @@ const tree = [
     },
 ];
 
-const workspace = firjs.Workspace.init({
+firjs.Workspace.init({
     parent: document.getElementById('root'),
-    tree: [],
+    tree: [...tree],
+    style: {
+        fontSize: "0.875em",
+    },
     onNodeSelect: (e) => {
         console.debug("ON NODE SELECTED:", e);
         showToast('onNodeSelect');
@@ -187,6 +190,12 @@ const workspace = firjs.Workspace.init({
         console.debug("ON TREE CHANGE", e);
         showToast('onTreeChange');
     },
+    onNodeDropAllowed: (e) => {
+        console.debug("ON NODE DROP", e);
+        showToast('onNodeDrop');
+
+        return true;
+    },
     // onNodeRemoveRequest: (e) => {
     //     console.debug("ON NODE REMOVE REQUEST", e);
     //     showToast('onNodeRemoveRequest');
@@ -201,30 +210,34 @@ const workspace = firjs.Workspace.init({
         else {
             return '';
         }
-    }
-});
-workspace.setTree([...tree], false);
-
-const elements = document.getElementsByClassName("draggable");
-for (const element of elements) {
-    element.addEventListener("dragstart", (event) => {
-        workspace.startDrag(event.target, {
-            x: event.pageX,
-            y: event.pageY,
-        }, {
-            id: i++,
-            type: element.dataset.type,
-            label: `New node ${i}`,
+    },
+}).then((workspace) => {
+    const elements = document.getElementsByClassName("draggable");
+    for (const element of elements) {
+        element.addEventListener("dragstart", (event) => {
+            workspace.startDrag(event.target, {
+                x: event.pageX,
+                y: event.pageY,
+            }, {
+                id: i++,
+                type: element.dataset.type,
+                label: `New node ${i}`,
+            });
+            return;
         });
-        return;
+    }
+
+    // Bootstrap demo scripts
+
+    const centerWorkflowBtn = document.getElementById('centerWorkflow');
+    centerWorkflowBtn.addEventListener('click', () => {
+        workspace.fitAndCenter();
     });
-}
 
-// Bootstrap demo scripts
-
-const centerWorkflowBtn = document.getElementById('centerWorkflow');
-centerWorkflowBtn.addEventListener('click', () => {
-    workspace.fitAndCenter();
+    const resetBtn = document.getElementById('resetBtn');
+    resetBtn.addEventListener('click', () => {
+        workspace.setTree([...tree], true);
+    }, false);
 });
 
 function showToast(type) {
@@ -259,8 +272,3 @@ function showToast(type) {
         }
     }).showToast();
 }
-
-const resetBtn = document.getElementById('resetBtn');
-resetBtn.addEventListener('click', () => {
-    workspace.setTree([...tree], true);
-}, false);

@@ -4,8 +4,8 @@ import { TaskView } from "./task-view";
 
 export class Task extends ChildlessComponent implements ComponentWithNode {
 
-    static create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Task {
-        const view = TaskView.create(parentElement, node, context);
+    static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<Task> {
+        const view = await TaskView.create(parentElement, node, context);
         const task = new Task(view, context);
 
         task.node = node;

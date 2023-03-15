@@ -1,5 +1,5 @@
 import { Placeholder } from "../components/placeholder/placeholder";
-import { ClickInteraction, Context, Vector } from "../models";
+import { ClickInteraction, Context, Node, Vector } from "../models";
 import { getElementPositionInWorkspace } from "../utils/component-position-utils";
 import { PlaceholderFinder } from "../utils/placeholder-finder";
 import { SequenceModifier } from "../utils/sequence-modifier";
@@ -70,12 +70,23 @@ export class DragExternalInteraction implements ClickInteraction {
     }
 
     onEnd(): void {
-        if (this._currentPlaceholder && this.context.designerState.tempNodeToDrop) {
-            const targetSequence = this._currentPlaceholder.parentSequence;
-            SequenceModifier.add(targetSequence, {
-                node: this.context.designerState.tempNodeToDrop,
-                parentNode: null,
-            }, this._currentPlaceholder.index);
+        const currentPlaceholder = this._currentPlaceholder;
+        const tempNodeToDrop = this.context.designerState.tempNodeToDrop;
+
+        if (currentPlaceholder && tempNodeToDrop) {
+            if (this.context.userDefinedListeners?.onNodeDropAllowed) {
+                const isAllowedToDrop = this.context.userDefinedListeners.onNodeDropAllowed({
+                    node: tempNodeToDrop,
+                    parent: null,
+                });
+
+                if (isAllowedToDrop) {
+                    this._dropNode(currentPlaceholder, tempNodeToDrop);
+                }
+            }
+            else {
+                this._dropNode(currentPlaceholder, tempNodeToDrop);
+            }
         }
 
         if (this.context.designerState.placeholders) {
@@ -85,4 +96,11 @@ export class DragExternalInteraction implements ClickInteraction {
         }
     }
 
+    private _dropNode(placeholder: Placeholder, node: Node): void {
+        const targetSequence = placeholder.parentSequence;
+        SequenceModifier.add(targetSequence, {
+            node: node,
+            parentNode: null,
+        }, placeholder.index);
+    }
 }

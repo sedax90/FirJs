@@ -5,6 +5,7 @@ import { PlaceholderView } from "../placeholder/placeholder-view";
 import { Sequence } from "../sequence/sequence";
 import choiceIcon from '../../assets/call_split.svg';
 import { StepView } from "../common/step/step-view";
+import { getNodeClasses } from "../../utils/node-utils";
 
 export class ChoiceView {
     public constructor(
@@ -16,15 +17,15 @@ export class ChoiceView {
         readonly childSequences: Sequence[],
     ) { }
 
-    private _choiceLabel!: SVGElement;
-
-    public static create(parentElement: SVGElement, node: Node, context: Context): ChoiceView {
+    public static async create(parentElement: SVGElement, node: Node, context: Context): Promise<ChoiceView> {
         const element = DomHelper.svg('g', {
             class: "choice",
         });
+        element.classList.add(...getNodeClasses(node));
 
-        const choiceLabelWidth = StepView.width;
-        const choiceLabelHeight = StepView.height;
+        const stepView = await StepView.create(node, context);
+        const choiceLabelWidth = stepView.width;
+        const choiceLabelHeight = stepView.height;
 
         // Bottom circle icon
         const labelIcon = DomHelper.svg('g', {
@@ -59,8 +60,7 @@ export class ChoiceView {
 
         choicesContainer.appendChild(choicesContainerBg);
 
-        const step = StepView.create(node, context);
-        step.appendChild(labelIcon);
+        stepView.element.appendChild(labelIcon);
 
         // Create choices
 
@@ -82,7 +82,7 @@ export class ChoiceView {
 
             if (!nodes.length) continue;
 
-            const sequence = Sequence.create(nodes, node, parentElement, context);
+            const sequence = await Sequence.create(nodes, node, parentElement, context);
             if (!sequence) continue;
 
             sequences.push(sequence);
@@ -106,21 +106,23 @@ export class ChoiceView {
 
             const sequenceView = sequence.view;
             choiceColumn.appendChild(sequenceView.element);
-            DomHelper.translate(sequenceView.element, columnOffset, 0);
+            DomHelper.translate(sequenceView.element, columnOffset, PlaceholderView.height / 2);
 
             const columnJoinX = (previousOffset - totalColumnsWidth - columnGutter / 2) + columnWidth / 2;
 
             // First connection
-            JoinView.createConnectionJoin(choiceColumn, { x: columnJoinX, y: -PlaceholderView.height / 2 }, PlaceholderView.height / 2, context);
+            JoinView.createConnectionJoin(choiceColumn, { x: columnJoinX, y: -PlaceholderView.height / 2 }, PlaceholderView.height, context);
 
             // Last connection
             const joinHeight = maxHeight - sequence.view.height + PlaceholderView.height;
-            JoinView.createStraightJoin(choiceColumn, { x: columnJoinX, y: sequence.view.height - PlaceholderView.height }, joinHeight, context);
+            JoinView.createStraightJoin(choiceColumn, { x: columnJoinX, y: sequence.view.height - PlaceholderView.height / 2 }, joinHeight, context);
 
             previousOffset = previousOffset + columnWidth;
 
             choicesContainer.appendChild(choiceColumn);
         }
+
+        maxHeight = maxHeight + PlaceholderView.height / 2;
 
         if (totalColumnsWidth > maxWidth) {
             maxWidth = totalColumnsWidth;
@@ -131,7 +133,7 @@ export class ChoiceView {
         const choicesContainerBgTopOffset = 10;
 
         const labelOffsetX = (maxWidth - choiceLabelWidth) / 2;
-        DomHelper.translate(step, labelOffsetX, 0);
+        DomHelper.translate(stepView.element, labelOffsetX, 0);
 
         const totalHeight = choiceLabelHeight + maxHeight + PlaceholderView.height;
         const joinX = maxWidth / 2;
@@ -187,12 +189,10 @@ export class ChoiceView {
 
         element.appendChild(endConnection);
         element.appendChild(choicesContainer);
-        element.appendChild(step);
+        element.appendChild(stepView.element);
         parentElement.appendChild(element);
 
-        const choiceView = new ChoiceView(element, parentElement, maxWidth, totalHeight, joinX, sequences);
-        choiceView._choiceLabel = step;
-        return choiceView;
+        return new ChoiceView(element, parentElement, maxWidth, totalHeight, joinX, sequences);
     }
 
     setDragging(value: boolean): void {

@@ -5,7 +5,7 @@
 `npm i @sedax90/firjs`
 
 ## Why
-I state that this project is freely inspired by the amazing Sequential Workflow Designer: https://github.com/nocode-js/sequential-workflow-designer.c
+I state that this project is freely inspired by the amazing Sequential Workflow Designer: https://github.com/nocode-js/sequential-workflow-designer
 
 **FirJs must not be intended as a ready to use project** but as a simple, generic, dependencies free library for drawing workflows (the only dependencies you will find are for compiling and running the demo).
 

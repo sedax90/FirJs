@@ -68,6 +68,7 @@ interface PublicEvents {
     onNodeRemove?: (event: NodeRemoveEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
     onNodeRemoveRequest?: (event: NodeRemoveRequestEvent) => void;
+    onNodeDropAllowed?: (event: NodeDropEvent) => boolean;
 }
 
 interface PublicOverriders {
@@ -75,9 +76,16 @@ interface PublicOverriders {
     overrideIcon?: (node: Node) => string;
 }
 
+export interface WorkspaceStyleOptions {
+    fontSize: string;
+    fontFamily: string;
+}
+
 export interface WorkspaceInit extends PublicEvents {
     parent: HTMLElement,
     tree: Node[],
+
+    style?: WorkspaceStyleOptions,
 
     overrideLabel?: (node: Node) => string;
     overrideIcon?: (node: Node) => string;
@@ -86,8 +94,11 @@ export interface WorkspaceInit extends PublicEvents {
 export interface Context {
     tree: Node[];
     designerState: DesignerState;
+    style: WorkspaceStyleOptions,
+
     userDefinedListeners?: PublicEvents;
     userDefinedOverriders?: PublicOverriders;
+
     onDefinitionChange?: (tree: Node[], preservePositionAndScale: boolean) => void;
 }
 
@@ -131,6 +142,8 @@ export interface NodeDeselectEvent extends GenericNodeEvent { }
 export interface NodeRemoveEvent extends GenericNodeEvent { }
 
 export interface NodeRemoveRequestEvent extends GenericNodeEvent { }
+
+export interface NodeDropEvent extends GenericNodeEvent { }
 
 export interface TreeChangeEvent {
     tree: Node[];

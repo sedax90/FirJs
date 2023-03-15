@@ -15,8 +15,8 @@ export class Sequence implements ComponentInstance {
 
     parentSequence!: Sequence | null;
 
-    public static create(sequenceNodes: Node[], parentNode: Node | null, parentElement: SVGElement, context: Context): Sequence {
-        const view = SequenceView.create(parentElement, sequenceNodes, parentNode, context);
+    public static async create(sequenceNodes: Node[], parentNode: Node | null, parentElement: SVGElement, context: Context): Promise<Sequence> {
+        const view = await SequenceView.create(parentElement, sequenceNodes, parentNode, context);
         const sequence = new Sequence(view, context, sequenceNodes);
 
         // Update view placeholders
