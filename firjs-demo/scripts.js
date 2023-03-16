@@ -171,8 +171,13 @@ const tree = [
 firjs.init({
     parent: document.getElementById('root'),
     tree: [...tree],
-    style: {
-        fontSize: "0.875em",
+    options: {
+        style: {
+            fontSize: "0.875em",
+        },
+        strings: {
+            'context-menu.workspace.actions.fitandcenter.label': "Fit & center",
+        }
     },
     onNodeSelect: (e) => {
         console.debug("ON NODE SELECTED:", e);
@@ -190,26 +195,36 @@ firjs.init({
         console.debug("ON TREE CHANGE", e);
         showToast('onTreeChange');
     },
-    onNodeDropAllowed: (e) => {
-        console.debug("ON NODE DROP", e);
-        showToast('onNodeDrop');
+    canDropNode: (e) => {
+        console.debug("ON CAN NODE DROP", e);
+        showToast('canDropNode');
 
-        return true;
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
     },
-    // onNodeRemoveRequest: (e) => {
-    //     console.debug("ON NODE REMOVE REQUEST", e);
-    //     showToast('onNodeRemoveRequest');
-    // },
+    canRemoveNode: (e) => {
+        console.debug("ON CAN REMOVE NODE", e);
+        showToast('canRemoveNode');
+
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    },
     overrideLabel: (node) => {
-        return node.label.toLowerCase();
+        return new Promise((resolve, reject) => {
+            resolve(node.label.toLowerCase());
+        });
     },
     overrideIcon: (node) => {
-        if (node.type === 'task') {
-            return './assets/task.svg';
-        }
-        else {
-            return '';
-        }
+        return new Promise((resolve, reject) => {
+            if (node.type === 'task') {
+                resolve('./assets/task.svg');
+            }
+            else {
+                resolve('');
+            }
+        });
     },
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");

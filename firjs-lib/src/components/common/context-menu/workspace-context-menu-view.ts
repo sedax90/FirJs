@@ -11,7 +11,7 @@ export class WorkspaceContextMenuView implements ContextMenu {
 
         const items = [
             {
-                label: "Fit and center",
+                label: context.options.strings['context-menu.workspace.actions.fitandcenter.label'],
                 action: onFitAndCenter,
             },
         ];

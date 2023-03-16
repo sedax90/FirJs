@@ -1,5 +1,5 @@
 import { Placeholder } from "../components/placeholder/placeholder";
-import { ClickInteraction, Context, Node, Vector } from "../models";
+import { ClickInteraction, Context, Node, NodeDropEvent, Vector } from "../models";
 import { getElementPositionInWorkspace } from "../utils/component-position-utils";
 import { PlaceholderFinder } from "../utils/placeholder-finder";
 import { SequenceModifier } from "../utils/sequence-modifier";
@@ -74,15 +74,20 @@ export class DragExternalInteraction implements ClickInteraction {
         const tempNodeToDrop = this.context.designerState.tempNodeToDrop;
 
         if (currentPlaceholder && tempNodeToDrop) {
-            if (this.context.userDefinedListeners?.onNodeDropAllowed) {
-                const isAllowedToDrop = this.context.userDefinedListeners.onNodeDropAllowed({
+            const canDropNodeFn = this.context.userDefinedListeners?.canDropNode;
+            if (canDropNodeFn) {
+                const event: NodeDropEvent = {
                     node: tempNodeToDrop,
                     parent: null,
-                });
-
-                if (isAllowedToDrop) {
-                    this._dropNode(currentPlaceholder, tempNodeToDrop);
-                }
+                    action: "add",
+                };
+                canDropNodeFn(event).then(
+                    (result) => {
+                        if (result === true) {
+                            this._dropNode(currentPlaceholder, tempNodeToDrop);
+                        }
+                    }
+                );
             }
             else {
                 this._dropNode(currentPlaceholder, tempNodeToDrop);

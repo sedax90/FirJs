@@ -68,13 +68,14 @@ interface PublicEvents {
     onNodeDeselect?: (event: NodeDeselectEvent) => void;
     onNodeRemove?: (event: NodeRemoveEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
-    onNodeRemoveRequest?: (event: NodeRemoveRequestEvent) => void;
-    onNodeDropAllowed?: (event: NodeDropEvent) => boolean;
+
+    canRemoveNode?: (event: NodeRemoveRequestEvent) => Promise<boolean>;
+    canDropNode?: (event: NodeDropEvent) => Promise<boolean>;
 }
 
 interface PublicOverriders {
-    overrideLabel?: (node: Node) => string;
-    overrideIcon?: (node: Node) => string;
+    overrideLabel?: (node: Node) => Promise<string>;
+    overrideIcon?: (node: Node) => Promise<string>;
 }
 
 export interface WorkspaceStyleOptions {
@@ -82,20 +83,24 @@ export interface WorkspaceStyleOptions {
     fontFamily: string;
 }
 
+export interface WorkspaceInitOptions {
+    style: WorkspaceStyleOptions;
+    strings: Record<string, string>;
+}
+
 export interface WorkspaceInit extends PublicEvents {
-    parent: HTMLElement,
-    tree: Node[],
+    parent: HTMLElement;
+    tree: Node[];
+    options: WorkspaceInitOptions;
 
-    style?: WorkspaceStyleOptions,
-
-    overrideLabel?: (node: Node) => string;
-    overrideIcon?: (node: Node) => string;
+    overrideLabel?: (node: Node) => Promise<string>;
+    overrideIcon?: (node: Node) => Promise<string>;
 }
 
 export interface Context {
     tree: Node[];
     designerState: DesignerState;
-    style: WorkspaceStyleOptions,
+    options: WorkspaceInitOptions;
 
     userDefinedListeners?: PublicEvents;
     userDefinedOverriders?: PublicOverriders;
@@ -144,7 +149,9 @@ export interface NodeRemoveEvent extends GenericNodeEvent { }
 
 export interface NodeRemoveRequestEvent extends GenericNodeEvent { }
 
-export interface NodeDropEvent extends GenericNodeEvent { }
+export interface NodeDropEvent extends GenericNodeEvent {
+    action: "add" | "move";
+}
 
 export interface TreeChangeEvent {
     tree: Node[];

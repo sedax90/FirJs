@@ -1,4 +1,4 @@
-import { ComponentInstance, Context, Node } from "../models";
+import { ComponentInstance, Context, Node, NodeRemoveRequestEvent } from "../models";
 import { instanceOfComponentWithNode } from "./interface-utils";
 import { SequenceModifier } from "./sequence-modifier";
 
@@ -14,11 +14,18 @@ export function removeNode(componentInstance: ComponentInstance, context: Contex
         const sequence = componentInstance.parentSequence;
         if (!sequence?.nodes) return;
 
-        if (context.userDefinedListeners?.onNodeRemoveRequest) {
-            context.userDefinedListeners.onNodeRemoveRequest({
+        if (context.userDefinedListeners?.canRemoveNode) {
+            const event: NodeRemoveRequestEvent = {
                 node: componentInstance.node,
                 parent: componentInstance.parentNode,
-            });
+            };
+            context.userDefinedListeners.canRemoveNode(event).then(
+                (result) => {
+                    if (result === true) {
+                        SequenceModifier.remove(sequence, componentInstance);
+                    }
+                }
+            );
         }
         else {
             SequenceModifier.remove(sequence, componentInstance);

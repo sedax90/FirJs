@@ -25,8 +25,8 @@ export class LabelView {
             fill: props?.color ? props.color : "currentColor",
             "text-anchor": "middle",
             "dominant-baseline": "middle",
-            "font-size": context.style.fontSize,
-            'font-family': context.style.fontFamily,
+            "font-size": context.options.style.fontSize,
+            'font-family': context.options.style.fontFamily,
         });
         label.append(text.trim());
 

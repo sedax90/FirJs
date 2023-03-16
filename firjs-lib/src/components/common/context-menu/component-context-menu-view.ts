@@ -11,11 +11,11 @@ export class ComponentContextMenuView implements ContextMenu {
 
         const items = [
             {
-                label: "Remove",
+                label: context.options.strings['context-menu.component.actions.remove.label'],
                 action: onRemoveAction,
             },
             {
-                label: "Duplicate",
+                label: context.options.strings['context-menu.component.actions.duplicate.label'],
                 action: onDuplicateAction,
             }
         ];

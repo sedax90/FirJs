@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, WorkspaceStyleOptions } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, WorkspaceInitOptions } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -14,6 +14,7 @@ import { spacebarKey } from "../utils/keyboard-utils";
 import { ComponentContextMenuView } from "../components/common/context-menu/component-context-menu-view";
 import { duplicateNode, removeNode } from "../utils/node-utils";
 import { WorkspaceContextMenuView } from "../components/common/context-menu/workspace-context-menu-view";
+import deepMerge from "../utils/object-utils";
 
 export class Workspace implements ComponentWithView {
 
@@ -56,68 +57,61 @@ export class Workspace implements ComponentWithView {
 
     // Public methods
 
-    static async init(options: WorkspaceInit): Promise<Workspace> {
-        let defaultStyle: WorkspaceStyleOptions = {
-            fontSize: "1em",
-            fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-        }
-
+    static async init(initData: WorkspaceInit): Promise<Workspace> {
+        const combinedOptions = deepMerge<WorkspaceInitOptions>(Workspace._getDefaultOptions(), initData?.options);
         const context: Context = {
-            tree: options.tree,
+            tree: initData.tree,
             designerState: {
                 placeholders: [],
                 selectedNode: new Observable<ComponentInstance | null>(),
                 deselectedNode: new Observable<ComponentInstance>,
                 zoomLevel: 1,
             },
-            style: {
-                ...defaultStyle,
-                ...options?.style,
-            }
+            options: combinedOptions,
         };
 
         if (!context.userDefinedListeners) {
             context.userDefinedListeners = {};
         }
 
-        if (options.onNodeSelect) {
-            context.userDefinedListeners.onNodeSelect = options.onNodeSelect;
+        if (initData.onNodeSelect) {
+            context.userDefinedListeners.onNodeSelect = initData.onNodeSelect;
         }
 
-        if (options.onNodeDeselect) {
-            context.userDefinedListeners.onNodeDeselect = options.onNodeDeselect;
+        if (initData.onNodeDeselect) {
+            context.userDefinedListeners.onNodeDeselect = initData.onNodeDeselect;
         }
 
-        if (options.onNodeRemove) {
-            context.userDefinedListeners.onNodeRemove = options.onNodeRemove;
+        if (initData.onNodeRemove) {
+            context.userDefinedListeners.onNodeRemove = initData.onNodeRemove;
         }
 
-        if (options.onTreeChange) {
-            context.userDefinedListeners.onTreeChange = options.onTreeChange;
+        if (initData.onTreeChange) {
+            context.userDefinedListeners.onTreeChange = initData.onTreeChange;
         }
 
-        if (options.onNodeRemoveRequest) {
-            context.userDefinedListeners.onNodeRemoveRequest = options.onNodeRemoveRequest;
+        if (initData.canRemoveNode) {
+            context.userDefinedListeners.canRemoveNode = initData.canRemoveNode;
         }
 
-        if (options.onNodeDropAllowed) {
-            context.userDefinedListeners.onNodeDropAllowed = options.onNodeDropAllowed;
+        if (initData.canDropNode) {
+            context.userDefinedListeners.canDropNode = initData.canDropNode;
         }
 
         if (!context.userDefinedOverriders) {
             context.userDefinedOverriders = {};
         }
 
-        if (options.overrideLabel) {
-            context.userDefinedOverriders.overrideLabel = options.overrideLabel;
+        if (initData.overrideLabel) {
+            context.userDefinedOverriders.overrideLabel = initData.overrideLabel;
         }
 
-        if (options.overrideIcon) {
-            context.userDefinedOverriders.overrideIcon = options.overrideIcon;
+        if (initData.overrideIcon) {
+            context.userDefinedOverriders.overrideIcon = initData.overrideIcon;
         }
 
-        const view = await WorkspaceView.create(options.parent, context);
-        const workspace = new Workspace(view, context, options.parent);
+        const view = await WorkspaceView.create(initData.parent, context);
+        const workspace = new Workspace(view, context, initData.parent);
         workspace._setViewBinds();
 
         context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
@@ -270,5 +264,19 @@ export class Workspace implements ComponentWithView {
     private _onContextMenuFitAndCenter(e: MouseEvent): void {
         e.preventDefault();
         this.fitAndCenter();
+    }
+
+    private static _getDefaultOptions(): WorkspaceInitOptions {
+        return {
+            style: {
+                fontSize: "1em",
+                fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+            },
+            strings: {
+                "context-menu.component.actions.remove.label": "Remove",
+                "context-menu.component.actions.duplicate.label": "Duplicate",
+                "context-menu.workspace.actions.fitandcenter.label": "Fit and center"
+            }
+        };
     }
 }

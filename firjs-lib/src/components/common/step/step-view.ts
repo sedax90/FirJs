@@ -27,7 +27,7 @@ export class StepView {
 
         let customIcon = node?.icon;
         if (context.userDefinedOverriders?.overrideIcon) {
-            customIcon = context.userDefinedOverriders.overrideIcon(node);
+            customIcon = await context.userDefinedOverriders.overrideIcon(node);
         }
 
         const iconContainer = StepView._createIcons(customIcon);
@@ -35,7 +35,7 @@ export class StepView {
 
         let text: string = "";
         if (context?.userDefinedOverriders?.overrideLabel) {
-            text = context.userDefinedOverriders.overrideLabel(node);
+            text = await context.userDefinedOverriders.overrideLabel(node);
         }
         else {
             text = node?.label ? node.label : node.id;
