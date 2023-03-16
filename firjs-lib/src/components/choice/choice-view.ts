@@ -181,7 +181,6 @@ export class ChoiceView {
         if (maxWidth > choicesContainerBgWidth) {
             choicesContainerBgWidth = maxWidth;
         }
-        choicesContainerBgWidth = choicesContainerBgWidth;
 
         choicesContainerBg.setAttribute('width', `${choicesContainerBgWidth}px`);
         choicesContainerBg.setAttribute('height', `${totalHeight}px`);
@@ -197,10 +196,10 @@ export class ChoiceView {
 
     setDragging(value: boolean): void {
         if (value) {
-            this.element.setAttribute('opacity', '0.25');
+            this.element.classList.add('dragging');
         }
         else {
-            this.element.removeAttribute('opacity');
+            this.element.classList.remove('dragging');
         }
     }
 

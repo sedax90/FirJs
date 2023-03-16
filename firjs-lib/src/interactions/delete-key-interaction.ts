@@ -1,7 +1,6 @@
 import { Context, KeyboardInteraction } from "../models";
-import { instanceOfComponentWithNode } from "../utils/interface-utils";
 import { delKey } from "../utils/keyboard-utils";
-import { SequenceModifier } from "../utils/sequence-modifier";
+import { removeNode } from "../utils/node-utils";
 
 export class DeleteKeyInteraction implements KeyboardInteraction {
     private constructor(
@@ -15,23 +14,9 @@ export class DeleteKeyInteraction implements KeyboardInteraction {
     onPress(e: KeyboardEvent): void {
         if (!delKey(e)) return;
 
-        const componentNode = this.context.designerState.selectedNode.getValue();
-        if (!componentNode) return;
-
-        if (instanceOfComponentWithNode(componentNode)) {
-            const sequence = componentNode.parentSequence;
-            if (!sequence?.nodes) return;
-
-            if (this.context.userDefinedListeners?.onNodeRemoveRequest) {
-                this.context.userDefinedListeners.onNodeRemoveRequest({
-                    node: componentNode.node,
-                    parent: componentNode.parentNode,
-                });
-            }
-            else {
-                SequenceModifier.remove(sequence, componentNode);
-            }
-        }
+        const componentInstance = this.context.designerState.selectedNode.getValue();
+        if (!componentInstance) return;
+        removeNode(componentInstance, this.context);
     }
 
     onRelease(e: KeyboardEvent): void {

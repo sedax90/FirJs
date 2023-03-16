@@ -29,9 +29,17 @@ export class WorkspaceView implements ElementView {
     }
 
     public bindClick(handler: (position: Vector, target: Element, buttonIndex: MouseButton) => void) {
-        this.element.addEventListener('mousedown', (e) => {
-            handler(readMousePosition(e as MouseEvent), e.target as Element, buttonIndexToType((<MouseEvent>e).button));
-        });
+        this.element.addEventListener('mousedown', (e: MouseEvent) => {
+            e.preventDefault();
+            handler(readMousePosition(e), e.target as Element, buttonIndexToType(e.button));
+        }, false);
+    }
+
+    public bindContextMenu(handler: (position: Vector, target: Element) => void) {
+        this.element.addEventListener('contextmenu', (e: MouseEvent) => {
+            e.preventDefault();
+            handler(readMousePosition(e), e.target as Element);
+        }, false);
     }
 
     public bindWheel(handler: (e: WheelEvent) => void) {

@@ -11,6 +11,9 @@ import { DeleteKeyInteraction } from "../interactions/delete-key-interaction";
 import { instanceOfComponentWithNode } from "../utils/interface-utils";
 import { CtrlInteraction } from "../interactions/ctrl-interaction";
 import { spacebarKey } from "../utils/keyboard-utils";
+import { ComponentContextMenuView } from "../components/common/context-menu/component-context-menu-view";
+import { duplicateNode, removeNode } from "../utils/node-utils";
+import { WorkspaceContextMenuView } from "../components/common/context-menu/workspace-context-menu-view";
 
 export class Workspace implements ComponentWithView {
 
@@ -115,14 +118,10 @@ export class Workspace implements ComponentWithView {
 
         const view = await WorkspaceView.create(options.parent, context);
         const workspace = new Workspace(view, context, options.parent);
+        workspace._setViewBinds();
 
         context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
-
         context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
-
-        view.bindClick((position: Vector, target: Element, button: MouseButton) => workspace._onClick(position, target, button));
-        view.bindWheel((e: WheelEvent) => workspace._onWheel(e));
-        view.bindKeyboard((e: KeyboardEvent) => workspace._onKeyboard(e));
 
         return workspace;
     }
@@ -146,6 +145,13 @@ export class Workspace implements ComponentWithView {
 
     private _userInteractionController!: UserInteractionController;
 
+    private _setViewBinds(): void {
+        this.view.bindClick((position: Vector, target: Element, button: MouseButton) => this._onClick(position, target, button));
+        this.view.bindWheel((e: WheelEvent) => this._onWheel(e));
+        this.view.bindContextMenu((position: Vector, target: Element) => this._onContextMenu(position, target));
+        this.view.bindKeyboard((e: KeyboardEvent) => this._onKeyboard(e));
+    }
+
     private async _onDefinitionChange(tree: Node[], preservePositionAndScale: boolean = false): Promise<void> {
         this.context.tree = tree;
 
@@ -158,9 +164,7 @@ export class Workspace implements ComponentWithView {
         const view = await WorkspaceView.create(this.parent, this.context);
         this.view = view;
 
-        view.bindClick((position: Vector, target: Element, button: MouseButton) => this._onClick(position, target, button));
-        view.bindWheel((e: WheelEvent) => this._onWheel(e));
-        view.bindKeyboard((e: KeyboardEvent) => this._onKeyboard(e));
+        this._setViewBinds();
 
         if (this.context.userDefinedListeners?.onTreeChange) {
             this.context.userDefinedListeners.onTreeChange({
@@ -170,6 +174,8 @@ export class Workspace implements ComponentWithView {
     }
 
     private _onClick(position: Vector, target: Element, button: MouseButton): void {
+        this._clearContextMenus();
+
         if (button === MouseButton.LEFT || button === MouseButton.MIDDLE) {
             const workflow = this.view.workflow;
             const click: ClickEvent = {
@@ -205,6 +211,31 @@ export class Workspace implements ComponentWithView {
         }
     }
 
+    private _onContextMenu(position: Vector, target: Element): void {
+        this._clearContextMenus();
+
+        const workflow = this.view.workflow;
+        const click: ClickEvent = {
+            position: position,
+            target: target,
+        };
+        const componentInstance = workflow.findByClick(click);
+
+        let contextMenu!: any;
+        if (componentInstance) {
+            this.context.designerState?.selectedNode.next(componentInstance);
+            contextMenu = ComponentContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuRemoveAction(e, componentInstance), (e: MouseEvent) => this._onContextMenuDuplicateAction(e, componentInstance));
+        }
+        else {
+            this.context.designerState?.selectedNode.next(null);
+            contextMenu = WorkspaceContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuFitAndCenter(e));
+        }
+
+        if (contextMenu) {
+            this.view.element.appendChild(contextMenu.contextMenu.element);
+        }
+    }
+
     private _onWheel(e: WheelEvent): void {
         e.preventDefault();
 
@@ -217,5 +248,27 @@ export class Workspace implements ComponentWithView {
             const interaction = CtrlInteraction.create(this.view.workflow, this.context);
             this._userInteractionController.handleKeyboardInteraction(interaction);
         }
+    }
+
+    private _clearContextMenus(): void {
+        const contextMenus = document.body.querySelectorAll('.context-menu');
+        contextMenus.forEach(e => {
+            e.remove();
+        });
+    }
+
+    private _onContextMenuRemoveAction(e: MouseEvent, componentInstance: ComponentInstance): void {
+        e.preventDefault();
+        removeNode(componentInstance, this.context);
+    }
+
+    private _onContextMenuDuplicateAction(e: MouseEvent, componentInstance: ComponentInstance): void {
+        e.preventDefault();
+        duplicateNode(componentInstance);
+    }
+
+    private _onContextMenuFitAndCenter(e: MouseEvent): void {
+        e.preventDefault();
+        this.fitAndCenter();
     }
 }

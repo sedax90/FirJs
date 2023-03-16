@@ -21,3 +21,16 @@ export function getElementPositionInWorkspace(element: HTMLElement | SVGElement,
         y: componentClientRectY,
     };
 }
+
+export function getVectorPositionInWorkspace(startPosition: Vector, context: Context): Vector {
+    const workspaceRect = context.designerState.workspaceRect;
+    if (workspaceRect) {
+        startPosition.x = startPosition.x - workspaceRect.left;
+        startPosition.y = startPosition.y - workspaceRect.top;
+    }
+
+    return {
+        x: startPosition.x,
+        y: startPosition.y,
+    };
+}

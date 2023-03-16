@@ -28,11 +28,12 @@ export class DragView implements ElementView {
         clone.setAttribute('transform', `scale(${zoomLevel})`);
 
         const dragSvg = DomHelper.svg('svg', {
+            class: 'drag-ghost',
             width: width + width * zoomLevel,
             height: height + height * zoomLevel,
         });
         dragSvg.style.position = 'absolute';
-        dragSvg.style.zIndex = '2';
+        dragSvg.style.zIndex = '10';
         dragSvg.appendChild(clone);
 
         const parent = document.getElementById('workspace-root');

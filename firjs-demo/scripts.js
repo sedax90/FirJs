@@ -168,7 +168,7 @@ const tree = [
     },
 ];
 
-firjs.Workspace.init({
+firjs.init({
     parent: document.getElementById('root'),
     tree: [...tree],
     style: {

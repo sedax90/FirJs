@@ -1,3 +1,4 @@
+import { ContextMenuView } from "./components/common/context-menu/context-menu-view";
 import { Placeholder } from "./components/placeholder/placeholder";
 import { Sequence } from "./components/sequence/sequence";
 import { ClickEvent } from "./utils/event-utils";
@@ -151,4 +152,13 @@ export interface TreeChangeEvent {
 
 export interface Attributes {
     [name: string]: string | number;
+}
+
+export interface ContextMenu {
+    contextMenu: ContextMenuView;
+}
+
+export interface ContextMenuItem {
+    label: string;
+    action: (e: MouseEvent) => void;
 }

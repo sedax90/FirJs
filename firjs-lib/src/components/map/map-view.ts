@@ -111,6 +111,15 @@ export class MapView extends ParentView {
         return mapView;
     }
 
+    setDragging(value: boolean): void {
+        if (value) {
+            this.element.classList.add('dragging');
+        }
+        else {
+            this.element.classList.remove('dragging');
+        }
+    }
+
     setSelected(status: boolean): void {
         if (status) {
             this.element.classList.add('selected');

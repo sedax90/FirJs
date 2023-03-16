@@ -37,4 +37,9 @@ export class Sequence implements ComponentInstance {
 
         return null;
     }
+
+    getNodeIndex(node: Node): number {
+        const id = node.id;
+        return this.nodes.findIndex(e => e.id === id);
+    }
 }

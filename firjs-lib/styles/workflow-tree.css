@@ -89,6 +89,10 @@
   stroke: var(--endStrokeColor);
 }
 
+.choice > .choices-container > .choices-container-bg {
+  fill: transparent;
+}
+
 .choice.selected > .choices-container > .choices-container-bg {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
@@ -134,4 +138,36 @@
 
 .label-icon {
   transform: scale(0.6) translate(15px, 15px);
+}
+
+.dragging {
+  opacity: 0.25;
+}
+
+.context-menu {
+  padding: 0;
+  background-color: #fff;
+  box-shadow: rgba(0, 28, 36, 0.3) 0px 1px 1px 0px,
+    rgba(0, 28, 36, 0.15) 1px 1px 1px 0px,
+    rgba(0, 28, 36, 0.15) -1px 1px 1px 0px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 2px;
+  min-width: 150px;
+}
+
+.context-menu > ul {
+  padding: 0;
+  margin: 0;
+}
+
+.context-menu > ul > li {
+  display: block;
+  padding: 0.5em 1.6em;
+  line-height: 1;
+  cursor: pointer;
+  text-align: left;
+}
+
+.context-menu > ul > li:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }

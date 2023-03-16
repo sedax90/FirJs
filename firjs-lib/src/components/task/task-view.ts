@@ -26,10 +26,10 @@ export class TaskView implements ComponentView {
 
     setDragging(value: boolean): void {
         if (value) {
-            this.element.setAttribute('opacity', '0.5');
+            this.element.classList.add('dragging');
         }
         else {
-            this.element.removeAttribute('opacity');
+            this.element.classList.remove('dragging');
         }
     }
 
