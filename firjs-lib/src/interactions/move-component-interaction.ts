@@ -107,7 +107,26 @@ export class MoveComponentInteraction implements ClickInteraction {
             }
 
             if (sourceSequence && targetSequence) {
-                SequenceModifier.move(sourceSequence, this.draggedComponent, targetSequence, this._currentPlaceholder.index);
+                const canDropNodeFn = this.context.userDefinedListeners?.canDropNode;
+                const currentPlaceholderIndex = this._currentPlaceholder.index;
+                const draggedComponent = this.draggedComponent;
+
+                if (canDropNodeFn) {
+                    canDropNodeFn({
+                        node: this.draggedComponent.node,
+                        parent: this.draggedComponent.parentNode,
+                        action: "move",
+                    }).then(
+                        (result) => {
+                            if (result === true) {
+                                SequenceModifier.move(sourceSequence, draggedComponent, targetSequence, currentPlaceholderIndex);
+                            }
+                        }
+                    );
+                }
+                else {
+                    SequenceModifier.move(sourceSequence, draggedComponent, targetSequence, currentPlaceholderIndex);
+                }
             }
         }
 

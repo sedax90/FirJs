@@ -13,7 +13,7 @@ export class WorkspaceView implements ElementView {
 
     workflow!: Workflow;
 
-    public static create(parent: HTMLElement, context: Context): WorkspaceView {
+    public static async create(parent: HTMLElement, context: Context): Promise<WorkspaceView> {
         const workspace = DomHelper.element('div', {
             id: "workspace-root",
             class: "workspace-root",
@@ -21,7 +21,7 @@ export class WorkspaceView implements ElementView {
 
         parent.appendChild(workspace);
         Background.create(workspace);
-        const workflow = Workflow.create(workspace, context);
+        const workflow = await Workflow.create(workspace, context);
 
         const wsv = new WorkspaceView(workspace, parent, context);
         wsv.workflow = workflow;
@@ -29,9 +29,17 @@ export class WorkspaceView implements ElementView {
     }
 
     public bindClick(handler: (position: Vector, target: Element, buttonIndex: MouseButton) => void) {
-        this.element.addEventListener('mousedown', (e) => {
-            handler(readMousePosition(e as MouseEvent), e.target as Element, buttonIndexToType((<MouseEvent>e).button));
-        });
+        this.element.addEventListener('mousedown', (e: MouseEvent) => {
+            e.preventDefault();
+            handler(readMousePosition(e), e.target as Element, buttonIndexToType(e.button));
+        }, false);
+    }
+
+    public bindContextMenu(handler: (position: Vector, target: Element) => void) {
+        this.element.addEventListener('contextmenu', (e: MouseEvent) => {
+            e.preventDefault();
+            handler(readMousePosition(e), e.target as Element);
+        }, false);
     }
 
     public bindWheel(handler: (e: WheelEvent) => void) {

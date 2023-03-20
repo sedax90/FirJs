@@ -2,7 +2,7 @@ let = i = 0;
 const tree = [
     {
         id: i++,
-        label: "Lorem ipsum dolor sit amet, consectetur",
+        label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
         type: "task",
     },
     {
@@ -168,9 +168,17 @@ const tree = [
     },
 ];
 
-const workspace = firjs.Workspace.init({
+firjs.init({
     parent: document.getElementById('root'),
-    tree: [],
+    tree: [...tree],
+    options: {
+        style: {
+            fontSize: "0.875em",
+        },
+        strings: {
+            'context-menu.workspace.actions.fitandcenter.label': "Fit & center",
+        }
+    },
     onNodeSelect: (e) => {
         console.debug("ON NODE SELECTED:", e);
         showToast('onNodeSelect');
@@ -187,44 +195,64 @@ const workspace = firjs.Workspace.init({
         console.debug("ON TREE CHANGE", e);
         showToast('onTreeChange');
     },
-    // onNodeRemoveRequest: (e) => {
-    //     console.debug("ON NODE REMOVE REQUEST", e);
-    //     showToast('onNodeRemoveRequest');
-    // },
+    canDropNode: (e) => {
+        console.debug("ON CAN NODE DROP", e);
+        showToast('canDropNode');
+
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    },
+    canRemoveNode: (e) => {
+        console.debug("ON CAN REMOVE NODE", e);
+        showToast('canRemoveNode');
+
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    },
     overrideLabel: (node) => {
-        return node.label.toLowerCase();
+        return new Promise((resolve, reject) => {
+            resolve(node.label.toLowerCase());
+        });
     },
     overrideIcon: (node) => {
-        if (node.type === 'task') {
-            return './assets/task.svg';
-        }
-        else {
-            return '';
-        }
-    }
-});
-workspace.setTree([...tree], false);
-
-const elements = document.getElementsByClassName("draggable");
-for (const element of elements) {
-    element.addEventListener("dragstart", (event) => {
-        workspace.startDrag(event.target, {
-            x: event.pageX,
-            y: event.pageY,
-        }, {
-            id: i++,
-            type: element.dataset.type,
-            label: `New node ${i}`,
+        return new Promise((resolve, reject) => {
+            if (node.type === 'task') {
+                resolve('./assets/task.svg');
+            }
+            else {
+                resolve('');
+            }
         });
-        return;
+    },
+}).then((workspace) => {
+    const elements = document.getElementsByClassName("draggable");
+    for (const element of elements) {
+        element.addEventListener("dragstart", (event) => {
+            workspace.startDrag(event.target, {
+                x: event.pageX,
+                y: event.pageY,
+            }, {
+                id: i++,
+                type: element.dataset.type,
+                label: `New node ${i}`,
+            });
+            return;
+        });
+    }
+
+    // Bootstrap demo scripts
+
+    const centerWorkflowBtn = document.getElementById('centerWorkflow');
+    centerWorkflowBtn.addEventListener('click', () => {
+        workspace.fitAndCenter();
     });
-}
 
-// Bootstrap demo scripts
-
-const centerWorkflowBtn = document.getElementById('centerWorkflow');
-centerWorkflowBtn.addEventListener('click', () => {
-    workspace.fitAndCenter();
+    const resetBtn = document.getElementById('resetBtn');
+    resetBtn.addEventListener('click', () => {
+        workspace.setTree([...tree], true);
+    }, false);
 });
 
 function showToast(type) {
@@ -259,8 +287,3 @@ function showToast(type) {
         }
     }).showToast();
 }
-
-const resetBtn = document.getElementById('resetBtn');
-resetBtn.addEventListener('click', () => {
-    workspace.setTree([...tree], true);
-}, false);

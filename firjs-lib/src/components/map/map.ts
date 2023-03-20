@@ -4,7 +4,7 @@ import { MapView } from "./map-view";
 
 export class Map extends ParentComponent implements ComponentWithNode {
 
-    public static create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Map {
+    public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<Map> {
         if (!node.props) {
             node.props = {};
         }
@@ -14,7 +14,7 @@ export class Map extends ParentComponent implements ComponentWithNode {
             props.children = [];
         }
 
-        const view = MapView.create(parentElement, node, context);
+        const view = await MapView.create(parentElement, node, context);
         const mapComponent = new Map(view, view.sequence, props.children, context);
 
         mapComponent.node = node;

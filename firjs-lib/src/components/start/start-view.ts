@@ -28,17 +28,12 @@ export class StartView implements ComponentView {
             cy: radius,
         });
 
-        const label = LabelView.create('Start', {
-            x: radius,
-            y: radius,
-            containerWidth: diameter,
-            containerHeight: diameter,
-        });
-        DomHelper.translate(label, -radius, 0);
+        const label = LabelView.create('Start', context);
+        DomHelper.translate(label.element, 0, radius);
 
         parent.appendChild(element);
         element.appendChild(circle);
-        element.appendChild(label);
+        element.appendChild(label.element);
 
         return new StartView(element, parent, diameter, diameter + PlaceholderView.height, diameter / 2);
     }

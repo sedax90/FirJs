@@ -4,7 +4,7 @@ import { EndView } from "./end-view";
 
 export class End extends ChildlessComponent {
     public static create(parent: SVGElement, context: Context): End {
-        const view = EndView.create(parent);
+        const view = EndView.create(parent, context);
         return new End(view, context);
     }
 }

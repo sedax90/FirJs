@@ -1,6 +1,6 @@
 import { LabelView } from "../common/label/label-view";
 import { DomHelper } from "../../utils/dom-helper";
-import { ComponentView } from "../../models";
+import { ComponentView, Context } from "../../models";
 
 export class EndView implements ComponentView {
     private constructor(
@@ -11,7 +11,7 @@ export class EndView implements ComponentView {
         readonly joinX: number,
     ) { }
 
-    public static create(parent: SVGElement): EndView {
+    public static create(parent: SVGElement, context: Context): EndView {
         const diameter = 60;
         const radius = diameter / 2;
 
@@ -27,16 +27,11 @@ export class EndView implements ComponentView {
             cy: radius,
         });
 
-        const label = LabelView.create('End', {
-            x: radius,
-            y: radius,
-            containerWidth: diameter,
-            containerHeight: diameter,
-        });
-        DomHelper.translate(label, -30, 0);
+        const label = LabelView.create('End', context);
+        DomHelper.translate(label.element, 0, radius);
 
         element.appendChild(circle);
-        element.appendChild(label);
+        element.appendChild(label.element);
         parent.appendChild(element);
 
         return new EndView(element, parent, diameter, diameter, diameter / 2);

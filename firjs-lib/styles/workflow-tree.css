@@ -6,13 +6,10 @@
   --startBgColor: lightblue;
   --endStrokeColor: green;
   --endBgColor: rgba(0, 255, 0, 0.25);
-  --startEndFontSize: 0.875em;
   --labelContainerFill: rgba(255, 255, 255, 1);
-  --labelContainerStroke: rgba(0, 0, 0, .15);
+  --labelContainerStroke: rgba(0, 0, 0, 0.15);
   --labelContainerFilter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.1));
-  --labelFontFamily: system-ui, sans-serif;
-  --labelFontSize: 1em;
-  --labelFontWeight: 300;
+  --labelFontWeight: lighter;
   --joinLineStroke: black;
   --joinLineStrokeWidth: 1.25;
 
@@ -29,7 +26,7 @@
 }
 
 .workflow-root.moving {
-  cursor: move;
+  cursor: grabbing;
 }
 
 .bg {
@@ -42,10 +39,8 @@
 }
 
 .label {
-  font-family: var(--labelFontFamily);
   font-weight: var(--labelFontWeight);
   letter-spacing: 1px;
-  font-size: var(--labelFontSize);
 }
 
 .label-container {
@@ -58,17 +53,24 @@
   cursor: pointer;
 }
 
-.start .label,
-.end .label {
-  font-size: var(--startEndFontSize);
+.has-error > .step > .label-container,
+.has-error
+  > .map-children-wrapper
+  > .children-container
+  > .children-container-bg {
+  stroke: var(--nodeHasErrorStrokeColor);
+  stroke-width: 2;
 }
 
-.map.selected>.map-children-wrapper>.children-container>.children-container-bg {
+.map.selected
+  > .map-children-wrapper
+  > .children-container
+  > .children-container-bg {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
 }
 
-.selected>.step>.label-container {
+.selected > .step > .label-container {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
 }
@@ -87,19 +89,17 @@
   stroke: var(--endStrokeColor);
 }
 
-.choice.selected>.choices-container>.choices-container-bg {
+.choice > .choices-container > .choices-container-bg {
+  fill: transparent;
+}
+
+.choice.selected > .choices-container > .choices-container-bg {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
 }
 
-.choice.selected>.choices-container>.choices-container-bg {
+.choice.selected > .choices-container > .choices-container-bg {
   opacity: 1;
-}
-
-.map.has-error>.step>.label-container,
-.map.has-error>.map-children-wrapper>.children-container>.children-container-bg {
-  stroke: var(--nodeHasErrorStrokeColor);
-  stroke-width: 2;
 }
 
 .join-line {
@@ -115,7 +115,7 @@
 }
 
 .label-icon-bg {
-  fill: rgba(0, 0, 0, .075);
+  fill: rgba(0, 0, 0, 0.075);
 }
 
 .grid-pattern-circle {
@@ -138,4 +138,36 @@
 
 .label-icon {
   transform: scale(0.6) translate(15px, 15px);
+}
+
+.dragging {
+  opacity: 0.25;
+}
+
+.context-menu {
+  padding: 0;
+  background-color: #fff;
+  box-shadow: rgba(0, 28, 36, 0.3) 0px 1px 1px 0px,
+    rgba(0, 28, 36, 0.15) 1px 1px 1px 0px,
+    rgba(0, 28, 36, 0.15) -1px 1px 1px 0px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 2px;
+  min-width: 150px;
+}
+
+.context-menu > ul {
+  padding: 0;
+  margin: 0;
+}
+
+.context-menu > ul > li {
+  display: block;
+  padding: 0.5em 1.6em;
+  line-height: 1;
+  cursor: pointer;
+  text-align: left;
+}
+
+.context-menu > ul > li:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }

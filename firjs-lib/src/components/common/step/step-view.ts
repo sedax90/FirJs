@@ -5,89 +5,118 @@ import { Context, Node } from "../../../models";
 import { DomHelper } from "../../../utils/dom-helper";
 
 export class StepView {
-    public static width: number = 200;
-    public static height: number = 46;
+    private static defaultWidth: number = 200;
+    private static defaultHeight: number = 46;
 
-    public static create(node: Node, context: Context, props?: StepViewProps): SVGElement {
+    private constructor(
+        public element: SVGElement,
+        public width: number,
+        public height: number,
+    ) { }
+
+    public static async create(node: Node, context: Context, props?: StepViewProps): Promise<StepView> {
         const step = DomHelper.svg('g', {
             class: 'step',
         });
         const container = LabelContainer.create({
             ...props?.container,
-            width: StepView.width,
-            height: StepView.height,
+            width: StepView.defaultWidth,
+            height: StepView.defaultHeight,
         });
         step.appendChild(container);
 
-        const dragIconSize = 22;
-        step.appendChild(DomHelper.svg('image', {
-            href: dragIcon,
-            width: dragIconSize,
-            height: dragIconSize,
-            x: 0,
-            y: StepView.height / 2 - dragIconSize / 2,
-            opacity: 0.25,
-            cursor: 'move',
-        }));
-
-        let labelIcon = node?.icon;
+        let customIcon = node?.icon;
         if (context.userDefinedOverriders?.overrideIcon) {
-            labelIcon = context.userDefinedOverriders.overrideIcon(node);
+            customIcon = await context.userDefinedOverriders.overrideIcon(node);
         }
 
-        const iconIconContainerSize = StepView.height;
-        if (labelIcon) {
-            const iconContainer = DomHelper.svg('g', {
-                class: 'label-icon-container',
-            });
-
-            iconContainer.appendChild(DomHelper.svg('rect', {
-                class: "label-icon-bg",
-                width: iconIconContainerSize,
-                height: iconIconContainerSize,
-            }));
-
-            DomHelper.translate(iconContainer, dragIconSize, 0);
-
-            const iconSize = iconIconContainerSize;
-            iconContainer.appendChild(DomHelper.svg('image', {
-                class: "label-icon",
-                href: labelIcon,
-                width: iconSize,
-                height: iconSize,
-                x: iconIconContainerSize / 2 - iconSize / 2,
-                y: iconIconContainerSize / 2 - iconSize / 2,
-            }));
-
-            step.appendChild(iconContainer);
-        }
+        const iconContainer = StepView._createIcons(customIcon);
+        step.appendChild(iconContainer);
 
         let text: string = "";
         if (context?.userDefinedOverriders?.overrideLabel) {
-            text = context.userDefinedOverriders.overrideLabel(node);
+            text = await context.userDefinedOverriders.overrideLabel(node);
         }
         else {
             text = node?.label ? node.label : node.id;
         }
 
-        const labelMarginX = 10;
-        const totalIconSizes = dragIconSize + (labelIcon ? iconIconContainerSize : 0);
-        const textAvailableSize = StepView.width - totalIconSizes - labelMarginX;
-        const label = LabelView.create(text, {
+        const label = LabelView.create(text, context, {
             ...props?.label,
-            x: textAvailableSize / 2,
-            y: StepView.height / 2,
-            containerWidth: textAvailableSize,
-            containerHeight: StepView.height,
-            textAlign: labelIcon ? 'left' : 'center',
+        });
+        step.appendChild(label.element);
+
+
+        let containerWidth = StepView.defaultWidth;
+
+        const iconMarginRight = 10;
+        const totalIconSizes = iconMarginRight + ((customIcon) ? (22 + StepView.defaultHeight) : 22);
+
+        const labelWidth = label.textLength;
+        if (labelWidth + totalIconSizes > containerWidth) {
+            containerWidth = labelWidth + totalIconSizes * 2;
+        }
+        else {
+            containerWidth = containerWidth + totalIconSizes / 2;
+        }
+
+        const labelOffsetX = containerWidth / 2;
+        const labelOffsetY = StepView.defaultHeight / 2;
+        DomHelper.translate(label.element, labelOffsetX, labelOffsetY);
+
+        container.setAttribute('width', containerWidth.toString());
+
+        return new StepView(step, containerWidth, StepView.defaultHeight);
+    }
+
+    private static _createIcons(customIcon: string | undefined): SVGElement {
+        const iconContainer = DomHelper.svg('g', {
+            class: 'label-icon-container',
         });
 
-        const labelOffsetX = labelIcon ? totalIconSizes + labelMarginX : (LabelView.defaultWidth - textAvailableSize) / 2;
-        DomHelper.translate(label, labelOffsetX, 0);
+        const dragIconSize = 22;
 
-        step.appendChild(label);
+        iconContainer.appendChild(DomHelper.svg('image', {
+            href: dragIcon,
+            width: dragIconSize,
+            height: dragIconSize,
+            x: 0,
+            y: StepView.defaultHeight / 2 - dragIconSize / 2,
+            opacity: 0.25,
+            cursor: 'move',
+        }));
 
-        return step;
+        const iconContainerHeight = StepView.defaultHeight;
+        if (customIcon) {
+            const customIconContainer = DomHelper.svg('g', {
+                class: "custom-label-container",
+            });
+
+            const iconBg = DomHelper.svg('rect', {
+                class: "label-icon-bg",
+                width: iconContainerHeight,
+                height: iconContainerHeight,
+            });
+
+            const iconSize = iconContainerHeight;
+            const iconImage = DomHelper.svg('image', {
+                class: "label-icon",
+                href: customIcon,
+                width: iconSize,
+                height: iconSize,
+                x: 0,
+                y: 0,
+            });
+
+            customIconContainer.appendChild(iconBg);
+            customIconContainer.appendChild(iconImage);
+
+            DomHelper.translate(customIconContainer, dragIconSize, 0);
+
+            iconContainer.appendChild(customIconContainer);
+        }
+
+        return iconContainer
     }
 }
 

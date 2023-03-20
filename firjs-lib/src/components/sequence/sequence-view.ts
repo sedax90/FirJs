@@ -18,7 +18,7 @@ export class SequenceView implements ComponentView {
         readonly placeholders: Placeholder[],
     ) { }
 
-    public static create(parentElement: SVGElement, nodes: Node[], parentNode: Node | null, context: Context): SequenceView {
+    public static async create(parentElement: SVGElement, nodes: Node[], parentNode: Node | null, context: Context): Promise<SequenceView> {
         const element = DomHelper.svg('g', {
             class: "sequence nodes",
         });
@@ -27,7 +27,7 @@ export class SequenceView implements ComponentView {
         let maxJoinX = 0;
         const components: ComponentInstance[] = [];
         for (const node of nodes) {
-            const component = ComponentCreator.createComponent(node, parentNode, element, context);
+            const component = await ComponentCreator.createComponent(node, parentNode, element, context);
             if (!component) continue;
 
             if (component.view.width > maxWidth) {

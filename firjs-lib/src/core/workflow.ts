@@ -13,8 +13,8 @@ export class Workflow implements ComponentWithView {
         return this.view.findComponentByClick(click);
     }
 
-    public static create(parent: HTMLElement, context: Context): Workflow {
-        const view = WorkflowView.create(parent, context);
+    public static async create(parent: HTMLElement, context: Context): Promise<Workflow> {
+        const view = await WorkflowView.create(parent, context);
         return new Workflow(view, context);
     }
 }

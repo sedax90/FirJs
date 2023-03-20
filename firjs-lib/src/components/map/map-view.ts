@@ -6,25 +6,25 @@ import { PlaceholderView } from "../placeholder/placeholder-view";
 import { Sequence } from "../sequence/sequence";
 import loopIcon from '../../assets/sync.svg';
 import { StepView } from "../common/step/step-view";
+import { getNodeClasses } from "../../utils/node-utils";
 
 export class MapView extends ParentView {
-    private _mapLabel!: SVGElement;
-
-    public static create(parent: SVGElement, node: Node, context: Context): MapView {
+    public static async create(parent: SVGElement, node: Node, context: Context): Promise<MapView> {
         const props = node.props as MapProps;
         const nodes = props?.children ? props.children : [];
 
         const element = DomHelper.svg('g', {
             class: "map sequence nodes",
         });
+        element.classList.add(...getNodeClasses(node));
 
-        const mapLabelWidth = StepView.width;
-        const mapLabelHeight = StepView.height;
+        const stepView = await StepView.create(node, context);
+
+        const mapLabelWidth = stepView.width;
+        const mapLabelHeight = stepView.height;
         const sequenceGroup = DomHelper.svg('g', {
             class: "map-children-wrapper",
         });
-
-        const step = StepView.create(node, context);
 
         const mapLabelIcon = DomHelper.svg('g', {
             class: "map-label-icon",
@@ -46,7 +46,7 @@ export class MapView extends ParentView {
             y: mapLabelHeight + 2 - iconSize / 2,
         }));
 
-        step.appendChild(mapLabelIcon);
+        stepView.element.appendChild(mapLabelIcon);
 
         const childrenContainer = DomHelper.svg('g', {
             class: "children-container",
@@ -59,12 +59,12 @@ export class MapView extends ParentView {
         childrenContainer.appendChild(childrenContainerBg);
         sequenceGroup.appendChild(childrenContainer);
         element.appendChild(sequenceGroup);
-        element.appendChild(step);
+        element.appendChild(stepView.element);
         parent.appendChild(element);
 
         // Create sequence
         const sequenceViewTopOffset = mapLabelHeight + PlaceholderView.height;
-        const sequenceComponent = Sequence.create(nodes, node, childrenContainer, context);
+        const sequenceComponent = await Sequence.create(nodes, node, childrenContainer, context);
         const totalHeight = mapLabelHeight + sequenceComponent.view.height + sequenceViewTopOffset;
 
         const childrenContainerBgLeftOffset = 30;
@@ -103,13 +103,21 @@ export class MapView extends ParentView {
         });
         childrenContainer.appendChild(endConnection);
 
-        DomHelper.translate(step, (childrenContainerBgWidth - mapLabelWidth) / 2, 0);
+        DomHelper.translate(stepView.element, (childrenContainerBgWidth - mapLabelWidth) / 2, 0);
         DomHelper.translate(childrenContainerBg, 0, childrenContainerBgTopOffset);
         DomHelper.translate(sequenceComponent.view.element, (sequenceOffsetLeft / 2), sequenceViewTopOffset);
 
         const mapView = new MapView(element, parent, childrenContainerBgWidth, totalHeight, joinX, sequenceComponent);
-        mapView._mapLabel = step;
         return mapView;
+    }
+
+    setDragging(value: boolean): void {
+        if (value) {
+            this.element.classList.add('dragging');
+        }
+        else {
+            this.element.classList.remove('dragging');
+        }
     }
 
     setSelected(status: boolean): void {

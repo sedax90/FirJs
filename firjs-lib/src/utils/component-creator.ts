@@ -4,16 +4,16 @@ import { Task } from "../components/task/task";
 import { ComponentInstance, Context, Node } from "../models";
 
 export class ComponentCreator {
-    static createComponent(node: Node, parentNode: Node | null, parentElement: SVGElement, context: Context): ComponentInstance | null {
+    static async createComponent(node: Node, parentNode: Node | null, parentElement: SVGElement, context: Context): Promise<ComponentInstance | null> {
         switch (node.type) {
             case 'task':
-                return Task.create(parentElement, node, parentNode, context);
+                return await Task.create(parentElement, node, parentNode, context);
 
             case 'map':
-                return Map.create(parentElement, node, parentNode, context);
+                return await Map.create(parentElement, node, parentNode, context);
 
             case 'choice':
-                return Choice.create(parentElement, node, parentNode, context);
+                return await Choice.create(parentElement, node, parentNode, context);
         }
 
         return null;

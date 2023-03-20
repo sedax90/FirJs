@@ -1,3 +1,4 @@
+import { ContextMenuView } from "./components/common/context-menu/context-menu-view";
 import { Placeholder } from "./components/placeholder/placeholder";
 import { Sequence } from "./components/sequence/sequence";
 import { ClickEvent } from "./utils/event-utils";
@@ -67,27 +68,43 @@ interface PublicEvents {
     onNodeDeselect?: (event: NodeDeselectEvent) => void;
     onNodeRemove?: (event: NodeRemoveEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
-    onNodeRemoveRequest?: (event: NodeRemoveRequestEvent) => void;
+
+    canRemoveNode?: (event: NodeRemoveRequestEvent) => Promise<boolean>;
+    canDropNode?: (event: NodeDropEvent) => Promise<boolean>;
 }
 
 interface PublicOverriders {
-    overrideLabel?: (node: Node) => string;
-    overrideIcon?: (node: Node) => string;
+    overrideLabel?: (node: Node) => Promise<string>;
+    overrideIcon?: (node: Node) => Promise<string>;
+}
+
+export interface WorkspaceStyleOptions {
+    fontSize: string;
+    fontFamily: string;
+}
+
+export interface WorkspaceInitOptions {
+    style: WorkspaceStyleOptions;
+    strings: Record<string, string>;
 }
 
 export interface WorkspaceInit extends PublicEvents {
-    parent: HTMLElement,
-    tree: Node[],
+    parent: HTMLElement;
+    tree: Node[];
+    options: WorkspaceInitOptions;
 
-    overrideLabel?: (node: Node) => string;
-    overrideIcon?: (node: Node) => string;
+    overrideLabel?: (node: Node) => Promise<string>;
+    overrideIcon?: (node: Node) => Promise<string>;
 }
 
 export interface Context {
     tree: Node[];
     designerState: DesignerState;
+    options: WorkspaceInitOptions;
+
     userDefinedListeners?: PublicEvents;
     userDefinedOverriders?: PublicOverriders;
+
     onDefinitionChange?: (tree: Node[], preservePositionAndScale: boolean) => void;
 }
 
@@ -132,10 +149,23 @@ export interface NodeRemoveEvent extends GenericNodeEvent { }
 
 export interface NodeRemoveRequestEvent extends GenericNodeEvent { }
 
+export interface NodeDropEvent extends GenericNodeEvent {
+    action: "add" | "move";
+}
+
 export interface TreeChangeEvent {
     tree: Node[];
 }
 
 export interface Attributes {
     [name: string]: string | number;
+}
+
+export interface ContextMenu {
+    contextMenu: ContextMenuView;
+}
+
+export interface ContextMenuItem {
+    label: string;
+    action: (e: MouseEvent) => void;
 }
