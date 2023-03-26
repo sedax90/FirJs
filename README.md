@@ -2,6 +2,9 @@
 
 ![](https://user-images.githubusercontent.com/5001801/224503499-9dd881a7-028f-4b16-824b-b689770bdc0d.png)
 
+## Demo 🚀️
+[https://sedax90.github.io/firjs-github-io/](https://sedax90.github.io/firjs-github-io/)
+
 ## How to install
 
 `npm i @sedax90/firjs`
