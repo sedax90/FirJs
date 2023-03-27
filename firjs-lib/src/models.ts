@@ -1,6 +1,7 @@
 import { ContextMenuView } from "./components/common/context-menu/context-menu-view";
 import { Placeholder } from "./components/placeholder/placeholder";
 import { Sequence } from "./components/sequence/sequence";
+import { ComponentCreator } from "./utils/component-creator";
 import { ClickEvent } from "./utils/event-utils";
 import { Observable } from "./utils/observable";
 
@@ -66,6 +67,8 @@ export interface ComponentWithNode {
 interface PublicEvents {
     onNodeSelect?: (event: NodeSelectEvent) => void;
     onNodeDeselect?: (event: NodeDeselectEvent) => void;
+    onNodeAdd?: (event: NodeAddEvent) => void;
+    onNodeMove?: (event: NodeMoveEvent) => void;
     onNodeRemove?: (event: NodeRemoveEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
 
@@ -76,6 +79,7 @@ interface PublicEvents {
 interface PublicOverriders {
     overrideLabel?: (node: Node) => Promise<string>;
     overrideIcon?: (node: Node) => Promise<string>;
+    overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 
 export interface WorkspaceStyleOptions {
@@ -91,10 +95,11 @@ export interface WorkspaceInitOptions {
 export interface WorkspaceInit extends PublicEvents {
     parent: HTMLElement;
     tree: Node[];
-    options: WorkspaceInitOptions;
+    options?: WorkspaceInitOptions;
 
     overrideLabel?: (node: Node) => Promise<string>;
     overrideIcon?: (node: Node) => Promise<string>;
+    overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 
 export interface Context {
@@ -106,6 +111,8 @@ export interface Context {
     userDefinedOverriders?: PublicOverriders;
 
     onDefinitionChange?: (tree: Node[], preservePositionAndScale: boolean) => void;
+
+    componentCreator: ComponentCreator;
 }
 
 export interface DesignerState {
@@ -148,6 +155,14 @@ export interface NodeDeselectEvent extends GenericNodeEvent { }
 export interface NodeRemoveEvent extends GenericNodeEvent { }
 
 export interface NodeRemoveRequestEvent extends GenericNodeEvent { }
+
+export interface NodeAddEvent extends GenericNodeEvent { }
+
+export interface NodeMoveEvent extends GenericNodeEvent {
+    previousParent: Node | null;
+    previousIndex: number;
+    currentIndex: number;
+}
 
 export interface NodeDropEvent extends GenericNodeEvent {
     action: "add" | "move";

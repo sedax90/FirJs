@@ -7,6 +7,7 @@ export class Sequence implements ComponentInstance {
         readonly view: SequenceView,
         readonly context: Context,
         readonly nodes: Node[],
+        readonly parentNode: Node | null,
     ) {
         for (const component of view.componentInstances) {
             component.parentSequence = this;
@@ -17,7 +18,7 @@ export class Sequence implements ComponentInstance {
 
     public static async create(sequenceNodes: Node[], parentNode: Node | null, parentElement: SVGElement, context: Context): Promise<Sequence> {
         const view = await SequenceView.create(parentElement, sequenceNodes, parentNode, context);
-        const sequence = new Sequence(view, context, sequenceNodes);
+        const sequence = new Sequence(view, context, sequenceNodes, parentNode);
 
         // Update view placeholders
         for (const placeholder of view.placeholders) {

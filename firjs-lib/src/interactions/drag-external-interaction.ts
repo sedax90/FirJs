@@ -105,7 +105,7 @@ export class DragExternalInteraction implements ClickInteraction {
         const targetSequence = placeholder.parentSequence;
         SequenceModifier.add(targetSequence, {
             node: node,
-            parentNode: null,
+            parentNode: targetSequence.parentNode,
         }, placeholder.index);
     }
 }

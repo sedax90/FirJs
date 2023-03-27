@@ -32,7 +32,7 @@ export class PlaceholderView implements ComponentView {
             width: PlaceholderView.width,
             height: 5,
             y: PlaceholderView.height / 2,
-            rx: 4,
+            rx: 2,
         }));
 
         const placeholderView = new PlaceholderView(g, PlaceholderView.width, PlaceholderView.height, PlaceholderView.width / 2);

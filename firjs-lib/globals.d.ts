@@ -1,4 +1,12 @@
-declare module '*.svg' {
-    const content: string;
-    export default content;
+import { NodeAddEvent, NodeMoveEvent, NodeRemoveEvent, TreeChangeEvent } from "./src";
+
+export { }
+
+declare global {
+    interface HTMLElementEventMap {
+        'treeChange': CustomEvent<TreeChangeEvent>;
+        'nodeAdd': CustomEvent<NodeAddEvent>,
+        'nodeMove': CustomEvent<NodeMoveEvent>,
+        'nodeRemove': CustomEvent<NodeRemoveEvent>,
+    }
 }
