@@ -6,7 +6,7 @@ import { Sequence } from "../sequence/sequence";
 import choiceIcon from '../../assets/call_split.svg';
 import { StepView } from "../common/step/step-view";
 import { getNodeClasses } from "../../utils/node-utils";
-import { ChoicheLabel as ChoiceLabel } from "./choice-label";
+import { ChoiceLabel as ChoiceLabel } from "./choice-label";
 
 export class ChoiceView {
     public constructor(

@@ -2,14 +2,14 @@ import { Context, Node } from "../../models";
 import { DomHelper } from "../../utils/dom-helper";
 import { LabelView } from "../common/label/label-view";
 
-export class ChoicheLabel {
+export class ChoiceLabel {
     private constructor(
         readonly element: SVGElement,
         readonly width: number,
         readonly height: number,
     ) { }
 
-    public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, columnIndex: number, context: Context): Promise<ChoicheLabel> {
+    public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, columnIndex: number, context: Context): Promise<ChoiceLabel> {
         const height = 20;
 
         const element = DomHelper.svg('g', {
@@ -47,6 +47,6 @@ export class ChoicheLabel {
         element.appendChild(label.element);
         parentElement.appendChild(element);
 
-        return new ChoicheLabel(element, labelWidth, height);
+        return new ChoiceLabel(element, labelWidth, height);
     }
 }
