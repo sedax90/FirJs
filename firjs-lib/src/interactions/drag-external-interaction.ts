@@ -66,7 +66,7 @@ export class DragExternalInteraction implements ClickInteraction {
 
                 this._currentPlaceholder = null;
             }
-        });
+        }, 5);
     }
 
     onEnd(): void {
