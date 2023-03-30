@@ -149,6 +149,13 @@ export class Workspace implements ComponentWithView {
     startDrag(element: HTMLElement | SVGElement, startPosition: Vector, node: Node): void {
         this.context.designerState.tempNodeToDrop = node;
 
+        // This is a workaround for Webkit browsers because a dataTransfer is required for invoking the drag event (this is not required in Chrome/Chromium).
+        window.addEventListener('dragstart', (event: DragEvent) => {
+            if (!event.dataTransfer?.getData("text")) {
+                event.dataTransfer?.setData('text/plain', JSON.stringify(node));
+            }
+        }, false);
+
         const dragDropInteraction = DragExternalInteraction.create(element, this.context);
         this._userInteractionController.handleDragInteraction(dragDropInteraction, startPosition);
     }
