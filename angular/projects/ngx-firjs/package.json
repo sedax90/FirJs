@@ -1,0 +1,13 @@
+{
+  "name": "ngx-firjs",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^15.1.0",
+    "@angular/core": "^15.1.0"
+  },
+  "dependencies": {
+    "@sedax90/firjs": "^0.0.5-dev",
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

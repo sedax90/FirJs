@@ -158,3 +158,6 @@ Enjoy!
 ### Run demo only
 
 `npm run run-demo`
+
+## License
+This project is released under the MIT license.
