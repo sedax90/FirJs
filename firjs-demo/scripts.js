@@ -2,6 +2,43 @@ let = i = 0;
 const tree = [
     {
         id: i++,
+        label: "Pass 1",
+        type: "task",
+    },
+    {
+        id: i++,
+        label: "Choice 1",
+        type: "choice",
+        props: {
+            choices: [
+                [
+                    {
+                        id: i++,
+                        label: "Condition 1",
+                        type: 'task',
+                    }
+                ],
+                [],
+                [
+                    {
+                        id: i++,
+                        label: "Condition 2",
+                        type: 'task',
+                    }
+                ],
+                []
+            ]
+        }
+    },
+    {
+        id: i++,
+        label: "Pass 2",
+        type: "task",
+    },
+
+
+    {
+        id: i++,
         label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
         type: "task",
     },
@@ -168,8 +205,9 @@ const tree = [
     },
 ];
 
+const root = document.getElementById('root');
 firjs.init({
-    parent: document.getElementById('root'),
+    parent: root,
     tree: [...tree],
     options: {
         style: {
@@ -178,6 +216,14 @@ firjs.init({
         strings: {
             'context-menu.workspace.actions.fitandcenter.label': "Fit & center",
         }
+    },
+    onNodeAdd: (e) => {
+        console.debug("ON NODE ADD:", e);
+        showToast('onNodeAdd');
+    },
+    onNodeMove: (e) => {
+        console.debug("ON NODE MOVE:", e);
+        showToast('onNodeMove');
     },
     onNodeSelect: (e) => {
         console.debug("ON NODE SELECTED:", e);
@@ -226,19 +272,51 @@ firjs.init({
             }
         });
     },
+    overrideColumnLabel: (node, parentNode, columnIndex) => {
+        return new Promise((resolve, reject) => {
+            return resolve(`Rule for choice ${columnIndex + 1}`);
+        })
+    }
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");
     for (const element of elements) {
+        let ghost;
+
         element.addEventListener("dragstart", (event) => {
-            workspace.startDrag(event.target, {
-                x: event.pageX,
-                y: event.pageY,
-            }, {
+            event.stopPropagation();
+
+            const node = {
                 id: i++,
                 type: element.dataset.type,
                 label: `New node ${i}`,
-            });
+            };
+
+            const originaElement = event.target;
+            const rect = event.target.getBoundingClientRect();
+
+            ghost = originaElement.cloneNode(true);
+            ghost.classList.add("ghost");
+            ghost.style.width = rect.width + 'px';
+            ghost.style.height = rect.height + 'px';
+
+            document.body.appendChild(ghost);
+            // var offsetX = (event.clientX - rect.left);
+            // var offsetY = (event.clientY - rect.top);
+            
+            event.dataTransfer.setDragImage(ghost, 0, 0);
+            event.dataTransfer?.setData('text/plain', JSON.stringify(node));
+
+            workspace.startDrag(originaElement, {
+                x: event.pageX,
+                y: event.pageY,
+            }, node);
             return;
+        });
+
+        element.addEventListener('dragend', (event) => {
+            if (ghost) {
+                ghost.remove();
+            }
         });
     }
 

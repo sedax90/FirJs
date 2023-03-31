@@ -42,8 +42,12 @@ export class WorkflowView implements ElementView {
         const nodes = context.tree;
         const sequence = await Sequence.create(nodes, null, workflowWrapper, context);
         const sequenceCenter = sequence.view.joinX;
+
         if (sequenceCenter > maxJoinX) {
             maxJoinX = sequenceCenter;
+        }
+        else if (sequenceCenter === 0) {
+            maxJoinX = PlaceholderView.width / 2;
         }
 
         let totalHeight = start.view.height + sequence.view.height;
@@ -124,8 +128,8 @@ export class WorkflowView implements ElementView {
             orient: "auto",
         });
         marker.appendChild(DomHelper.svg('path', {
+            class: "marker-path",
             d: "M 0 0 L 10 5 L 0 10 z",
-            fill: "currentColor",
         }));
 
         const defs = DomHelper.svg('defs');

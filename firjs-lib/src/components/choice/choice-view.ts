@@ -6,6 +6,7 @@ import { Sequence } from "../sequence/sequence";
 import choiceIcon from '../../assets/call_split.svg';
 import { StepView } from "../common/step/step-view";
 import { getNodeClasses } from "../../utils/node-utils";
+import { ChoiceLabel as ChoiceLabel } from "./choice-label";
 
 export class ChoiceView {
     public constructor(
@@ -17,7 +18,7 @@ export class ChoiceView {
         readonly childSequences: Sequence[],
     ) { }
 
-    public static async create(parentElement: SVGElement, node: Node, context: Context): Promise<ChoiceView> {
+    public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<ChoiceView> {
         const element = DomHelper.svg('g', {
             class: "choice",
         });
@@ -67,62 +68,120 @@ export class ChoiceView {
         // Set choice total width
         let maxWidth = choiceLabelWidth;
 
-        const props = node.props as ChoiceProps;
-        const choices = props?.choices ? props.choices : [];
+        if (!node.props) {
+            node.props = {
+                choices: [],
+            } as ChoiceProps;
+        }
 
-        let filteredChoices = choices.filter(e => e.length);
-        let totalChoices = (filteredChoices).length;
+        const props = node.props as ChoiceProps;
+        if (!props?.choices) {
+            props.choices = [];
+        }
+
+        const choices = props.choices;
+        if (!choices || choices.length < 2) {
+            for (let i = choices.length; i < 2; i++) {
+                choices.push([]);
+            }
+        }
+
+        const totalChoices = (choices).length;
 
         const sequences: Sequence[] = [];
         let totalColumnsWidth = 0;
         const columnGutter = 50;
         let maxHeight = 0;
-        for (let i = 0; i < totalChoices; i++) {
-            const nodes = props.choices[i];
 
-            if (!nodes.length) continue;
+        // Preprocess columns
+        const tmpColumnMap: {
+            sequence: Sequence,
+            column: SVGElement,
+            infoLabel: ChoiceLabel,
+            width: number,
+            joinX: number,
+        }[] = [];
+        for (let i = 0; i < totalChoices; i++) {
+            const nodes = props.choices[i] || [];
 
             const sequence = await Sequence.create(nodes, node, parentElement, context);
             if (!sequence) continue;
 
             sequences.push(sequence);
-            totalColumnsWidth = totalColumnsWidth + sequence.view.width + columnGutter;
 
             const sequenceHeight = sequence.view.height;
             if (sequenceHeight > maxHeight) {
                 maxHeight = sequenceHeight;
             }
+
+            const choiceColumn = DomHelper.svg('g', {
+                class: `choice-column choice-column-index-${i}`,
+            });
+            const choiceInfoLabel = await ChoiceLabel.create(choiceColumn, node, parentNode, i, context);
+
+            let joinX = sequence.view.joinX;
+            let sequenceWidth = sequence.view.width;
+
+            if (choiceInfoLabel.width > sequenceWidth) {
+                sequenceWidth = choiceInfoLabel.width;
+                joinX = sequenceWidth / 2;
+            }
+
+            totalColumnsWidth = totalColumnsWidth + sequenceWidth + columnGutter;
+
+            tmpColumnMap.push({
+                sequence: sequence,
+                column: choiceColumn,
+                infoLabel: choiceInfoLabel,
+                width: sequenceWidth,
+                joinX: joinX,
+            });
         }
 
         const choicesContainerTopOffset = choiceLabelHeight + PlaceholderView.height;
         let previousOffset = 0;
-        for (const sequence of sequences) {
-            const choiceColumn = DomHelper.svg('g', {
-                class: 'choice-column',
-            });
+        for (let i = 0; i < tmpColumnMap.length; i++) {
+            const tmpObj = tmpColumnMap[i];
+            const sequence = tmpObj.sequence;
+            const sequenceWidth = tmpObj.width;
+            const choiceColumn = tmpObj.column;
+            const choiceInfoLabel = tmpObj.infoLabel;
 
-            const columnWidth = sequence.view.width + columnGutter;
-            const columnOffset = -(totalColumnsWidth - previousOffset);
+            const columnWidthWithGutter = sequenceWidth + columnGutter;
+            let columnOffset = -(totalColumnsWidth - previousOffset);
 
             const sequenceView = sequence.view;
             choiceColumn.appendChild(sequenceView.element);
-            DomHelper.translate(sequenceView.element, columnOffset, PlaceholderView.height / 2);
 
-            const columnJoinX = (previousOffset - totalColumnsWidth - columnGutter / 2) + columnWidth / 2;
+            if (sequence.nodes.length === 0) {
+                columnOffset = columnOffset + tmpObj.joinX;
+            }
+            DomHelper.translate(sequenceView.element, columnOffset, PlaceholderView.height);
+
+            const columnJoinX = (previousOffset - totalColumnsWidth - columnGutter / 2) + columnWidthWithGutter / 2;
 
             // First connection
-            JoinView.createConnectionJoin(choiceColumn, { x: columnJoinX, y: -PlaceholderView.height / 2 }, PlaceholderView.height, context);
+            const connectionHeight = PlaceholderView.height + (PlaceholderView.height / 2);
+            JoinView.createConnectionJoin(choiceColumn, { x: columnJoinX, y: -PlaceholderView.height / 2 }, connectionHeight, context);
+
+            // Add connection info
+            const choiceInfoLabelOffsetX = columnJoinX - choiceInfoLabel.width / 2;
+            DomHelper.translate(choiceInfoLabel.element, choiceInfoLabelOffsetX, -PlaceholderView.height / 4);
 
             // Last connection
             const joinHeight = maxHeight - sequence.view.height + PlaceholderView.height;
-            JoinView.createStraightJoin(choiceColumn, { x: columnJoinX, y: sequence.view.height - PlaceholderView.height / 2 }, joinHeight, context);
+            JoinView.createStraightJoin(choiceColumn, { x: columnJoinX, y: sequence.view.height }, joinHeight, context);
 
-            previousOffset = previousOffset + columnWidth;
+            // We have to detach and reattach the label because it must be rendered over all the join lines.
+            choiceColumn.removeChild(choiceInfoLabel.element);
+            choiceColumn.appendChild(choiceInfoLabel.element);
+
+            previousOffset = previousOffset + columnWidthWithGutter;
 
             choicesContainer.appendChild(choiceColumn);
         }
 
-        maxHeight = maxHeight + PlaceholderView.height / 2;
+        maxHeight = maxHeight + PlaceholderView.height;
 
         if (totalColumnsWidth > maxWidth) {
             maxWidth = totalColumnsWidth;
@@ -140,7 +199,7 @@ export class ChoiceView {
 
         // Output connection dot
         const endConnection = DomHelper.svg('circle', {
-            r: 6,
+            r: 5,
             cx: joinX,
             cy: totalHeight,
             class: 'output choicesContainerConnection',
@@ -149,11 +208,11 @@ export class ChoiceView {
         });
 
         if (sequences.length > 1) {
-            const firstColumn = sequences[0];
-            const lastColumn = sequences[sequences.length - 1];
+            const firstColumn = tmpColumnMap[0];
+            const lastColumn = tmpColumnMap[tmpColumnMap.length - 1];
 
-            const startX = firstColumn.view.joinX + columnGutter / 2;
-            const endX = lastColumn.view.joinX + columnGutter / 2;
+            const startX = firstColumn.joinX + columnGutter / 2;
+            const endX = lastColumn.joinX + columnGutter / 2;
 
             // Start join line
             JoinView.createStraightJoin(element, { x: joinX, y: choicesContainerTopOffset - PlaceholderView.height }, PlaceholderView.height / 2, context);

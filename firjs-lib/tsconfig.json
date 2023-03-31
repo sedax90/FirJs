@@ -18,6 +18,7 @@
 	},
 	"include": [
 		"src/**/*",
+		"svg.d.ts",
 		"globals.d.ts"
 	]
 }

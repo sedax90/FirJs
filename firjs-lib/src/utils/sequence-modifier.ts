@@ -1,5 +1,6 @@
 import { Sequence } from "../components/sequence/sequence";
-import { ComponentWithNode, Node } from "../models";
+import { ComponentWithNode } from "../models";
+import { EventEmitter } from "../events/event-emitter";
 
 export class SequenceModifier {
     static move(sourceSequence: Sequence, component: ComponentWithNode, targetSequence: Sequence, targetIndex: number): void {
@@ -22,33 +23,31 @@ export class SequenceModifier {
 
         targetSequence.nodes.splice(targetIndex, 0, node);
 
-        const context = targetSequence.context;
-        if (context.onDefinitionChange) {
-            context.onDefinitionChange(targetSequence.context.tree, true);
-        }
+        EventEmitter.emitNodeMoveEvent(targetSequence.view.element, {
+            node: component.node,
+            parent: component.parentNode,
+            previousParent: sourceSequence.parentNode,
+            previousIndex: sourceIndex,
+            currentIndex: targetIndex,
+        });
     }
 
     static add(sequence: Sequence, component: ComponentWithNode, index: number): void {
         sequence.nodes.splice(index, 0, component.node);
 
-        if (sequence.context.onDefinitionChange) {
-            sequence.context.onDefinitionChange(sequence.context.tree, true);
-        }
+        EventEmitter.emitNodeAddEvent(sequence.view.element, {
+            node: component.node,
+            parent: component.parentNode,
+        });
     }
 
     static remove(sequence: Sequence, component: ComponentWithNode): void {
         const index = sequence.nodes.findIndex(e => e.id === component.node.id);
         sequence.nodes.splice(index, 1);
 
-        if (sequence.context.userDefinedListeners?.onNodeRemove) {
-            sequence.context.userDefinedListeners.onNodeRemove({
-                node: component.node,
-                parent: null, // TODO
-            });
-        }
-
-        if (sequence.context.onDefinitionChange) {
-            sequence.context.onDefinitionChange(sequence.context.tree, true);
-        }
+        EventEmitter.emitNodeRemoveEvent(sequence.view.element, {
+            node: component.node,
+            parent: sequence.parentNode,
+        });
     }
 }

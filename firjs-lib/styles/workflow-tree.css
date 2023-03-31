@@ -107,6 +107,10 @@
   stroke: var(--joinLineStroke);
 }
 
+.marker-path {
+  fill: var(--joinLineStroke);
+}
+
 .text-html {
   line-height: 1;
   position: relative;
@@ -170,4 +174,13 @@
 
 .context-menu > ul > li:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.choice-label-background {
+  fill: var(--joinLineStroke);
+}
+
+.choice-label-text {
+  color: white;
+  font-size: 0.5em;
 }

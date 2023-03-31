@@ -1,7 +1,6 @@
 import { JoinView } from "../common/join/join-view";
 import { DomHelper } from "../../utils/dom-helper";
 import { ComponentInstance, ComponentView, Context, Node } from "../../models";
-import { ComponentCreator } from "../../utils/component-creator";
 import { Placeholder } from "../placeholder/placeholder";
 import { PlaceholderView } from "../placeholder/placeholder-view";
 
@@ -27,7 +26,7 @@ export class SequenceView implements ComponentView {
         let maxJoinX = 0;
         const components: ComponentInstance[] = [];
         for (const node of nodes) {
-            const component = await ComponentCreator.createComponent(node, parentNode, element, context);
+            const component = await context.componentCreator.createComponent(node, parentNode, element, context);
             if (!component) continue;
 
             if (component.view.width > maxWidth) {
@@ -54,9 +53,11 @@ export class SequenceView implements ComponentView {
         }
         DomHelper.translate(placeholder.view.element, offsetX, -PlaceholderView.height);
 
+        const totalComponents = components.length;
+
         let sequenceHeight: number = 0;
         let lastTaskOffsetY = 0;
-        for (let i = 0; i < components.length; i++) {
+        for (let i = 0; i < totalComponents; i++) {
             const component = components[i];
             const nodeView = component.view;
 
@@ -76,6 +77,11 @@ export class SequenceView implements ComponentView {
             DomHelper.translate(placeholder.view.element, maxJoinX - PlaceholderView.width / 2, sequenceHeight);
 
             sequenceHeight = sequenceHeight + placeholder.view.height;
+        }
+
+        if (totalComponents === 0) {
+            maxWidth = PlaceholderView.width;
+            maxJoinX = maxWidth / 2;
         }
 
         parentElement.appendChild(element);

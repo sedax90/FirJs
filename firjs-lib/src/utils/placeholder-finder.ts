@@ -5,7 +5,7 @@ import { getComponentPositionInWorkspace } from "./component-position-utils";
 export class PlaceholderFinder {
     private constructor(
         private readonly placeholders: Placeholder[]
-    ) {}
+    ) { }
 
     public static create(placeholders: Placeholder[]): PlaceholderFinder {
         return new PlaceholderFinder(placeholders);

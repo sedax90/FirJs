@@ -94,7 +94,7 @@ export class MapView extends ParentView {
 
         // Output connection dot
         const endConnection = DomHelper.svg('circle', {
-            r: 6,
+            r: 5,
             cx: joinX,
             cy: totalHeight,
             class: 'output',

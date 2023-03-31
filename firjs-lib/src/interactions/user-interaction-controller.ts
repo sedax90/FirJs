@@ -35,7 +35,8 @@ export class UserInteractionController {
 
         userInteraction.onStart(startPosition);
 
-        window.addEventListener('drag', this._onMouseMoveHandler, false);
+        // We must listen on draover event because Firefox doens't emit mouse coordinates on drag event (https://bugzilla.mozilla.org/show_bug.cgi?id=505521)
+        window.addEventListener('dragover', this._onMouseMoveHandler, false);
         window.addEventListener('dragend', this._onMouseUpHandler, false);
     }
 

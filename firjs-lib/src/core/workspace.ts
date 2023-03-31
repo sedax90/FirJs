@@ -15,6 +15,8 @@ import { ComponentContextMenuView } from "../components/common/context-menu/comp
 import { duplicateNode, removeNode } from "../utils/node-utils";
 import { WorkspaceContextMenuView } from "../components/common/context-menu/workspace-context-menu-view";
 import deepMerge from "../utils/object-utils";
+import { EventEmitter } from "../events/event-emitter";
+import { ComponentCreator } from "../utils/component-creator";
 
 export class Workspace implements ComponentWithView {
 
@@ -58,7 +60,11 @@ export class Workspace implements ComponentWithView {
     // Public methods
 
     static async init(initData: WorkspaceInit): Promise<Workspace> {
-        const combinedOptions = deepMerge<WorkspaceInitOptions>(Workspace._getDefaultOptions(), initData?.options);
+        let combinedOptions: WorkspaceInitOptions = Workspace._getDefaultOptions();
+        if (initData.options) {
+            combinedOptions = deepMerge<WorkspaceInitOptions>(Workspace._getDefaultOptions(), initData.options);
+        }
+
         const context: Context = {
             tree: initData.tree,
             designerState: {
@@ -68,10 +74,19 @@ export class Workspace implements ComponentWithView {
                 zoomLevel: 1,
             },
             options: combinedOptions,
+            componentCreator: new ComponentCreator(),
         };
 
         if (!context.userDefinedListeners) {
             context.userDefinedListeners = {};
+        }
+
+        if (initData.onNodeAdd) {
+            context.userDefinedListeners.onNodeAdd = initData.onNodeAdd;
+        }
+
+        if (initData.onNodeMove) {
+            context.userDefinedListeners.onNodeMove = initData.onNodeMove;
         }
 
         if (initData.onNodeSelect) {
@@ -110,9 +125,14 @@ export class Workspace implements ComponentWithView {
             context.userDefinedOverriders.overrideIcon = initData.overrideIcon;
         }
 
+        if (initData.overrideColumnLabel) {
+            context.userDefinedOverriders.overrideColumnLabel = initData.overrideColumnLabel;
+        }
+
         const view = await WorkspaceView.create(initData.parent, context);
         const workspace = new Workspace(view, context, initData.parent);
         workspace._setViewBinds();
+        workspace._addEventListeners();
 
         context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
         context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
@@ -146,6 +166,49 @@ export class Workspace implements ComponentWithView {
         this.view.bindKeyboard((e: KeyboardEvent) => this._onKeyboard(e));
     }
 
+    private _addEventListeners(): void {
+        const context = this.context;
+        const workspaceViewElement = this.view.element;
+
+        workspaceViewElement.addEventListener('treeChange', (event) => {
+            if (context.onDefinitionChange) {
+                context.onDefinitionChange(event.detail.tree, true);
+            }
+        });
+
+        workspaceViewElement.addEventListener('nodeMove', (event) => {
+            const onNodeMoveCallback = context.userDefinedListeners?.onNodeMove;
+            if (onNodeMoveCallback) {
+                onNodeMoveCallback(event.detail);
+            }
+
+            EventEmitter.emitTreeChangeEvent(workspaceViewElement, {
+                tree: context.tree
+            });
+        });
+
+        workspaceViewElement.addEventListener('nodeAdd', (event) => {
+            const onNodeAddCallback = context.userDefinedListeners?.onNodeAdd;
+            if (onNodeAddCallback) {
+                onNodeAddCallback(event.detail);
+            }
+
+            EventEmitter.emitTreeChangeEvent(workspaceViewElement, {
+                tree: context.tree
+            });
+        });
+
+        workspaceViewElement.addEventListener('nodeRemove', (event) => {
+            if (context.userDefinedListeners?.onNodeRemove) {
+                context.userDefinedListeners.onNodeRemove(event.detail);
+            }
+
+            EventEmitter.emitTreeChangeEvent(workspaceViewElement, {
+                tree: context.tree
+            });
+        })
+    }
+
     private async _onDefinitionChange(tree: Node[], preservePositionAndScale: boolean = false): Promise<void> {
         this.context.tree = tree;
 
@@ -159,6 +222,7 @@ export class Workspace implements ComponentWithView {
         this.view = view;
 
         this._setViewBinds();
+        this._addEventListeners();
 
         if (this.context.userDefinedListeners?.onTreeChange) {
             this.context.userDefinedListeners.onTreeChange({
