@@ -1,13 +1,34 @@
 {
-  "name": "ngx-firjs",
-  "version": "0.0.1",
+  "name": "@sedax90/ngx-firjs",
+  "version": "0.0.9-dev",
+  "author": {
+    "name": "Cristian Sedaboni"
+  },
   "peerDependencies": {
-    "@angular/common": "^15.1.0",
-    "@angular/core": "^15.1.0"
+    "@angular/common": "13 - 15",
+    "@angular/core": "13 - 15"
   },
   "dependencies": {
     "@sedax90/firjs": "^0.0.5-dev",
     "tslib": "^2.3.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sedax90/FirJs.git"
+  },
+  "keywords": [
+    "workflow",
+    "workflow-designer",
+    "designer",
+    "builder",
+    "flow",
+    "angular",
+    "angularjs"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sedax90/FirJs/issues"
+  },
+  "homepage": "https://github.com/sedax90/FirJs#readme"
 }

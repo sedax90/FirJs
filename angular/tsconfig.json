@@ -6,35 +6,26 @@
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "paths": {
-      "firjs": [
-        "dist/firjs"
-      ],
-      "ng-firjs": [
-        "dist/ng-firjs"
-      ],
-      "ngx-firjs": [
-        "dist/ngx-firjs"
-      ],
-      "ngx-firjs-demo": [
-        "dist/ngx-firjs-demo"
-      ]
-    },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
+    "paths": {
+      "ngx-firjs": [
+        "dist/ngx-firjs/ngx-firjs",
+        "dist/ngx-firjs"
+      ]
+    },
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022",
-    "useDefineForClassFields": false,
+    "target": "es2017",
+    "module": "es2020",
     "lib": [
-      "ES2022",
+      "es2020",
       "dom"
     ]
   },
