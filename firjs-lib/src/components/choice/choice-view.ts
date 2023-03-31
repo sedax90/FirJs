@@ -172,6 +172,10 @@ export class ChoiceView {
             const joinHeight = maxHeight - sequence.view.height + PlaceholderView.height;
             JoinView.createStraightJoin(choiceColumn, { x: columnJoinX, y: sequence.view.height }, joinHeight, context);
 
+            // We have to detach and reattach the label because it must be rendered over all the join lines.
+            choiceColumn.removeChild(choiceInfoLabel.element);
+            choiceColumn.appendChild(choiceInfoLabel.element);
+
             previousOffset = previousOffset + columnWidthWithGutter;
 
             choicesContainer.appendChild(choiceColumn);
