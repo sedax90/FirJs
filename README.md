@@ -3,6 +3,7 @@
 ![](https://user-images.githubusercontent.com/5001801/224503499-9dd881a7-028f-4b16-824b-b689770bdc0d.png)
 
 ## Demo 🚀️
+
 [https://sedax90.github.io/firjs-github-io/](https://sedax90.github.io/firjs-github-io/)
 
 ## How to install
@@ -63,6 +64,8 @@ firjs.init({
 The library does not do anything automatically (except node removal), you have to use the exposed functions to adapt the library to your needs:
 
 ```
+onNodeAdd: (e) => void;
+onNodeMove: (e) => void;
 onNodeSelect: (e) => void;
 onNodeDeselect: (e) => void;
 onNodeRemove: (e) => void;
@@ -79,6 +82,8 @@ canRemoveNode: (e) => Promise<boolean>
 When you implement your drag&drop logic, you have to inform the Workspace that you are going to drop a node on the tree:
 
 ```
+event.dataTransfer.setData('text/plain', JSON.stringify(node));
+
 ws.startDrag(event.target, {
     x: event.pageX,
     y: event.pageY,
