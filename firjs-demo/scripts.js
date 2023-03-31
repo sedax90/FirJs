@@ -280,16 +280,43 @@ firjs.init({
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");
     for (const element of elements) {
+        let ghost;
+
         element.addEventListener("dragstart", (event) => {
-            workspace.startDrag(event.target, {
-                x: event.pageX,
-                y: event.pageY,
-            }, {
+            event.stopPropagation();
+
+            const node = {
                 id: i++,
                 type: element.dataset.type,
                 label: `New node ${i}`,
-            });
+            };
+
+            const originaElement = event.target;
+            const rect = event.target.getBoundingClientRect();
+
+            ghost = originaElement.cloneNode(true);
+            ghost.classList.add("ghost");
+            ghost.style.width = rect.width + 'px';
+            ghost.style.height = rect.height + 'px';
+
+            document.body.appendChild(ghost);
+            // var offsetX = (event.clientX - rect.left);
+            // var offsetY = (event.clientY - rect.top);
+            
+            event.dataTransfer.setDragImage(ghost, 0, 0);
+            event.dataTransfer?.setData('text/plain', JSON.stringify(node));
+
+            workspace.startDrag(originaElement, {
+                x: event.pageX,
+                y: event.pageY,
+            }, node);
             return;
+        });
+
+        element.addEventListener('dragend', (event) => {
+            if (ghost) {
+                ghost.remove();
+            }
         });
     }
 

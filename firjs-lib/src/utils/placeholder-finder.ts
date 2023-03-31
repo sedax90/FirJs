@@ -4,50 +4,39 @@ import { getComponentPositionInWorkspace } from "./component-position-utils";
 
 export class PlaceholderFinder {
     private constructor(
-        private readonly placeholders: Placeholder[],
-        private readonly cache: PlaceholderCacheItem[]
-    ) {
-        // TODO rebuild cache based on events
+        private readonly placeholders: Placeholder[]
+    ) { }
+
+    public static create(placeholders: Placeholder[]): PlaceholderFinder {
+        return new PlaceholderFinder(placeholders);
     }
 
-    static create(placeholders: Placeholder[]): PlaceholderFinder {
-        const cache = PlaceholderFinder._rebuildCache(placeholders);
-        return new PlaceholderFinder(placeholders, cache);
-    }
+    private _cache?: {
+        placeholder: Placeholder;
+        letTopPosition: Vector;
+        bottomRightPosition: Vector;
+    }[];
 
-    findByPosition(mousePosition: Vector, componentWidth: number, componentHeight: number): Placeholder | undefined {
-        const vR = mousePosition.x + componentWidth;
-        const vB = mousePosition.y + componentHeight;
+    public findByPosition(mousePosition: Vector, componentWidth: number, componentHeight: number): Placeholder | undefined {
+        this._cache = [];
 
-        for (let i = 0; i < this.cache.length; i++) {
-            const cacheItem = this.cache[i];
-
-            if (Math.max(mousePosition.x, cacheItem.letTopPosition.x) < Math.min(vR, cacheItem.bottomRightPosition.x) && Math.max(mousePosition.y, cacheItem.letTopPosition.y) < Math.min(vB, cacheItem.bottomRightPosition.y)) {
-                return this.placeholders[i];
-            }
-        }
-    }
-
-    private static _rebuildCache(placeholders: Placeholder[]): PlaceholderCacheItem[] {
-        console.debug('rebuild cache');
-
-        const cache: PlaceholderCacheItem[] = [];
-
-        for (let i = 0; i < placeholders.length; i++) {
-            const placeholder = placeholders[i];
+        for (const placeholder of this.placeholders) {
             const position = getComponentPositionInWorkspace(placeholder);
-            cache?.push({
+            this._cache?.push({
+                placeholder,
                 letTopPosition: { x: position.x, y: position.y },
                 bottomRightPosition: { x: position.x + placeholder.view.width, y: position.y + placeholder.view.height }
             });
         }
+        this._cache.sort((a, b) => a.letTopPosition.y - b.letTopPosition.y);
 
-        cache.sort((a, b) => a.letTopPosition.y - b.letTopPosition.y);
-        return cache;
+        const vR = mousePosition.x + componentWidth;
+        const vB = mousePosition.y + componentHeight;
+
+        for (const cacheItem of this._cache) {
+            if (Math.max(mousePosition.x, cacheItem.letTopPosition.x) < Math.min(vR, cacheItem.bottomRightPosition.x) && Math.max(mousePosition.y, cacheItem.letTopPosition.y) < Math.min(vB, cacheItem.bottomRightPosition.y)) {
+                return cacheItem.placeholder;
+            }
+        }
     }
-}
-
-interface PlaceholderCacheItem {
-    letTopPosition: Vector;
-    bottomRightPosition: Vector;
 }

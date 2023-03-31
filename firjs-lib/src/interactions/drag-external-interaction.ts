@@ -25,10 +25,10 @@ export class DragExternalInteraction implements ClickInteraction {
     onStart(startMousePosition: Vector): void {
         this._startPosition = startMousePosition;
 
-        const componentPosition = getElementPositionInWorkspace(this.element, this.context);
+        const componentRect = this.element.getBoundingClientRect();
         this._mouseClickOffsetFromComponent = subtract(startMousePosition, {
-            x: componentPosition.x,
-            y: componentPosition.y,
+            x: componentRect.x,
+            y: componentRect.y,
         });
 
         if (this.context.designerState.placeholders) {
@@ -41,6 +41,13 @@ export class DragExternalInteraction implements ClickInteraction {
     onMove(delta: Vector): void | ClickInteraction {
         let newPosition = subtract(this._startPosition, delta);
         newPosition = subtract(newPosition, this._mouseClickOffsetFromComponent);
+
+        // We must compensate the element position with the workspace offset
+        const workspaceRect = this.context.designerState.workspaceRect;
+        if (workspaceRect) {
+            newPosition.x = newPosition.x - workspaceRect.left;
+            newPosition.y = newPosition.y - workspaceRect.top;
+        }
 
         const elementRect = this.element.getBoundingClientRect();
 
