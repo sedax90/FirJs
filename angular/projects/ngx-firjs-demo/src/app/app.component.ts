@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NgxFirjsComponent } from '../../../ngx-firjs/src/public-api';
-import { Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, TreeChangeEvent } from '@sedax90/firjs';
+import { NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, TreeChangeEvent } from '../../../ngx-firjs/src/public-api';
 
 @Component({
   selector: 'app-root',
