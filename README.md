@@ -105,6 +105,7 @@ strings: {
     "context-menu.component.actions.remove.label": string,
     "context-menu.component.actions.duplicate.label": string,
     "context-menu.workspace.actions.fitandcenter.label": string,
+	"placeholder.not-allowed-to-drop.label": string,
 }
 ```
 
