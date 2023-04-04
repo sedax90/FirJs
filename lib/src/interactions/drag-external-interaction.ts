@@ -14,7 +14,6 @@ export class DragExternalInteraction implements ClickInteraction {
 
     private _mouseClickOffsetFromComponent!: Vector;
     private _startPosition!: Vector;
-    // private _currentPlaceholder: Placeholder | null = null;
 
     static create(element: HTMLElement | SVGElement, context: Context): DragExternalInteraction {
         const placeholderFinder = PlaceholderFinder.create(context.designerState?.placeholders ? context.designerState.placeholders : []);
@@ -54,35 +53,6 @@ export class DragExternalInteraction implements ClickInteraction {
 
         // This is a workaround for the dragend event because when you are dragging an HtmlElement and you release the mouse a last drag event is emitted before dragend and it could override the placeholder value.
         setTimeout(() => {
-            // let canDropNode = true;
-
-            // const node = this.context.designerState.tempNodeToDrop;
-            // if (placeholder && node) {
-            //     canDropNode = placeholder.canDropNode(node);
-            // }
-
-            // if (placeholder) {
-            //     if (this._currentPlaceholder) {
-            //         this._currentPlaceholder.resetState();
-            //     }
-
-            //     if (canDropNode) {
-            //         this._currentPlaceholder = placeholder;
-            //         this._currentPlaceholder.setHover(true);
-            //         this._currentPlaceholder.setCanDrop(true);
-            //     }
-            //     else {
-            //         placeholder.setHover(true);
-            //     }
-            // }
-            // else {
-            //     if (this._currentPlaceholder) {
-            //         this._currentPlaceholder.resetState();
-            //     }
-
-            //     this._currentPlaceholder = null;
-            // }
-
             this.context.designerState.selectedPlaceholder.next(placeholder);
         }, 5);
     }

@@ -1,4 +1,3 @@
-import { Placeholder } from "../components/placeholder/placeholder";
 import { ComponentInstance, Context, ClickInteraction, Vector } from "../models";
 import { getComponentPositionInWorkspace } from "../utils/component-position-utils";
 import { instanceOfComponentWithNode } from "../utils/interface-utils";
@@ -17,7 +16,6 @@ export class MoveComponentInteraction implements ClickInteraction {
 
     private _startPosition!: Vector;
     private _mouseClickOffsetFromComponent!: Vector;
-    // private _currentPlaceholder: Placeholder | null = null;
     private _dragEnded: boolean = false;
 
     static create(
@@ -71,26 +69,6 @@ export class MoveComponentInteraction implements ClickInteraction {
         this.dragView.element.style.top = newPosition.y + "px";
 
         const placeholder = this.placeholderFinder.findByPosition(newPosition, this.draggedComponent.view.width, this.draggedComponent.view.height);
-
-        // const placeholderIsAChildOfDraggedComponent = placeholder && this.draggedComponent.view.element.contains(placeholder.view.element);
-        // if (placeholder && !placeholderIsAChildOfDraggedComponent) {
-        //     if (this._currentPlaceholder) {
-        //         this._currentPlaceholder._setHover(false);
-        //         this._currentPlaceholder = placeholder;
-        //     }
-        //     else {
-        //         this._currentPlaceholder = placeholder;
-        //     }
-
-        //     this._currentPlaceholder._setHover(true);
-        // }
-        // else {
-        //     if (this._currentPlaceholder) {
-        //         this._currentPlaceholder._setHover(false);
-        //     }
-
-        //     this._currentPlaceholder = null;
-        // }
 
         this.context.designerState.selectedPlaceholder.next(placeholder);
     }
