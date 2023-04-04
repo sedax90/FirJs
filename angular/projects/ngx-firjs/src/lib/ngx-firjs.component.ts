@@ -49,6 +49,10 @@ export class NgxFirjsComponent implements OnInit {
     this._overrideIcon = fn;
   }
 
+  @Input() set overrideColumnLabel(fn: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>) {
+    this._overrideColumnLabel = fn;
+  }
+
   @Output() onNodeAdd: EventEmitter<NodeAddEvent> = new EventEmitter<NodeAddEvent>();
   @Output() onNodeMove: EventEmitter<NodeMoveEvent> = new EventEmitter<NodeMoveEvent>();
   @Output() onNodeSelect: EventEmitter<NodeSelectEvent> = new EventEmitter<NodeSelectEvent>();
