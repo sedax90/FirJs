@@ -25,8 +25,18 @@ export class ContextMenuView {
 
         for (const item of items) {
             const menuItem = ContextMenuView._createMenuItem(item.label);
+
+            if (item.disabled) {
+                menuItem.style.opacity = "0.5";
+                menuItem.style.cursor = 'default';
+                menuItem.style.pointerEvents = 'none';
+            }
+            else {
+                menuItem.addEventListener('mousedown', (e) => item.action(e), false);
+            }
+
             contextMenuItems.append(menuItem);
-            menuItem.addEventListener('mousedown', (e) => item.action(e), false);
+
         }
 
         contextMenuElement.append(contextMenuItems);

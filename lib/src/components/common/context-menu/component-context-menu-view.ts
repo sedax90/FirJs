@@ -1,4 +1,4 @@
-import { Context, ContextMenu, Vector } from "../../../models";
+import { Context, ContextMenu, ContextMenuItem, Vector } from "../../../models";
 import { ContextMenuView } from "./context-menu-view";
 
 export class ComponentContextMenuView implements ContextMenu {
@@ -8,8 +8,10 @@ export class ComponentContextMenuView implements ContextMenu {
 
     static create(position: Vector, context: Context, onRemoveAction: (e: MouseEvent) => void, onDuplicateAction: (e: MouseEvent) => void): ComponentContextMenuView {
         const componentContextMenu = new ComponentContextMenuView();
+        const currentSelectedNodeInstance = context.designerState.selectedNode.getValue();
+        const node = currentSelectedNodeInstance?.node;
 
-        const items = [
+        const items: ContextMenuItem[] = [
             {
                 label: context.options.strings['context-menu.component.actions.remove.label'],
                 action: onRemoveAction,
@@ -17,6 +19,7 @@ export class ComponentContextMenuView implements ContextMenu {
             {
                 label: context.options.strings['context-menu.component.actions.duplicate.label'],
                 action: onDuplicateAction,
+                disabled: (node && node.type === 'terminator'),
             }
         ];
 

@@ -197,6 +197,7 @@ export interface ContextMenu {
 export interface ContextMenuItem {
     label: string;
     action: (e: MouseEvent) => void;
+    disabled?: boolean;
 }
 
 export interface WorkflowPanEvent {

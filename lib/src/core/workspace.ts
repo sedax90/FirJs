@@ -307,8 +307,6 @@ export class Workspace implements ComponentWithView {
     }
 
     private _onClick(position: Vector, target: Element, button: MouseButton): void {
-        this._clearContextMenus();
-
         // We have to check if the previous interaction was a node or worklow movement, in that case we have to skip the mouseup event
         if (this.context.designerState.wasMoving) {
             this.context.designerState.wasMoving = false;
@@ -316,6 +314,8 @@ export class Workspace implements ComponentWithView {
         }
 
         if (button === MouseButton.LEFT || button === MouseButton.MIDDLE) {
+            this._clearContextMenus();
+
             const workflow = this.view.workflow;
             const click: ClickEvent = {
                 position: position,
@@ -345,8 +345,6 @@ export class Workspace implements ComponentWithView {
     }
 
     private _onMouseDown(position: Vector, target: Element, button: MouseButton): void {
-        this._clearContextMenus();
-
         if (button === MouseButton.LEFT || button === MouseButton.MIDDLE) {
             const workflow = this.view.workflow;
             const click: ClickEvent = {

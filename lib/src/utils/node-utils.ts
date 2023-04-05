@@ -35,6 +35,13 @@ export function removeNode(componentInstance: ComponentInstance, context: Contex
 
 export function duplicateNode(componentInstance: ComponentInstance): void {
     if (instanceOfComponentWithNode(componentInstance)) {
+        const node = componentInstance.node;
+
+        if (node.type === 'terminator') {
+            // Cannot duplicate terminator component
+            return;
+        }
+
         const sequence = componentInstance.parentSequence;
         if (!sequence?.nodes) return;
 
