@@ -116,6 +116,12 @@ export class NgxFirjsComponent implements OnInit {
       onTreeChange: (event: TreeChangeEvent) => {
         this.onTreeChange.emit(event);
       },
+      onWorkflowPan: (event: WorkflowPanEvent) => {
+        this.onWorkflowPan.emit(event);
+      },
+      onWorkflowScale: (event: WorkflowScaleEvent) => {
+        this.onWorkflowScale.emit(event);
+      },
       canDropNode: this._canDropNode,
       canRemoveNode: this._canRemoveNode,
       canAttachNode: this._canAttachNode,

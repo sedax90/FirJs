@@ -21,6 +21,13 @@
   </button>
 </div>
 
-<firjs [tree]="tree" (onNodeSelect)="onNodeSelect($event)" (onNodeDeselect)="onNodeDeselect($event)"
-  (onNodeRemove)="onNodeRemove($event)" (onTreeChange)="onTreeChange($event)" (onNodeAdd)="onNodeAdd($event)"
-  (onNodeMove)="onNodeMove($event)"></firjs>
+<firjs [tree]="tree" 
+  (onNodeAdd)="onNodeAdd($event)"
+  (onNodeMove)="onNodeMove($event)"
+  (onNodeSelect)="onNodeSelect($event)"
+  (onNodeDeselect)="onNodeDeselect($event)"
+  (onNodeRemove)="onNodeRemove($event)"
+  (onTreeChange)="onTreeChange($event)"
+  (onWorkflowPan)="onWorkflowPan($event)"
+  (onWorkflowScale)="onWorkflowScale($event)">
+</firjs>
