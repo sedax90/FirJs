@@ -84,6 +84,7 @@ ws.addEventListener('nodeAdd', (event) => {
 ```
 
 FirJS emits these events:
+
 - `nodeAdd`
 - `nodeMove`
 - `nodeSelect`
@@ -96,11 +97,16 @@ FirJS emits these events:
 If you want to implement some logics during node drop or node remove, you can implement:
 
 ```
+// This is triggered whenever you move a node over a placeholder and allows you to override whether a node can be added to that placeholder or not (you can also add a custom message for the user if you want).
 canDropNode: (e) => Promise<{
 	allowed: boolean;
 	label?: string;
 }>
+
+// This is triggered when you release a node over a placeholder. It's the last chance for you to implement a custom logic for allow/disallow node attachment.
 canAttachNode: (e) => Promise<boolean>
+
+// This is triggered before removing a node (with context menu or Del button).
 canRemoveNode: (e) => Promise<boolean>
 ```
 
@@ -188,4 +194,5 @@ Enjoy!
 `npm run run-demo`
 
 ## License
+
 This project is released under the MIT license.
