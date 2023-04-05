@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, WorkspaceInitOptions, ComponentWithNode } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, WorkspaceInitOptions, ComponentWithNode, NodeSelectEvent } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -31,30 +31,21 @@ export class Workspace implements ComponentWithView {
 
         context.designerState?.selectedNode.subscribe(
             (data: ComponentWithNode | null) => {
-                if (data && context.userDefinedFunctions?.onNodeSelect) {
-                    if (instanceOfComponentWithNode(data)) {
-                        context.userDefinedFunctions.onNodeSelect({
-                            node: data.node,
-                            parent: data.parentNode,
-                        });
-                    }
-
-                    const deleteKeyInteraction = DeleteKeyInteraction.create(this.context);
-                    this._userInteractionController.handleKeyboardInteraction(deleteKeyInteraction);
+                if (data) {
+                    EventEmitter.emitNodeSelectEvent(this.view.workflow.view.element, {
+                        node: data.node,
+                        parent: data.parentNode,
+                    });
                 }
             }
         );
 
         context.designerState?.previousSelectedNode.subscribe(
             (data: ComponentWithNode) => {
-                if (context.userDefinedFunctions?.onNodeDeselect) {
-                    if (instanceOfComponentWithNode(data)) {
-                        context.userDefinedFunctions.onNodeDeselect({
-                            node: data.node,
-                            parent: data.parentNode,
-                        });
-                    }
-                }
+                EventEmitter.emitNodeDeselectEvent(this.view.workflow.view.element, {
+                    node: data?.node,
+                    parent: data?.parentNode,
+                })
             }
         );
     }
@@ -224,6 +215,35 @@ export class Workspace implements ComponentWithView {
             }
 
             this._rebuildPlaceholderCache();
+        });
+
+        workspaceViewElement.addEventListener('nodeSelect', (event) => {
+            if (context.userDefinedFunctions?.onNodeSelect) {
+                const data = event.detail;
+
+                if (instanceOfComponentWithNode(data)) {
+                    context.userDefinedFunctions.onNodeSelect({
+                        node: data.node,
+                        parent: data.parentNode,
+                    });
+                }
+
+                const deleteKeyInteraction = DeleteKeyInteraction.create(this.context);
+                this._userInteractionController.handleKeyboardInteraction(deleteKeyInteraction);
+            }
+        });
+
+        workspaceViewElement.addEventListener('nodeDeselect', (event) => {
+            if (context.userDefinedFunctions?.onNodeDeselect) {
+                const data = event.detail;
+
+                if (instanceOfComponentWithNode(data)) {
+                    context.userDefinedFunctions.onNodeDeselect({
+                        node: data.node,
+                        parent: data.parentNode,
+                    });
+                }
+            }
         });
 
         workspaceViewElement.addEventListener('nodeMove', (event) => {

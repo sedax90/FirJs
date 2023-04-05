@@ -1,4 +1,4 @@
-import { ComponentInstance, Context, Node, NodeRemoveRequestEvent } from "../models";
+import { ComponentInstance, ComponentWithNode, Context, Node, NodeRemoveRequestEvent } from "../models";
 import { instanceOfComponentWithNode } from "./interface-utils";
 import { SequenceModifier } from "./sequence-modifier";
 

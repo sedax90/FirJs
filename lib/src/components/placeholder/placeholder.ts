@@ -86,8 +86,10 @@ export class Placeholder implements ComponentInstance {
             }
         }
 
-        if (node.type === 'terminator' && !placeholderIsLast && totalNodes > 0) {
-            canDrop = false;
+        if (node.type === 'terminator') {
+            if (!placeholderIsLast && totalNodes > 0 || this.parentSequence.parentNode === null) {
+                canDrop = false;
+            }
         }
 
         // Check if previous node is a terminator
