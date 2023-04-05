@@ -18,6 +18,7 @@ import deepMerge from "../utils/object-utils";
 import { EventEmitter } from "../events/event-emitter";
 import { ComponentCreator } from "../utils/component-creator";
 import { Placeholder } from "../components/placeholder/placeholder";
+import { PlaceholderFinder } from "../utils/placeholder-finder";
 
 export class Workspace implements ComponentWithView {
 
@@ -103,6 +104,14 @@ export class Workspace implements ComponentWithView {
             context.userDefinedFunctions.onNodeRemove = initData.onNodeRemove;
         }
 
+        if (initData.onWorkflowPan) {
+            context.userDefinedFunctions.onWorkflowPan = initData.onWorkflowPan;
+        }
+
+        if (initData.onWorkflowScale) {
+            context.userDefinedFunctions.onWorkflowScale = initData.onWorkflowScale;
+        }
+
         if (initData.onTreeChange) {
             context.userDefinedFunctions.onTreeChange = initData.onTreeChange;
         }
@@ -143,6 +152,8 @@ export class Workspace implements ComponentWithView {
         context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
         context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
 
+        workspace._rebuildPlaceholderCache();
+
         return workspace;
     }
 
@@ -152,7 +163,9 @@ export class Workspace implements ComponentWithView {
         }
     }
 
-    async redraw(): Promise<void> {
+    async draw(): Promise<void> {
+        this.context.designerState.placeholders = [];
+
         this.parent.removeChild(this.view.element);
         const view = await WorkspaceView.create(this.parent, this.context);
         this.view = view;
@@ -165,6 +178,8 @@ export class Workspace implements ComponentWithView {
                 tree: this.context.tree,
             });
         }
+
+        this._rebuildPlaceholderCache();
     }
 
     startDrag(element: HTMLElement | SVGElement, startPosition: Vector, node: Node): void {
@@ -195,6 +210,8 @@ export class Workspace implements ComponentWithView {
             if (context.onDefinitionChange) {
                 context.onDefinitionChange(event.detail.tree, true);
             }
+
+            this._rebuildPlaceholderCache();
         });
 
         workspaceViewElement.addEventListener('nodeMove', (event) => {
@@ -227,7 +244,23 @@ export class Workspace implements ComponentWithView {
             EventEmitter.emitTreeChangeEvent(workspaceViewElement, {
                 tree: context.tree
             });
-        })
+        });
+
+        workspaceViewElement.addEventListener('workflowPan', (event) => {
+            if (context.userDefinedFunctions?.onWorkflowPan) {
+                context.userDefinedFunctions.onWorkflowPan(event.detail);
+            }
+
+            this._rebuildPlaceholderCache();
+        });
+
+        workspaceViewElement.addEventListener('workflowScale', (event) => {
+            if (context.userDefinedFunctions?.onWorkflowScale) {
+                context.userDefinedFunctions.onWorkflowScale(event.detail);
+            }
+
+            this._rebuildPlaceholderCache();
+        });
     }
 
     private async _onDefinitionChange(tree: Node[], preservePositionAndScale: boolean = false): Promise<void> {
@@ -238,7 +271,7 @@ export class Workspace implements ComponentWithView {
             this.context.designerState.zoomLevel = 1;
         }
 
-        await this.redraw();
+        await this.draw();
     }
 
     private _onClick(position: Vector, target: Element, button: MouseButton): void {
@@ -353,5 +386,13 @@ export class Workspace implements ComponentWithView {
                 "placeholder.not-allowed-to-drop.label": "You can't attach a node here",
             }
         };
+    }
+
+    private _rebuildPlaceholderCache(): void {
+        const placeholders = this.context.designerState.placeholders;
+        if (placeholders != null) {
+            const placeholderFinder = PlaceholderFinder.getInstance();
+            placeholderFinder.buildCache(placeholders);
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { NodeAddEvent, NodeMoveEvent, NodeRemoveEvent, TreeChangeEvent } from "../models";
+import { NodeAddEvent, NodeMoveEvent, NodeRemoveEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from "../models";
 
 export class EventEmitter {
     static emitTreeChangeEvent(element: EventTarget, data: TreeChangeEvent): void {
@@ -15,6 +15,14 @@ export class EventEmitter {
 
     static emitNodeRemoveEvent(element: EventTarget, data: NodeRemoveEvent): void {
         element.dispatchEvent(EventEmitter.createCustomEvent('nodeRemove', data));
+    }
+
+    static emitWorkflowPanEvent(element: EventTarget, data: WorkflowPanEvent): void {
+        element.dispatchEvent(EventEmitter.createCustomEvent('workflowPan', data));
+    }
+
+    static emitWorkflowScaleEvent(element: EventTarget, data: WorkflowScaleEvent): void {
+        element.dispatchEvent(EventEmitter.createCustomEvent('workflowScale', data));
     }
 
     private static createCustomEvent(name: string, data: unknown): CustomEvent {

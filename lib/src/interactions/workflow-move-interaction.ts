@@ -1,4 +1,5 @@
 import { Workflow } from "../core/workflow";
+import { EventEmitter } from "../events/event-emitter";
 import { Context, ClickInteraction, Vector } from "../models";
 import { subtract } from "../utils/vector-utils";
 
@@ -11,6 +12,7 @@ export class WorkflowMoveInteraction implements ClickInteraction {
     private _startPosition!: Vector;
     private _mouseClickOffsetFromComponent!: Vector;
     private _workflowWrapper!: SVGElement;
+    private _hasMoved: boolean = false;
 
     static create(
         workflow: Workflow,
@@ -50,10 +52,19 @@ export class WorkflowMoveInteraction implements ClickInteraction {
         const zoomLevel = this.context.designerState.zoomLevel;
         this._workflowWrapper.setAttribute('transform', `translate(${workflowPosition?.x ? workflowPosition.x : 0}, ${workflowPosition?.y ? workflowPosition.y : 0}) scale(${zoomLevel})`);
         this.context.designerState.workspacePosition = workflowPosition;
+
+        this._hasMoved = true;
     }
 
     onEnd(): void {
         this.workflow.view.element.classList.remove('moving');
+
+        const postion = this.context.designerState.workspacePosition;
+        if (this._hasMoved && postion) {
+            EventEmitter.emitWorkflowPanEvent(this.workflow.view.element, {
+                position: postion,
+            });
+        }
     }
 
 }

@@ -23,7 +23,7 @@ export class MoveComponentInteraction implements ClickInteraction {
         context: Context,
     ): MoveComponentInteraction {
         const dragView = DragView.create(componentInstance, context);
-        const placeholderFinder = PlaceholderFinder.create(context.designerState?.placeholders ? context.designerState.placeholders : []);
+        const placeholderFinder = PlaceholderFinder.getInstance();
         return new MoveComponentInteraction(dragView, componentInstance, placeholderFinder, context);
     }
 

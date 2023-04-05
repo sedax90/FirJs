@@ -70,6 +70,8 @@ interface PublicEvents {
     onNodeAdd?: (event: NodeAddEvent) => void;
     onNodeMove?: (event: NodeMoveEvent) => void;
     onNodeRemove?: (event: NodeRemoveEvent) => void;
+    onWorkflowPan?: (event: WorkflowPanEvent) => void;
+    onWorkflowScale?: (event: WorkflowScaleEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
 
     canRemoveNode?: (event: NodeRemoveRequestEvent) => Promise<boolean>;
@@ -192,4 +194,12 @@ export interface ContextMenu {
 export interface ContextMenuItem {
     label: string;
     action: (e: MouseEvent) => void;
+}
+
+export interface WorkflowPanEvent {
+    position: Vector;
+}
+
+export interface WorkflowScaleEvent {
+    scale: number;
 }

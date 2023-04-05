@@ -69,8 +69,6 @@ export class Placeholder implements ComponentInstance {
     }
 
     private async _canDropNode(node: Node): Promise<boolean> {
-        console.debug(node.type)
-
         let canDrop = true;
 
         // Check if we are not dropping a terminator as latest

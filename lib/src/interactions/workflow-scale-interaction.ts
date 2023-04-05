@@ -1,4 +1,5 @@
 import { Workflow } from "../core/workflow";
+import { EventEmitter } from "../events/event-emitter";
 import { Context, WheelInteraction } from "../models";
 
 export class WorkflowScaleInteraction implements WheelInteraction {
@@ -46,6 +47,10 @@ export class WorkflowScaleInteraction implements WheelInteraction {
 
         this._workflowWrapper.setAttribute('transform', `translate(${positionX}, ${positionY}) scale(${zoomLevel})`);
         this.context.designerState.zoomLevel = zoomLevel;
+
+        EventEmitter.emitWorkflowScaleEvent(this.workflow.view.element, {
+            scale: this.context.designerState.zoomLevel,
+        });
     }
 
 }

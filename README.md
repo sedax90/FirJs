@@ -10,7 +10,7 @@
 
 `npm i @sedax90/firjs`
 
-## Why
+## Why ℹ️
 
 I state that this project is freely inspired by the amazing Sequential Workflow Designer: https://github.com/nocode-js/sequential-workflow-designer
 
@@ -18,15 +18,16 @@ I state that this project is freely inspired by the amazing Sequential Workflow 
 
 This library is written entirely in Typescript and was born to remain simple and as agnostic as possible, so that it can be easily integrated into projects where needed.
 
-## Concepts
+## Concepts 💡️
 
 The main area is your **Workspace**. A _workspace_ contains a **Workflow**, who is simply a _nodes tree_.
 
-FirJs provides only three types of nodes:
+FirJs provides these basic nodes:
 
 - `task` (a generic operation)
 - `map` (for/while)
 - `choice` (if/switch)
+- `terminator` (indicates that the flow ended before its natural end)
 
 The workflow tree has a basic hierarchical structure:
 
@@ -50,7 +51,7 @@ The workflow tree has a basic hierarchical structure:
 
 You can attach all the data you need in the `props` field, they will always be kept.
 
-## Getting started
+## Getting started 🔥️
 
 Import the library and create a simple JS object:
 
@@ -61,21 +62,45 @@ firjs.init({
 }).then((ws) => { // Enjoy! });
 ```
 
-The library does not do anything automatically (except node removal), you have to use the exposed functions to adapt the library to your needs:
+The library does not do anything automatically (except node removal), you have to use the exposed functions and events to adapt the library to your needs:
 
 ```
-onNodeAdd: (e) => void;
-onNodeMove: (e) => void;
-onNodeSelect: (e) => void;
-onNodeDeselect: (e) => void;
-onNodeRemove: (e) => void;
-onTreeChange: (e) => void;
+onNodeAdd: (e: NodeAddeEvent) => void;
+onNodeMove: (e: NodeMoveEvent) => void;
+onNodeSelect: (e: NodeSelectEvent) => void;
+onNodeDeselect: (e: NodeDeselectEvent) => void;
+onNodeRemove: (e: NodeRemoveEvent) => void;
+onTreeChange: (e: TreeChangeEvent) => void;
+onWorkflowPan: (e: WorkflowPanEvent) => void;
+onWorkflowScale: (e: WorkflowScaleEvent) => void;
 ```
+
+You are not required to initialize event responses when creating the workflow as events are emitted as native Javascript events from the Workspace, so you can subscribe to them simply with:
+
+```
+ws.addEventListener('nodeAdd', (event) => {
+	// Your logic
+});
+```
+
+FirJS emits these events:
+- `nodeAdd`
+- `nodeMove`
+- `nodeSelect`
+- `nodeDeselect`
+- `nodeRemove`
+- `treeChange`
+- `workflowPan`
+- `workflowScale`
 
 If you want to implement some logics during node drop or node remove, you can implement:
 
 ```
-canDropNode: (e) => Promise<boolean>
+canDropNode: (e) => Promise<{
+	allowed: boolean;
+	label?: string;
+}>
+canAttachNode: (e) => Promise<boolean>
 canRemoveNode: (e) => Promise<boolean>
 ```
 
@@ -113,15 +138,17 @@ strings: {
 
 - `fitAndCenter(): void`: Call it to fit and center the tree (omg really?)
 - `setTree(tree: Node[], preservePositionAndScale: boolean = false): void`: Call it to set the tree programmatically.
+- `async draw(): Promise<void>`: Call it to force a redraw without passing a new tree.
 
-## Customizations
+## Customizations 🎨️
 
 ### Advanced customizations
 
 FirJs provide this methods to override your data:
 
-- `overrideLabel(node): Promise<string>`: to override your label.
-- `overrideIcon(node): Promise<string>`: to assign a dynamic icon.
+- `overrideLabel(node: Node): Promise<string>`: to override your label.
+- `overrideIcon(node: Node): Promise<string>`: to assign a dynamic icon.
+- `overrideColumnLabel(node: Node, parent: Node | null, columnIndex: number): Promise<string>`: to assign a dynamic icon.
 
 Both of this functions are executed when a node is drawed.
 
@@ -129,7 +156,7 @@ Both of this functions are executed when a node is drawed.
 
 You can customize the entire Workspace with only a little bit of CSS. You will find that there are many implemented CSS variables that you can simply override.
 
-## Workspace tips
+## Workspace tips ✨️
 
 - Grab an empty point in the workspace with your **left mouse button** and move it to shift the workflow.
 - If you want to move the workflow from any position, before to click press and hold the **Ctrl** or the **Space** button.
@@ -137,16 +164,16 @@ You can customize the entire Workspace with only a little bit of CSS. You will f
 - If you are dragging a node and do you want to cancel the drop operation, simply press **Esc**.
 - Right click on a component or on workspace to open the contextual menu with some useful actions.
 
-## Next steps
+## Next steps 🗓️
 
 - [ ] Add tests.
 - [ ] Angular module.
 - [ ] React component.
-- [ ] Better event management.
+- [x] Better event management.
 - [ ] More customizations.
 - [ ] Better mobile.
 
-## How to use this repo
+## How to use this repo 🛠️
 
 Install the required dev dependencies with: `npm i`.
 

@@ -252,6 +252,14 @@ firjs.init({
         console.debug("ON TREE CHANGE", e);
         showToast('onTreeChange');
     },
+    onWorkflowPan: (e) => {
+        console.debug("ON WORKFLOW PAN", e);
+        showToast('onWorkflowPan');
+    },
+    onWorkflowScale: (e) => {
+        console.debug("ON WORKFLOW SCALE", e);
+        showToast('onWorkflowScale');
+    },
     // canDropNode: (e) => {
     //     console.debug("ON CAN NODE DROP", e);
     //     showToast('canDropNode');
@@ -380,10 +388,20 @@ function showToast(type) {
         case 'onTreeChange':
             bg = 'radial-gradient( circle farthest-corner at 10% 20%,  rgba(255,94,247,1) 17.8%, rgba(2,245,255,1) 100.2% )';
             break;
+
+        case 'onWorkflowPan':
+            bg = 'linear-gradient(90deg, hsla(311, 74%, 87%, 1) 0%, hsla(275, 19%, 88%, 1) 100%)';
+            color = "#000";
+            break;
+
+        case 'onWorkflowScale':
+            bg = 'linear-gradient(90deg, hsla(312, 77%, 86%, 1) 0%, hsla(220, 61%, 79%, 1) 100%)';
+            color = '#000';
+            break;
     }
 
     Toastify({
-        text: `Event <b>${type}</b> fired.<br>For more info open your console.`,
+        text: `Event <b>${type}</b> fired.<br><small>For more info open your console.</small>`,
         duration: 4000,
         newWindow: true,
         close: false,
