@@ -88,8 +88,12 @@ export class WorkflowView implements ElementView {
         return workflowView;
     }
 
-    findComponentByClick(click: ClickEvent): ComponentInstance | null {
+    findByClick(click: ClickEvent): ComponentInstance | null {
         return this.mainSequence.findByClick(click);
+    }
+
+    findById(nodeId: string): ComponentInstance | null {
+        return this.mainSequence.findById(nodeId);
     }
 
     // Center workflowWrapper into svg

@@ -15,6 +15,7 @@ export interface ComponentInstance extends ComponentWithView {
     parentSequence: Sequence | null;
 
     findByClick: (click: ClickEvent) => ComponentInstance | null;
+    findById: (nodeId: string) => ComponentInstance | null;
 }
 
 export interface ElementView {
@@ -27,6 +28,7 @@ export interface ComponentView extends ElementView {
     height: number;
     joinX: number;
 
+    getSelectableElement: () => HTMLElement | SVGElement | null;
     setSelected?: (status: boolean) => void;
     setDragging?: (status: boolean) => void;
 }
@@ -132,6 +134,7 @@ export interface DesignerState {
     workspaceRect?: DOMRect;
     isDragging?: boolean;
     isPressingCtrl?: boolean;
+    wasMoving?: boolean; // Set when a user move a node or the workflow.
     workspacePosition?: Vector;
 }
 

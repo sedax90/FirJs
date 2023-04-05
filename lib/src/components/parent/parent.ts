@@ -36,8 +36,21 @@ export abstract class ParentComponent implements ComponentInstance {
         }
 
         // If no children check if is current view
-        const viewContains = this.view.element.contains(click.target);
+        const viewContains = this.view.getSelectableElement()?.contains(click.target);
         if (viewContains) {
+            return this;
+        }
+
+        return null;
+    }
+
+    findById(nodeId: string): ComponentInstance | null {
+        const child = this.sequence.findById(nodeId);
+        if (child) {
+            return child;
+        }
+
+        if (this.node && this.node.id === nodeId) {
             return this;
         }
 

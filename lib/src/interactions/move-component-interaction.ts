@@ -28,6 +28,7 @@ export class MoveComponentInteraction implements ClickInteraction {
     }
 
     onStart(startMousePosition: Vector): void {
+        this.context.designerState.wasMoving = true;
         this._startPosition = startMousePosition;
 
         if (this.draggedComponent) {
@@ -69,7 +70,6 @@ export class MoveComponentInteraction implements ClickInteraction {
         this.dragView.element.style.top = newPosition.y + "px";
 
         const placeholder = this.placeholderFinder.findByPosition(newPosition, this.draggedComponent.view.width, this.draggedComponent.view.height);
-
         this.context.designerState.selectedPlaceholder.next(placeholder);
     }
 

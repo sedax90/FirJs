@@ -29,6 +29,13 @@ export class WorkspaceView implements ElementView {
     }
 
     public bindClick(handler: (position: Vector, target: Element, buttonIndex: MouseButton) => void) {
+        this.element.addEventListener('mouseup', (e: MouseEvent) => {
+            e.preventDefault();
+            handler(readMousePosition(e), e.target as Element, buttonIndexToType(e.button));
+        }, false);
+    }
+
+    public bindMouseDown(handler: (position: Vector, target: Element, buttonIndex: MouseButton) => void) {
         this.element.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault();
             handler(readMousePosition(e), e.target as Element, buttonIndexToType(e.button));

@@ -14,7 +14,7 @@ export class UserInteractionController {
     handleClickInteraction(interaction: ClickInteraction, startPosition: Vector): void {
         this._clickInteractionState = {
             userInteraction: interaction,
-            startPosition,
+            startPosition: startPosition,
         };
 
         interaction.onStart(startPosition);
@@ -29,8 +29,8 @@ export class UserInteractionController {
 
     handleDragInteraction(userInteraction: ClickInteraction, startPosition: Vector): void {
         this._clickInteractionState = {
-            userInteraction,
-            startPosition,
+            userInteraction: userInteraction,
+            startPosition: startPosition,
         };
 
         userInteraction.onStart(startPosition);

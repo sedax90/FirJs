@@ -107,4 +107,8 @@ export class PlaceholderView implements ComponentView {
             this.element.removeChild(notAllowedLabel.element);
         }
     }
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return null;
+    }
 }

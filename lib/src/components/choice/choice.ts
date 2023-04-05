@@ -48,8 +48,24 @@ export class Choice implements ComponentWithNode {
         }
 
         // If no children check if is current view
-        const viewContains = this.view.element.contains(click.target);
+        const viewContains = this.view.getSelectableElement()?.contains(click.target);
         if (viewContains) {
+            return this;
+        }
+
+        return null;
+    }
+
+    findById(nodeId: string): ComponentInstance | null {
+        const sequences = this.view.childSequences;
+        for (const sequence of sequences) {
+            const component = sequence.findById(nodeId);
+            if (component) {
+                return component;
+            }
+        }
+
+        if (this.node && this.node.id === nodeId) {
             return this;
         }
 

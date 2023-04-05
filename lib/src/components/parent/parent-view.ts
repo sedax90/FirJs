@@ -1,8 +1,8 @@
 import { ComponentView } from "../../models";
 import { Sequence } from "../sequence/sequence";
 
-export class ParentView implements ComponentView {
-    public constructor(
+export abstract class ParentView implements ComponentView {
+    constructor(
         readonly element: SVGElement,
         readonly parent: SVGElement,
         readonly width: number,
@@ -10,4 +10,7 @@ export class ParentView implements ComponentView {
         readonly joinX: number,
         readonly sequence: Sequence,
     ) { }
+
+
+    abstract getSelectableElement(): HTMLElement | SVGElement | null;
 }

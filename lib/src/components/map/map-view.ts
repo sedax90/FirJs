@@ -9,6 +9,8 @@ import { StepView } from "../common/step/step-view";
 import { getNodeClasses } from "../../utils/node-utils";
 
 export class MapView extends ParentView {
+    private _selectableElement!: SVGElement;
+
     public static async create(parent: SVGElement, node: Node, context: Context): Promise<MapView> {
         const props = node.props as MapProps;
         const nodes = props?.children ? props.children : [];
@@ -108,6 +110,7 @@ export class MapView extends ParentView {
         DomHelper.translate(sequenceComponent.view.element, (sequenceOffsetLeft / 2), sequenceViewTopOffset);
 
         const mapView = new MapView(element, parent, childrenContainerBgWidth, totalHeight, joinX, sequenceComponent);
+        mapView._selectableElement = stepView.element;
         return mapView;
     }
 
@@ -127,5 +130,10 @@ export class MapView extends ParentView {
         else {
             this.element.classList.remove('selected');
         }
+    }
+
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return this._selectableElement;
     }
 }

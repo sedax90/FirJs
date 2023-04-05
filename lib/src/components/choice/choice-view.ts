@@ -18,6 +18,8 @@ export class ChoiceView {
         readonly childSequences: Sequence[],
     ) { }
 
+    private _selectableElement!: SVGElement;
+
     public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<ChoiceView> {
         const element = DomHelper.svg('g', {
             class: "choice",
@@ -268,7 +270,9 @@ export class ChoiceView {
         element.appendChild(stepView.element);
         parentElement.appendChild(element);
 
-        return new ChoiceView(element, parentElement, maxWidth, totalHeight, joinX, sequences);
+        const choiceView = new ChoiceView(element, parentElement, maxWidth, totalHeight, joinX, sequences);
+        choiceView._selectableElement = stepView.element;
+        return choiceView;
     }
 
     setDragging(value: boolean): void {
@@ -287,5 +291,9 @@ export class ChoiceView {
         else {
             this.element.classList.remove('selected');
         }
+    }
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return this._selectableElement;
     }
 }

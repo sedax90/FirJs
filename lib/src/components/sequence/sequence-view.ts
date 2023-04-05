@@ -87,4 +87,8 @@ export class SequenceView implements ComponentView {
 
         return new SequenceView(element, parentElement, nodes, maxWidth, sequenceHeight, maxJoinX, components, context, placeholders);
     }
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return null;
+    }
 }

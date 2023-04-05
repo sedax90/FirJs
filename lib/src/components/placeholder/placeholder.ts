@@ -40,6 +40,10 @@ export class Placeholder implements ComponentInstance {
         return null;
     }
 
+    findById(nodeId: string): ComponentInstance | null {
+        return null;
+    }
+
     static async create(parentElement: SVGElement, parentNode: Node | null, context: Context, index: number): Promise<Placeholder> {
         const view = await PlaceholderView.create(parentElement, index, context);
         const placeholder = new Placeholder(view, context, index, parentNode);

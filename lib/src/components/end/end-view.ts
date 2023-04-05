@@ -36,4 +36,8 @@ export class EndView implements ComponentView {
 
         return new EndView(element, parent, diameter, diameter, diameter / 2);
     }
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return null;
+    }
 }

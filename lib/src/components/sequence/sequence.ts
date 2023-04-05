@@ -39,6 +39,17 @@ export class Sequence implements ComponentInstance {
         return null;
     }
 
+    findById(nodeId: string): ComponentInstance | null {
+        for (const componentInstance of this.view.componentInstances) {
+            const element = componentInstance.findById(nodeId);
+            if (element) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
     getNodeIndex(node: Node): number {
         const id = node.id;
         return this.nodes.findIndex(e => e.id === id);

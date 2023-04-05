@@ -27,10 +27,16 @@ export abstract class ChildlessComponent implements ComponentInstance {
     parentSequence!: Sequence | null;
 
     findByClick(click: ClickEvent): ComponentInstance | null {
-        const viewContains = this.view.element.contains(click.target);
+        const viewContains = this.view.getSelectableElement()?.contains(click.target);
         if (viewContains) {
             return this;
         }
+
+        return null;
+    }
+
+    findById(nodeId: string): ComponentInstance | null {
+        if (this.node && this.node.id === nodeId) return this;
 
         return null;
     }

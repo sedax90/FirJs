@@ -13,6 +13,8 @@ export class TerminatorView implements ComponentView {
         readonly joinX: number,
     ) { }
 
+    private _selectableElement!: SVGElement;
+
     public static async create(parent: SVGElement, node: Node, context: Context): Promise<TerminatorView> {
         const element = DomHelper.svg('g', {
             class: "terminator",
@@ -36,7 +38,9 @@ export class TerminatorView implements ComponentView {
         parent.appendChild(element);
 
         const totalHeight = stepView.height + endView.height + connectionHeight;
-        return new TerminatorView(element, stepView.width, totalHeight, joinX);
+        const terminator = new TerminatorView(element, stepView.width, totalHeight, joinX);
+        terminator._selectableElement = stepView.element;
+        return terminator;
     }
 
     setDragging(value: boolean): void {
@@ -55,5 +59,9 @@ export class TerminatorView implements ComponentView {
         else {
             this.element.classList.remove('selected');
         }
+    }
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return this._selectableElement;
     }
 }

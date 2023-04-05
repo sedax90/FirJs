@@ -164,6 +164,8 @@ export class Workspace implements ComponentWithView {
     }
 
     async draw(): Promise<void> {
+        const currentSelectedNodeInstance = this.context.designerState.selectedNode.getValue();
+
         this.context.designerState.placeholders = [];
 
         this.parent.removeChild(this.view.element);
@@ -180,6 +182,15 @@ export class Workspace implements ComponentWithView {
         }
 
         this._rebuildPlaceholderCache();
+
+        // We have to restore the previous selected node if exists
+        if (currentSelectedNodeInstance) {
+            const nodeId = currentSelectedNodeInstance.node.id;
+            const newInstance = this.view.workflow.findById(nodeId);
+            if (newInstance && instanceOfComponentWithNode(newInstance)) {
+                this.context.designerState.selectedNode.next(newInstance);
+            }
+        }
     }
 
     startDrag(element: HTMLElement | SVGElement, startPosition: Vector, node: Node): void {
@@ -197,6 +208,7 @@ export class Workspace implements ComponentWithView {
 
     private _setViewBinds(): void {
         this.view.bindClick((position: Vector, target: Element, button: MouseButton) => this._onClick(position, target, button));
+        this.view.bindMouseDown((position: Vector, target: Element, button: MouseButton) => this._onMouseDown(position, target, button));
         this.view.bindWheel((e: WheelEvent) => this._onWheel(e));
         this.view.bindContextMenu((position: Vector, target: Element) => this._onContextMenu(position, target));
         this.view.bindKeyboard((e: KeyboardEvent) => this._onKeyboard(e));
@@ -277,6 +289,12 @@ export class Workspace implements ComponentWithView {
     private _onClick(position: Vector, target: Element, button: MouseButton): void {
         this._clearContextMenus();
 
+        // We have to check if the previous interaction was a node or worklow movement, in that case we have to skip the mouseup event
+        if (this.context.designerState.wasMoving) {
+            this.context.designerState.wasMoving = false;
+            return;
+        }
+
         if (button === MouseButton.LEFT || button === MouseButton.MIDDLE) {
             const workflow = this.view.workflow;
             const click: ClickEvent = {
@@ -297,11 +315,32 @@ export class Workspace implements ComponentWithView {
                         this.context.designerState.selectedNode.next(null);
                     }
                 }
-            }
 
+                if (componentInstance) {
+                    const userInteraction = SelectComponentInteraction.create(componentInstance, this.context);
+                    this._userInteractionController.handleClickInteraction(userInteraction, position);
+                }
+            }
+        }
+    }
+
+    private _onMouseDown(position: Vector, target: Element, button: MouseButton): void {
+        this._clearContextMenus();
+
+        if (button === MouseButton.LEFT || button === MouseButton.MIDDLE) {
+            const workflow = this.view.workflow;
+            const click: ClickEvent = {
+                position: position,
+                target: target,
+            };
+
+            const componentInstance = workflow.findByClick(click);
 
             let userInteraction!: ClickInteraction;
             if (componentInstance && !this.context.designerState.isPressingCtrl) {
+                if (instanceOfComponentWithNode(componentInstance)) {
+                    this.context.designerState.draggedNode = componentInstance.node;
+                }
                 userInteraction = SelectComponentInteraction.create(componentInstance, this.context);
             }
             else {

@@ -37,4 +37,8 @@ export class StartView implements ComponentView {
 
         return new StartView(element, parent, diameter, diameter + PlaceholderView.height, diameter / 2);
     }
+
+    getSelectableElement(): HTMLElement | SVGElement | null {
+        return null;
+    }
 }

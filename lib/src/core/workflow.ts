@@ -10,7 +10,11 @@ export class Workflow implements ComponentWithView {
     ) { }
 
     public findByClick(click: ClickEvent): ComponentInstance | null {
-        return this.view.findComponentByClick(click);
+        return this.view.findByClick(click);
+    }
+
+    public findById(nodeId: string): ComponentInstance | null {
+        return this.view.findById(nodeId);
     }
 
     public static async create(parent: HTMLElement, context: Context): Promise<Workflow> {

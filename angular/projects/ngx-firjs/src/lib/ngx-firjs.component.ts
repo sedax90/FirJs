@@ -5,7 +5,6 @@ import { Node, NodeAddEvent, NodeDeselectEvent, NodeDropEvent, NodeMoveEvent, No
   selector: 'firjs',
   templateUrl: './ngx-firjs.component.html',
   styleUrls: [
-    '../../node_modules/@sedax90/firjs/styles/workflow-tree.css',
     './ngx-firjs.component.scss',
   ],
   encapsulation: ViewEncapsulation.None,
@@ -106,10 +105,10 @@ export class NgxFirjsComponent implements OnInit {
       overrideIcon: this._overrideIcon,
       overrideColumnLabel: this._overrideColumnLabel,
     }).then(
-      (ws) => {
+      (ws: Workspace) => {
         this._workspace = ws;
       }
-    ).catch(e => {
+    ).catch((e: any) => {
       console.error(e);
     });
   }
