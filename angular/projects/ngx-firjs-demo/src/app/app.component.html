@@ -1,0 +1,26 @@
+<div class="topbar bg-light d-flex align-items-center justify-content-between p-2 position-relative mat-elevation-z1 sticky-top">
+  <div class="d-flex align-items-center">
+    <span class="me-3">Drag and drop components:</span>
+
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'task')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">settings</mat-icon> <span>Task</span>
+    </button>
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'map')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">sync</mat-icon> <span>Map</span>
+    </button>
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'choice')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">alt_route</mat-icon> <span>Choice</span>
+    </button>
+  </div>
+  <button mat-raised-button (click)="firjsWorkflow.fitAndCenter()">
+    <mat-icon class="me-2">center_focus_weak</mat-icon>
+    <span>Fit & center</span>
+  </button>
+</div>
+
+<firjs [tree]="tree" (onNodeSelect)="onNodeSelect($event)" (onNodeDeselect)="onNodeDeselect($event)"
+  (onNodeRemove)="onNodeRemove($event)" (onTreeChange)="onTreeChange($event)" (onNodeAdd)="onNodeAdd($event)"
+  (onNodeMove)="onNodeMove($event)"></firjs>
