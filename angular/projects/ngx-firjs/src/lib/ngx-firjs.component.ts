@@ -1,11 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Node, NodeAddEvent, NodeDeselectEvent, NodeDropEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, Vector, Workspace } from '@sedax90/firjs';
+import { Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace } from '@sedax90/firjs';
 
 @Component({
   selector: 'firjs',
   templateUrl: './ngx-firjs.component.html',
   styleUrls: [
-    '../../node_modules/@sedax90/firjs/styles/workflow-tree.css',
     './ngx-firjs.component.scss',
   ],
   encapsulation: ViewEncapsulation.None,
@@ -25,19 +24,30 @@ export class NgxFirjsComponent implements OnInit {
     return this._tree;
   }
 
-  @Input() set canDropNode(fn: (event: NodeDropEvent) => Promise<boolean>) {
+  @Input() set canDropNode(fn: (event: NodeHoverEvent) => Promise<{
+    allowed: boolean;
+    label?: string;
+  }>) {
     this._canDropNode = fn;
 
-    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedListeners) {
-      this._workspace.context.userDefinedListeners.canDropNode = fn;
+    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedFunctions) {
+      this._workspace.context.userDefinedFunctions.canDropNode = fn;
     }
   }
 
   @Input() set canRemoveNode(fn: (event: NodeRemoveEvent) => Promise<boolean>) {
     this._canRemoveNode = fn;
 
-    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedListeners) {
-      this._workspace.context.userDefinedListeners.canRemoveNode = fn;
+    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedFunctions) {
+      this._workspace.context.userDefinedFunctions.canRemoveNode = fn;
+    }
+  }
+
+  @Input() set canAttachNode(fn: (event: NodeAttachEvent) => Promise<boolean>) {
+    this._canAttachNode = fn;
+
+    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedFunctions) {
+      this._workspace.context.userDefinedFunctions.canAttachNode = fn;
     }
   }
 
@@ -59,9 +69,15 @@ export class NgxFirjsComponent implements OnInit {
   @Output() onNodeDeselect: EventEmitter<NodeDeselectEvent> = new EventEmitter<NodeDeselectEvent>();
   @Output() onNodeRemove: EventEmitter<NodeRemoveEvent> = new EventEmitter<NodeRemoveEvent>();
   @Output() onTreeChange: EventEmitter<TreeChangeEvent> = new EventEmitter<TreeChangeEvent>();
+  @Output() onWorkflowPan: EventEmitter<WorkflowPanEvent> = new EventEmitter<WorkflowPanEvent>();
+  @Output() onWorkflowScale: EventEmitter<WorkflowScaleEvent> = new EventEmitter<WorkflowScaleEvent>();
 
-  private _canDropNode!: (event: NodeDropEvent) => Promise<boolean>;
+  private _canDropNode!: (event: NodeHoverEvent) => Promise<{
+    allowed: boolean;
+    label?: string;
+  }>;
   private _canRemoveNode!: (event: NodeRemoveEvent) => Promise<boolean>;
+  private _canAttachNode!: (event: NodeAttachEvent) => Promise<boolean>;
   private _overrideLabel!: (node: Node) => Promise<string>;
   private _overrideIcon!: (node: Node) => Promise<string>;
   private _overrideColumnLabel!: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
@@ -100,16 +116,23 @@ export class NgxFirjsComponent implements OnInit {
       onTreeChange: (event: TreeChangeEvent) => {
         this.onTreeChange.emit(event);
       },
+      onWorkflowPan: (event: WorkflowPanEvent) => {
+        this.onWorkflowPan.emit(event);
+      },
+      onWorkflowScale: (event: WorkflowScaleEvent) => {
+        this.onWorkflowScale.emit(event);
+      },
       canDropNode: this._canDropNode,
       canRemoveNode: this._canRemoveNode,
+      canAttachNode: this._canAttachNode,
       overrideLabel: this._overrideLabel,
       overrideIcon: this._overrideIcon,
       overrideColumnLabel: this._overrideColumnLabel,
     }).then(
-      (ws) => {
+      (ws: Workspace) => {
         this._workspace = ws;
       }
-    ).catch(e => {
+    ).catch((e: any) => {
       console.error(e);
     });
   }
@@ -124,5 +147,10 @@ export class NgxFirjsComponent implements OnInit {
     if (!this._workspace) return;
 
     this._workspace.startDrag(element, startPosition, node);
+  }
+
+
+  async draw(): Promise<void> {
+    return await this._workspace.draw();
   }
 }

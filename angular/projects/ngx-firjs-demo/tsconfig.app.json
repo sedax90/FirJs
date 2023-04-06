@@ -3,7 +3,12 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/app",
-    "types": []
+    "types": [],
+    "paths": {
+      "@sedax90/ngx-firjs": [
+        "../../../lib"
+      ]
+    },
   },
   "files": [
     "src/main.ts",
@@ -11,5 +16,5 @@
   ],
   "include": [
     "src/**/*.d.ts"
-  ]
+  ],
 }

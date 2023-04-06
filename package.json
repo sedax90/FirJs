@@ -2,8 +2,8 @@
     "name": "firjs-demo",
     "version": "0.0.1",
     "scripts": {
-        "run-demo": "http-server -p 8080 -a 127.0.0.1 -d false -c-1 -o /firjs-demo/index.html",
-        "start": "npm run run-demo & npm run start --prefix ./firjs-lib"
+        "run-demo": "http-server -p 8080 -a 127.0.0.1 -d false -c-1 -o /demo/index.html",
+        "start": "npm run run-demo & npm run start --prefix ./lib"
     },
     "devDependencies": {
         "http-server": "^14.1.1",

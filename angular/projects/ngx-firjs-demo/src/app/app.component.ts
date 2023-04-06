@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, TreeChangeEvent } from '../../../ngx-firjs/src/public-api';
+import { NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from '../../../ngx-firjs/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -189,6 +189,11 @@ export class AppComponent {
     console.debug('onNodeDeselect', event);
   }
 
+  canRemoveNode(event: NodeRemoveEvent): Promise<boolean> {
+    console.debug('canRemoveNode', event);
+    return Promise.resolve(true);
+  }
+
   onNodeRemove(event: NodeRemoveEvent): void {
     console.debug('onNodeRemove', event);
   }
@@ -199,6 +204,14 @@ export class AppComponent {
 
   onTreeChange(event: TreeChangeEvent): void {
     console.debug('onTreeChange', event);
+  }
+
+  onWorkflowPan(event: WorkflowPanEvent): void {
+    console.debug('onWorkflowPan', event);
+  }
+
+  onWorkflowScale(event: WorkflowScaleEvent): void {
+    console.debug('onWorkflowScale', event);
   }
 
   onDragstart(event: DragEvent, type: NodeType): void {
