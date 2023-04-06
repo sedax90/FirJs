@@ -26,7 +26,7 @@
   (onNodeMove)="onNodeMove($event)"
   (onNodeSelect)="onNodeSelect($event)"
   (onNodeDeselect)="onNodeDeselect($event)"
-  [canRemoveNode]="canRemoveNode"
+  [canRemoveNode]="canRemoveNode.bind(this)"
   (onNodeRemove)="onNodeRemove($event)"
   (onTreeChange)="onTreeChange($event)"
   (onWorkflowPan)="onWorkflowPan($event)"
