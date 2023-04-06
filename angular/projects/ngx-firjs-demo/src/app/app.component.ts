@@ -189,6 +189,11 @@ export class AppComponent {
     console.debug('onNodeDeselect', event);
   }
 
+  canRemoveNode(event: NodeRemoveEvent): Promise<boolean> {
+    console.debug('canRemoveNode', event);
+    return Promise.resolve(true);
+  }
+
   onNodeRemove(event: NodeRemoveEvent): void {
     console.debug('onNodeRemove', event);
   }
