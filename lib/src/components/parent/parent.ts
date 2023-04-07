@@ -9,7 +9,7 @@ export abstract class ParentComponent implements ComponentInstance {
         readonly children: Node[],
         readonly context: Context,
     ) {
-        context.designerState?.selectedNode.subscribe(
+        context.designerState?.selectedComponent.subscribe(
             (data) => {
                 if (data && data === this) {
                     if (this.view.setSelected) {

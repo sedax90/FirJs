@@ -76,12 +76,12 @@ export class WorkflowView implements ElementView {
         workflowView.mainSequence = sequence;
         workflowView.wrapper = workflowWrapper;
 
-        if (!context.designerState.workspacePosition) {
+        if (!context.designerState.workflowPositionInWorkspace) {
             workflowView.fitAndCenter();
         }
         else {
-            const workflowPosition = context.designerState.workspacePosition;
-            const zoomLevel = context.designerState.zoomLevel;
+            const workflowPosition = context.designerState.workflowPositionInWorkspace;
+            const zoomLevel = context.designerState.scale;
             workflowWrapper.setAttribute('transform', `translate(${workflowPosition.x}, ${workflowPosition.y}) scale(${zoomLevel})`);
         }
 
@@ -101,7 +101,7 @@ export class WorkflowView implements ElementView {
         const parentRect = this.parent.getBoundingClientRect();
         const workflowOffsetY = 10;
 
-        let zoomLevel = this.context.designerState.zoomLevel;
+        let zoomLevel = this.context.designerState.scale;
         const parentHeight = parentRect.height - workflowOffsetY;
         if (this.height > parentHeight) {
             // We have to scale the workflow because it's too big
@@ -114,10 +114,10 @@ export class WorkflowView implements ElementView {
             y: workflowOffsetY,
         }
 
-        this.context.designerState.zoomLevel = zoomLevel;
-        this.context.designerState.workspacePosition = workflowPosition;
+        // this.context.designerState.zoomLevel = zoomLevel;
+        // this.context.designerState.workflowPositionInWorkspace = workflowPosition;
 
-        this.wrapper.setAttribute('transform', `translate(${workflowPosition.x}, ${workflowPosition.y}) scale(${zoomLevel})`);
+        // this.wrapper.setAttribute('transform', `translate(${workflowPosition.x}, ${workflowPosition.y}) scale(${zoomLevel})`);
     }
 
     private static _addSvgDefs(svg: SVGElement): void {

@@ -1,12 +1,24 @@
-import { Vector } from "../models";
+import { Context, Vector } from "../models";
 
-export function readMousePosition(e: MouseEvent): Vector {
+export function readMousePosition(e: MouseEvent | WheelEvent): Vector {
     const vector: Vector = {
         x: e.clientX,
         y: e.clientY,
     }
 
     return vector;
+}
+
+export function readMousePositionInWorkspace(e: MouseEvent | WheelEvent, context: Context): Vector {
+    const mousePosition = readMousePosition(e);
+
+    const workspaceRect = context.designerState.workspaceRect;
+    if (workspaceRect) {
+        mousePosition.x = mousePosition.x - workspaceRect.left;
+        mousePosition.y = mousePosition.y - workspaceRect.top;
+    }
+
+    return mousePosition;
 }
 
 export enum MouseButton {

@@ -15,7 +15,7 @@ export class DeleteKeyInteraction implements KeyboardInteraction {
     onPress(e: KeyboardEvent): void {
         if (!delKey(e)) return;
 
-        const componentWithNode = this.context.designerState.selectedNode.getValue();
+        const componentWithNode = this.context.designerState.selectedComponent.getValue();
         if (!componentWithNode) return;
 
         if (instanceOfComponentInstance(componentWithNode)) {

@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, WorkspaceInitOptions, ComponentWithNode, NodeSelectEvent } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -19,6 +19,7 @@ import { EventEmitter } from "../events/event-emitter";
 import { ComponentCreator } from "../utils/component-creator";
 import { Placeholder } from "../components/placeholder/placeholder";
 import { PlaceholderFinder } from "../utils/placeholder-finder";
+import { EventSuppressor } from "../events/event-suppressor";
 
 export class Workspace implements ComponentWithView {
 
@@ -29,7 +30,7 @@ export class Workspace implements ComponentWithView {
     ) {
         this._userInteractionController = new UserInteractionController();
 
-        context.designerState?.selectedNode.subscribe(
+        context.designerState?.selectedComponent.subscribe(
             (data: ComponentWithNode | null) => {
                 if (data) {
                     EventEmitter.emitNodeSelectEvent(this.view.workflow.view.element, {
@@ -53,19 +54,19 @@ export class Workspace implements ComponentWithView {
     // Public methods
 
     static async init(initData: WorkspaceInit): Promise<Workspace> {
-        let combinedOptions: WorkspaceInitOptions = Workspace._getDefaultOptions();
+        let combinedOptions: WorkspaceOptions = Workspace._getDefaultOptions();
         if (initData.options) {
-            combinedOptions = deepMerge<WorkspaceInitOptions>(Workspace._getDefaultOptions(), initData.options);
+            combinedOptions = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), initData.options);
         }
 
         const context: Context = {
             tree: initData.tree,
             designerState: {
                 placeholders: [],
-                selectedNode: new Observable<ComponentWithNode | null>(),
+                selectedComponent: new Observable<ComponentWithNode | null>(),
                 previousSelectedNode: new Observable<ComponentWithNode>,
                 selectedPlaceholder: new Observable<Placeholder | null>(),
-                zoomLevel: 1,
+                scale: 1,
             },
             options: combinedOptions,
             componentCreator: new ComponentCreator(),
@@ -154,8 +155,16 @@ export class Workspace implements ComponentWithView {
         }
     }
 
-    async draw(): Promise<void> {
-        const currentSelectedNodeInstance = this.context.designerState.selectedNode.getValue();
+    async setOptions(options: Partial<WorkspaceOptions>): Promise<void> {
+        let combinedOptions: WorkspaceOptions = Workspace._getDefaultOptions();
+        combinedOptions = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), options);
+
+        this.context.options = combinedOptions;
+        await this.draw();
+    }
+
+    async draw(suppressEvents: boolean = true): Promise<void> {
+        const currentSelectedNodeInstance = this.context.designerState.selectedComponent.getValue();
 
         this.context.designerState.placeholders = [];
 
@@ -166,12 +175,6 @@ export class Workspace implements ComponentWithView {
         this._setViewBinds();
         this._addEventListeners();
 
-        if (this.context.userDefinedFunctions?.onTreeChange) {
-            this.context.userDefinedFunctions.onTreeChange({
-                tree: this.context.tree,
-            });
-        }
-
         this._rebuildPlaceholderCache();
 
         // We have to restore the previous selected node if exists
@@ -179,7 +182,12 @@ export class Workspace implements ComponentWithView {
             const nodeId = currentSelectedNodeInstance.node.id;
             const newInstance = this.view.workflow.findById(nodeId);
             if (newInstance && instanceOfComponentWithNode(newInstance)) {
-                this.context.designerState.selectedNode.next(newInstance);
+                if (suppressEvents) {
+                    const eventSuppressor = EventSuppressor.getInstance();
+                    eventSuppressor.suppress('nodeSelect');
+                }
+
+                this.context.designerState.selectedComponent.next(newInstance);
             }
         }
     }
@@ -193,6 +201,27 @@ export class Workspace implements ComponentWithView {
 
     fitAndCenter(): void {
         this.view.workflow.view.fitAndCenter();
+    }
+
+    getSelectedNode(): Node | null {
+        const componentWithNode = this.context.designerState.selectedComponent.getValue();
+
+        if (componentWithNode) {
+            return componentWithNode.node;
+        }
+
+        return null;
+    }
+
+    setSelectedNode(value: Node | null): void {
+        if (value) {
+            const component = this.view.workflow.findById(value.id);
+            if (component && instanceOfComponentWithNode(component)) {
+                this.context.designerState.selectedComponent.next(component);
+            }
+        }
+
+        this.context.designerState.selectedComponent.next(null);
     }
 
     private _userInteractionController!: UserInteractionController;
@@ -299,8 +328,8 @@ export class Workspace implements ComponentWithView {
         this.context.tree = tree;
 
         if (!preservePositionAndScale) {
-            this.context.designerState.workspacePosition = undefined;
-            this.context.designerState.zoomLevel = 1;
+            this.context.designerState.workflowPositionInWorkspace = undefined;
+            this.context.designerState.scale = 1;
         }
 
         await this.draw();
@@ -326,13 +355,13 @@ export class Workspace implements ComponentWithView {
             if (!this.context.designerState.isPressingCtrl) {
                 componentInstance = workflow.findByClick(click);
                 if (componentInstance && instanceOfComponentWithNode(componentInstance)) {
-                    this.context.designerState?.selectedNode.next(componentInstance);
+                    this.context.designerState?.selectedComponent.next(componentInstance);
                 }
                 else {
-                    const previousSelectedNode = this.context.designerState?.selectedNode.getValue();
+                    const previousSelectedNode = this.context.designerState?.selectedComponent.getValue();
                     if (previousSelectedNode) {
                         this.context.designerState?.previousSelectedNode.next(previousSelectedNode);
-                        this.context.designerState.selectedNode.next(null);
+                        this.context.designerState.selectedComponent.next(null);
                     }
                 }
 
@@ -381,11 +410,11 @@ export class Workspace implements ComponentWithView {
 
         let contextMenu!: any;
         if (componentInstance && instanceOfComponentWithNode(componentInstance)) {
-            this.context.designerState?.selectedNode.next(componentInstance);
+            this.context.designerState?.selectedComponent.next(componentInstance);
             contextMenu = ComponentContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuRemoveAction(e, componentInstance), (e: MouseEvent) => this._onContextMenuDuplicateAction(e, componentInstance));
         }
         else {
-            this.context.designerState?.selectedNode.next(null);
+            this.context.designerState?.selectedComponent.next(null);
             contextMenu = WorkspaceContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuFitAndCenter(e));
         }
 
@@ -430,7 +459,7 @@ export class Workspace implements ComponentWithView {
         this.fitAndCenter();
     }
 
-    private static _getDefaultOptions(): WorkspaceInitOptions {
+    private static _getDefaultOptions(): WorkspaceOptions {
         return {
             style: {
                 fontSize: "1em",

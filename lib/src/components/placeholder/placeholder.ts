@@ -14,7 +14,7 @@ export class Placeholder implements ComponentInstance {
             if (selectedPlaceholder === this) {
                 this.setHover(true);
 
-                this._node = context.designerState.draggedNode || context.designerState.selectedNode.getValue()?.node;
+                this._node = context.designerState.draggedNode || context.designerState.selectedComponent.getValue()?.node;
                 if (this._node) {
                     this.canDrop = await this._canDropNode(this._node);
                     this._setCanDrop(this.canDrop);

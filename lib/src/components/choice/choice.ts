@@ -8,7 +8,7 @@ export class Choice implements ComponentWithNode {
         readonly view: ChoiceView,
         readonly context: Context,
     ) {
-        context.designerState?.selectedNode.subscribe(
+        context.designerState?.selectedComponent.subscribe(
             (data) => {
                 if (data && data === this) {
                     if (this.view.setSelected) {

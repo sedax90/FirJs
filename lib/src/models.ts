@@ -95,7 +95,7 @@ export interface WorkspaceStyleOptions {
     fontFamily: string;
 }
 
-export interface WorkspaceInitOptions {
+export interface WorkspaceOptions {
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
 }
@@ -103,7 +103,7 @@ export interface WorkspaceInitOptions {
 export interface WorkspaceInit extends PublicEvents {
     parent: HTMLElement;
     tree: Node[];
-    options?: WorkspaceInitOptions;
+    options?: Partial<WorkspaceOptions>;
 
     overrideLabel?: (node: Node) => Promise<string>;
     overrideIcon?: (node: Node) => Promise<string>;
@@ -113,7 +113,7 @@ export interface WorkspaceInit extends PublicEvents {
 export interface Context {
     tree: Node[];
     designerState: DesignerState;
-    options: WorkspaceInitOptions;
+    options: WorkspaceOptions;
 
     userDefinedFunctions?: PublicEvents;
     userDefinedOverriders?: PublicOverriders;
@@ -124,10 +124,10 @@ export interface Context {
 }
 
 export interface DesignerState {
-    selectedNode: Observable<ComponentWithNode | null>;
+    selectedComponent: Observable<ComponentWithNode | null>;
     previousSelectedNode: Observable<ComponentWithNode>;
     selectedPlaceholder: Observable<Placeholder | null>;
-    zoomLevel: number;
+    scale: number;
 
     placeholders?: Placeholder[];
     draggedNode?: Node;
@@ -135,7 +135,7 @@ export interface DesignerState {
     isDragging?: boolean;
     isPressingCtrl?: boolean;
     wasMoving?: boolean; // Set when a user move a node or the workflow.
-    workspacePosition?: Vector;
+    workflowPositionInWorkspace?: Vector;
 }
 
 export interface ClickInteraction {
@@ -145,7 +145,7 @@ export interface ClickInteraction {
 }
 
 export interface WheelInteraction {
-    onWheel(delta: number): void;
+    onWheel(delta: number, mousePosition: Vector): void;
 }
 
 export interface KeyboardInteraction {

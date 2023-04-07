@@ -364,6 +364,11 @@ firjs.init({
     resetBtn.addEventListener('click', () => {
         workspace.setTree([...tree], true);
     }, false);
+
+    const redrawBtn = document.getElementById('redrawBtn');
+    redrawBtn.addEventListener('click', () => {
+        workspace.draw();
+    });
 });
 
 function showToast(type) {

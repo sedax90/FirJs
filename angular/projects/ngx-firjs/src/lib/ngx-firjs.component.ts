@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace } from '@sedax90/firjs';
+import { Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '@sedax90/firjs';
 
 @Component({
   selector: 'firjs',
@@ -22,6 +22,12 @@ export class NgxFirjsComponent implements OnInit {
   }
   get tree(): Node[] {
     return this._tree;
+  }
+
+  @Input() set options(options: WorkspaceOptions) {
+    if (this._workspace) {
+      this._workspace.setOptions(options);
+    }
   }
 
   @Input() set canDropNode(fn: (event: NodeHoverEvent) => Promise<{
@@ -63,6 +69,20 @@ export class NgxFirjsComponent implements OnInit {
     this._overrideColumnLabel = fn;
   }
 
+  getSelectedNode(): Node | null {
+    if (this._workspace) {
+      return this._workspace.getSelectedNode();
+    }
+
+    return null;
+  }
+
+  setSelectedNode(value: Node | null): void {
+    if (this._workspace) {
+      this._workspace.setSelectedNode(value);
+    }
+  }
+
   @Output() onNodeAdd: EventEmitter<NodeAddEvent> = new EventEmitter<NodeAddEvent>();
   @Output() onNodeMove: EventEmitter<NodeMoveEvent> = new EventEmitter<NodeMoveEvent>();
   @Output() onNodeSelect: EventEmitter<NodeSelectEvent> = new EventEmitter<NodeSelectEvent>();
@@ -91,13 +111,6 @@ export class NgxFirjsComponent implements OnInit {
     Workspace.init({
       parent: this.workflowRoot.nativeElement,
       tree: this._tree,
-      options: {
-        strings: {},
-        style: {
-          fontFamily: "",
-          fontSize: "",
-        }
-      },
       onNodeAdd: (event: NodeAddEvent) => {
         this.onNodeAdd.emit(event);
       },
@@ -150,7 +163,7 @@ export class NgxFirjsComponent implements OnInit {
   }
 
 
-  async draw(): Promise<void> {
-    return await this._workspace.draw();
+  async draw(suppressEvents: boolean = true): Promise<void> {
+    return await this._workspace.draw(suppressEvents);
   }
 }

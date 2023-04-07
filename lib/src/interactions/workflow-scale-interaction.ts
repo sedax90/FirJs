@@ -1,6 +1,6 @@
 import { Workflow } from "../core/workflow";
 import { EventEmitter } from "../events/event-emitter";
-import { Context, WheelInteraction } from "../models";
+import { Context, Vector, WheelInteraction } from "../models";
 
 export class WorkflowScaleInteraction implements WheelInteraction {
     private constructor(
@@ -11,7 +11,7 @@ export class WorkflowScaleInteraction implements WheelInteraction {
     private _workflowWrapper!: SVGElement;
     private _minZoomLevel: number = 0.05;
     private _maxZoomLevel: number = 2;
-    private _zoomStep: number = 0.05;
+    private _scaleStep: number = 1.1;
 
     static create(
         workflow: Workflow,
@@ -22,34 +22,55 @@ export class WorkflowScaleInteraction implements WheelInteraction {
         return interaction;
     }
 
-    onWheel(delta: number): void {
-        let zoomLevel = this.context.designerState?.zoomLevel ? this.context.designerState.zoomLevel : 1;
+    onWheel(delta: number, mousePosition: Vector): void {
+        const currentScale = this.context.designerState?.scale ? this.context.designerState.scale : 1;
+        let nextScale = currentScale;
 
         if (delta > 0) {
             // Scroll down
-            zoomLevel = zoomLevel - this._zoomStep;
-            if (zoomLevel < this._minZoomLevel) {
-                zoomLevel = this._minZoomLevel;
+            nextScale = nextScale / this._scaleStep;
+            if (nextScale < this._minZoomLevel) {
+                nextScale = this._minZoomLevel;
             }
         }
         else {
             // Scroll up
-            zoomLevel = zoomLevel + this._zoomStep;
-            if (zoomLevel > this._maxZoomLevel) {
-                zoomLevel = this._maxZoomLevel;
+            nextScale = nextScale * this._scaleStep;
+            if (nextScale > this._maxZoomLevel) {
+                nextScale = this._maxZoomLevel;
             }
         }
 
-        const workflowPosition = this.context.designerState.workspacePosition;
+        // Prevent zoom if we have reached max or min scale value.
+        if (currentScale === nextScale) {
+            return;
+        }
 
-        const positionX = workflowPosition?.x ? workflowPosition.x : 0;
-        const positionY = workflowPosition?.y ? workflowPosition.y : 0;
+        const workspaceRect = this.context.designerState.workspaceRect;
+        if (workspaceRect) {
+            mousePosition.x = mousePosition.x - workspaceRect.left;
+            mousePosition.y = mousePosition.y - workspaceRect.top;
+        }
 
-        this._workflowWrapper.setAttribute('transform', `translate(${positionX}, ${positionY}) scale(${zoomLevel})`);
-        this.context.designerState.zoomLevel = zoomLevel;
+        const workflowPosition = this.context.designerState.workflowPositionInWorkspace;
+        let workflowPositionX = workflowPosition?.x ? workflowPosition.x : 0;
+        let workflowPositionY = workflowPosition?.y ? workflowPosition.y : 0;
+
+        // Pan the svg while zooming
+        const ratio = 1 - nextScale / currentScale;
+        workflowPositionX += (mousePosition.x - workflowPositionX) * ratio;
+        workflowPositionY += (mousePosition.y - workflowPositionY) * ratio;
+
+        this._workflowWrapper.setAttribute('transform', `translate(${workflowPositionX}, ${workflowPositionY}) scale(${nextScale})`);
+
+        this.context.designerState.scale = nextScale;
+        this.context.designerState.workflowPositionInWorkspace = {
+            x: workflowPositionX,
+            y: workflowPositionY,
+        }
 
         EventEmitter.emitWorkflowScaleEvent(this.workflow.view.element, {
-            scale: this.context.designerState.zoomLevel,
+            scale: this.context.designerState.scale,
         });
     }
 

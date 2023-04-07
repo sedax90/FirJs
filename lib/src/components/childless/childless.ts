@@ -7,7 +7,7 @@ export abstract class ChildlessComponent implements ComponentInstance {
         readonly view: ComponentView,
         readonly context: Context,
     ) {
-        context.designerState?.selectedNode.subscribe(
+        context.designerState?.selectedComponent.subscribe(
             (data) => {
                 if (data && data === this) {
                     if (this.view.setSelected) {

@@ -43,5 +43,5 @@ export default function deepMerge<T>(target: T | Partial<T>, newValues: T | Part
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
-    return value != null && typeof value === 'object' && Object.keys(value).length > 0 && !Array.isArray(value);
+    return value != null && typeof value === 'object' && !Array.isArray(value);
 }
