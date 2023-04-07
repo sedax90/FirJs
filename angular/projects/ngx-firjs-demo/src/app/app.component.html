@@ -26,8 +26,10 @@
   </button>
 </div>
 
-<firjs [tree]="tree" (onNodeAdd)="onNodeAdd($event)" (onNodeMove)="onNodeMove($event)"
-  (onNodeSelect)="onNodeSelect($event)" (onNodeDeselect)="onNodeDeselect($event)"
-  [canRemoveNode]="canRemoveNode.bind(this)" (onNodeRemove)="onNodeRemove($event)" (onTreeChange)="onTreeChange($event)"
+<firjs [tree]="tree" (onTreeChange)="onTreeChange($event)"
+  (onNodeAdd)="onNodeAdd($event)" (onNodeMove)="onNodeMove($event)"
+  [canSelectNode]="canSelectNode.bind(this)" (onNodeSelect)="onNodeSelect($event)" 
+  [canDeselectNode]="canDeselectNode.bind(this)" (onNodeDeselect)="onNodeDeselect($event)"
+  [canRemoveNode]="canRemoveNode.bind(this)" (onNodeRemove)="onNodeRemove($event)"
   (onWorkflowPan)="onWorkflowPan($event)" (onWorkflowScale)="onWorkflowScale($event)">
 </firjs>

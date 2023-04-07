@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '@sedax90/firjs';
+import { DeselectNodeRequestEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '@sedax90/firjs';
 
 @Component({
   selector: 'firjs',
@@ -57,6 +57,22 @@ export class NgxFirjsComponent implements OnInit {
     }
   }
 
+  @Input() set canSelectNode(fn: (event: SelectNodeRequestEvent) => Promise<boolean>) {
+    this._canSelectNode = fn;
+
+    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedFunctions) {
+      this._workspace.context.userDefinedFunctions.canSelectNode = fn;
+    }
+  }
+
+  @Input() set canDeselectNode(fn: (event: DeselectNodeRequestEvent) => Promise<boolean>) {
+    this._canDeselectNode = fn;
+
+    if (this._workspace && this._workspace.context && this._workspace.context.userDefinedFunctions) {
+      this._workspace.context.userDefinedFunctions.canDeselectNode = fn;
+    }
+  }
+
   @Input() set overrideLabel(fn: (node: Node) => Promise<string>) {
     this._overrideLabel = fn;
   }
@@ -98,6 +114,9 @@ export class NgxFirjsComponent implements OnInit {
   }>;
   private _canRemoveNode!: (event: NodeRemoveEvent) => Promise<boolean>;
   private _canAttachNode!: (event: NodeAttachEvent) => Promise<boolean>;
+  private _canSelectNode!: (event: SelectNodeRequestEvent) => Promise<boolean>;
+  private _canDeselectNode!: (event: DeselectNodeRequestEvent) => Promise<boolean>;
+
   private _overrideLabel!: (node: Node) => Promise<string>;
   private _overrideIcon!: (node: Node) => Promise<string>;
   private _overrideColumnLabel!: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
@@ -138,6 +157,8 @@ export class NgxFirjsComponent implements OnInit {
       canDropNode: this._canDropNode,
       canRemoveNode: this._canRemoveNode,
       canAttachNode: this._canAttachNode,
+      canSelectNode: this._canSelectNode,
+      canDeselectNode: this._canDeselectNode,
       overrideLabel: this._overrideLabel,
       overrideIcon: this._overrideIcon,
       overrideColumnLabel: this._overrideColumnLabel,

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from '../../../ngx-firjs/src/public-api';
+import { DeselectNodeRequestEvent, NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, SelectNodeRequestEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from '../../../ngx-firjs/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -181,8 +181,18 @@ export class AppComponent {
     console.debug('onNodeMove', event);
   }
 
+  canSelectNode(event: SelectNodeRequestEvent): Promise<boolean> {
+    console.debug('canSelectNode', event);
+    return Promise.resolve(true);
+  }
+
   onNodeSelect(event: NodeSelectEvent): void {
     console.debug('onNodeSelect', event);
+  }
+
+  canDeselectNode(event: DeselectNodeRequestEvent): Promise<boolean> {
+    console.debug('canDeselectNode', event);
+    return Promise.resolve(true);
   }
 
   onNodeDeselect(event: NodeDeselectEvent): void {
