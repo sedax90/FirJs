@@ -50,16 +50,6 @@ export class Workspace implements ComponentWithView {
                 }
             }
         );
-
-        context.designerState?.previousSelectedNode.subscribe(
-            (data: ComponentWithNode) => {
-                EventEmitter.emitNodeDeselectEvent(this.view.workflow.view.element, {
-                    node: data?.node,
-                    parent: data?.parentNode,
-                    index: instanceOfComponentInstance(data) ? data.indexInSequence : null,
-                })
-            }
-        );
     }
 
     // Public methods
@@ -75,7 +65,6 @@ export class Workspace implements ComponentWithView {
             designerState: {
                 placeholders: [],
                 selectedComponent: new Observable<ComponentWithNode | null>(),
-                previousSelectedNode: new Observable<ComponentWithNode>,
                 selectedPlaceholder: new Observable<Placeholder | null>(),
                 scale: 1,
             },
@@ -129,6 +118,14 @@ export class Workspace implements ComponentWithView {
 
         if (initData.canDropNode) {
             context.userDefinedFunctions.canDropNode = initData.canDropNode;
+        }
+
+        if (initData.canSelectNode) {
+            context.userDefinedFunctions.canSelectNode = initData.canSelectNode;
+        }
+
+        if (initData.canDeselectNode) {
+            context.userDefinedFunctions.canDeselectNode = initData.canDeselectNode;
         }
 
         if (!context.userDefinedOverriders) {
@@ -367,14 +364,47 @@ export class Workspace implements ComponentWithView {
             let componentInstance!: ComponentInstance | null;
             if (!this.context.designerState.isPressingCtrl) {
                 componentInstance = workflow.findByClick(click);
+
                 if (componentInstance && instanceOfComponentWithNode(componentInstance)) {
-                    this.context.designerState?.selectedComponent.next(componentInstance);
+                    // Select a node
+                    const componentWithNode = componentInstance;
+
+                    const canSelectNodeFn = this.context.userDefinedFunctions?.canSelectNode;
+                    if (canSelectNodeFn) {
+                        canSelectNodeFn({
+                            node: componentInstance.node,
+                            parent: componentInstance.parentNode,
+                            index: componentInstance.indexInSequence,
+                        }).then((result) => {
+                            if (result === true) {
+                                this.context.designerState?.selectedComponent.next(componentWithNode);
+                            }
+                        });
+                    }
+                    else {
+                        this.context.designerState?.selectedComponent.next(componentWithNode);
+                    }
                 }
                 else {
+                    // Deselect a node
                     const previousSelectedNode = this.context.designerState?.selectedComponent.getValue();
                     if (previousSelectedNode) {
-                        this.context.designerState?.previousSelectedNode.next(previousSelectedNode);
-                        this.context.designerState.selectedComponent.next(null);
+
+                        const canDeselectNodeFn = this.context.userDefinedFunctions?.canDeselectNode;
+                        if (canDeselectNodeFn) {
+                            canDeselectNodeFn({
+                                node: previousSelectedNode.node,
+                                parent: previousSelectedNode.parentNode,
+                                index: instanceOfComponentInstance(previousSelectedNode) ? previousSelectedNode.indexInSequence : null,
+                            }).then((result) => {
+                                if (result === true) {
+                                    this._deselectNode(previousSelectedNode);
+                                }
+                            });
+                        }
+                        else {
+                            this._deselectNode(previousSelectedNode);
+                        }
                     }
                 }
 
@@ -384,6 +414,10 @@ export class Workspace implements ComponentWithView {
                 }
             }
         }
+    }
+
+    private _deselectNode(previousSelectedNode: ComponentWithNode): void {
+        this.context.designerState.selectedComponent.next(null);
     }
 
     private _onMouseDown(position: Vector, target: Element, button: MouseButton): void {

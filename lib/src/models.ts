@@ -83,6 +83,8 @@ interface PublicEvents {
         allowed: boolean;
         label?: string;
     }>;
+    canSelectNode?: (event: SelectNodeRequestEvent) => Promise<boolean>;
+    canDeselectNode?: (event: DeselectNodeRequestEvent) => Promise<boolean>;
 }
 
 interface PublicOverriders {
@@ -126,7 +128,6 @@ export interface Context {
 
 export interface DesignerState {
     selectedComponent: Observable<ComponentWithNode | null>;
-    previousSelectedNode: Observable<ComponentWithNode>;
     selectedPlaceholder: Observable<Placeholder | null>;
     scale: number;
 
@@ -196,6 +197,14 @@ export interface NodeHoverEvent extends GenericNodeEvent {
 
 export interface TreeChangeEvent {
     tree: Node[];
+}
+
+export interface SelectNodeRequestEvent extends GenericNodeEvent {
+    index: number | null;
+}
+
+export interface DeselectNodeRequestEvent extends GenericNodeEvent {
+    index: number | null;
 }
 
 export interface Attributes {

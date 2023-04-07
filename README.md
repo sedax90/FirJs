@@ -1,5 +1,7 @@
 # FirJs
 
+![](https://img.shields.io/github/license/sedax90/firjs)
+
 ![](https://user-images.githubusercontent.com/5001801/224503499-9dd881a7-028f-4b16-824b-b689770bdc0d.png)
 
 ## Demo 🚀️
@@ -8,7 +10,10 @@
 
 ## How to install
 
-`npm i @sedax90/firjs`
+|||
+|----------|-------------|
+|**Vanilla JS**|`npm i @sedax90/firjs`|
+|**Angular**|`npm i @sedax90/ngx-firjs`|
 
 ## Why ℹ️
 
@@ -173,7 +178,7 @@ You can customize the entire Workspace with only a little bit of CSS. You will f
 ## Next steps 🗓️
 
 - [ ] Add tests.
-- [ ] Angular module.
+- [x] Angular module.
 - [ ] React component.
 - [x] Better event management.
 - [ ] More customizations.
