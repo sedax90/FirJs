@@ -15,6 +15,7 @@ export class Sequence implements ComponentInstance {
     }
 
     parentSequence!: Sequence | null;
+    indexInSequence!: number;
 
     public static async create(sequenceNodes: Node[], parentNode: Node | null, parentElement: SVGElement, context: Context): Promise<Sequence> {
         const view = await SequenceView.create(parentElement, sequenceNodes, parentNode, context);

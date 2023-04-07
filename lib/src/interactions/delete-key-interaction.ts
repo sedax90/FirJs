@@ -1,5 +1,5 @@
 import { Context, KeyboardInteraction } from "../models";
-import { instanceOfComponentInstanc as instanceOfComponentInstance, instanceOfComponentWithNode } from "../utils/interface-utils";
+import { instanceOfComponentInstance as instanceOfComponentInstance, instanceOfComponentWithNode } from "../utils/interface-utils";
 import { delKey } from "../utils/keyboard-utils";
 import { removeNode } from "../utils/node-utils";
 

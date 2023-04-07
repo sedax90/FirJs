@@ -1,6 +1,7 @@
 import { Sequence } from "../components/sequence/sequence";
 import { ComponentWithNode } from "../models";
 import { EventEmitter } from "../events/event-emitter";
+import { instanceOfComponentInstance } from "./interface-utils";
 
 export class SequenceModifier {
     static move(sourceSequence: Sequence, component: ComponentWithNode, targetSequence: Sequence, targetIndex: number): void {
@@ -38,6 +39,7 @@ export class SequenceModifier {
         EventEmitter.emitNodeAddEvent(sequence.view.element, {
             node: component.node,
             parent: component.parentNode,
+            index: instanceOfComponentInstance(component) ? component.indexInSequence : null,
         });
     }
 
@@ -48,6 +50,7 @@ export class SequenceModifier {
         EventEmitter.emitNodeRemoveEvent(sequence.view.element, {
             node: component.node,
             parent: sequence.parentNode,
+            index: instanceOfComponentInstance(component) ? component.indexInSequence : -1,
         });
     }
 }

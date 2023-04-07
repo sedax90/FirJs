@@ -90,7 +90,7 @@ export class MoveComponentInteraction implements ClickInteraction {
 
             if (sourceSequence && targetSequence) {
                 const canAttachNodeFn = this.context.userDefinedFunctions?.canAttachNode;
-                const currentPlaceholderIndex = currentPlaceholder.index;
+                const currentPlaceholderIndex = currentPlaceholder.indexInSequence;
                 const draggedComponent = this.draggedComponent;
 
                 if (canAttachNodeFn) {
@@ -98,6 +98,7 @@ export class MoveComponentInteraction implements ClickInteraction {
                         node: this.draggedComponent.node,
                         parent: this.draggedComponent.parentNode,
                         action: "move",
+                        index: this.draggedComponent.indexInSequence,
                     }).then(
                         (result) => {
                             if (result === true) {

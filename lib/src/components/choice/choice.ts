@@ -26,6 +26,7 @@ export class Choice implements ComponentWithNode {
     node!: Node;
     parentNode!: Node | null;
     parentSequence!: Sequence | null;
+    indexInSequence!: number;
 
     public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<Choice> {
         const view = await ChoiceView.create(parentElement, node, parentNode, context);

@@ -13,6 +13,7 @@ export interface ComponentInstance extends ComponentWithView {
     view: ComponentView;
     context: Context;
     parentSequence: Sequence | null;
+    indexInSequence: number;
 
     findByClick: (click: ClickEvent) => ComponentInstance | null;
     findById: (nodeId: string) => ComponentInstance | null;
@@ -158,15 +159,25 @@ interface GenericNodeEvent {
     parent: Node | null;
 }
 
-export interface NodeSelectEvent extends GenericNodeEvent { }
+export interface NodeSelectEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeDeselectEvent extends GenericNodeEvent { }
+export interface NodeDeselectEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeRemoveEvent extends GenericNodeEvent { }
+export interface NodeRemoveEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeRemoveRequestEvent extends GenericNodeEvent { }
+export interface NodeRemoveRequestEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeAddEvent extends GenericNodeEvent { }
+export interface NodeAddEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
 export interface NodeMoveEvent extends GenericNodeEvent {
     previousParent: Node | null;
@@ -176,6 +187,7 @@ export interface NodeMoveEvent extends GenericNodeEvent {
 
 export interface NodeAttachEvent extends GenericNodeEvent {
     action: "add" | "move";
+    index: number | null;
 }
 
 export interface NodeHoverEvent extends GenericNodeEvent {

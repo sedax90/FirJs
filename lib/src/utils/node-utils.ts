@@ -18,6 +18,7 @@ export function removeNode(componentInstance: ComponentInstance, context: Contex
             const event: NodeRemoveRequestEvent = {
                 node: componentInstance.node,
                 parent: componentInstance.parentNode,
+                index: componentInstance.indexInSequence,
             };
             context.userDefinedFunctions.canRemoveNode(event).then(
                 (result) => {

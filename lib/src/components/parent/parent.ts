@@ -27,6 +27,7 @@ export abstract class ParentComponent implements ComponentInstance {
     node!: Node;
     parentNode!: Node | null;
     parentSequence!: Sequence | null;
+    indexInSequence!: number;
 
     findByClick(click: ClickEvent): ComponentInstance | null {
         // Check children

@@ -8,7 +8,7 @@ import { WorkflowMoveInteraction } from "../interactions/workflow-move-interacti
 import { WorkflowScaleInteraction } from "../interactions/workflow-scale-interaction";
 import { DragExternalInteraction } from "../interactions/drag-external-interaction";
 import { DeleteKeyInteraction } from "../interactions/delete-key-interaction";
-import { instanceOfComponentWithNode } from "../utils/interface-utils";
+import { instanceOfComponentInstance, instanceOfComponentWithNode } from "../utils/interface-utils";
 import { CtrlInteraction } from "../interactions/ctrl-interaction";
 import { spacebarKey } from "../utils/keyboard-utils";
 import { ComponentContextMenuView } from "../components/common/context-menu/component-context-menu-view";
@@ -32,10 +32,20 @@ export class Workspace implements ComponentWithView {
 
         context.designerState?.selectedComponent.subscribe(
             (data: ComponentWithNode | null) => {
+                const previousValue = context.designerState.selectedComponent.getPreviousValue();
+                if (previousValue && previousValue !== data) {
+                    EventEmitter.emitNodeDeselectEvent(this.view.workflow.view.element, {
+                        node: previousValue.node,
+                        parent: previousValue.parentNode,
+                        index: instanceOfComponentInstance(previousValue) ? previousValue.indexInSequence : null,
+                    });
+                }
+
                 if (data) {
                     EventEmitter.emitNodeSelectEvent(this.view.workflow.view.element, {
                         node: data.node,
                         parent: data.parentNode,
+                        index: instanceOfComponentInstance(data) ? data.indexInSequence : null,
                     });
                 }
             }
@@ -46,6 +56,7 @@ export class Workspace implements ComponentWithView {
                 EventEmitter.emitNodeDeselectEvent(this.view.workflow.view.element, {
                     node: data?.node,
                     parent: data?.parentNode,
+                    index: instanceOfComponentInstance(data) ? data.indexInSequence : null,
                 })
             }
         );
@@ -253,7 +264,8 @@ export class Workspace implements ComponentWithView {
                 if (instanceOfComponentWithNode(data)) {
                     context.userDefinedFunctions.onNodeSelect({
                         node: data.node,
-                        parent: data.parentNode,
+                        parent: data.parent,
+                        index: data.index,
                     });
                 }
 
@@ -269,7 +281,8 @@ export class Workspace implements ComponentWithView {
                 if (instanceOfComponentWithNode(data)) {
                     context.userDefinedFunctions.onNodeDeselect({
                         node: data.node,
-                        parent: data.parentNode,
+                        parent: data.parent,
+                        index: data.index,
                     });
                 }
             }

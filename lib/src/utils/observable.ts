@@ -1,5 +1,6 @@
 export class Observable<T> {
     private _observers: Array<(data: T) => void> = [];
+    private _previousData: T | undefined;
     private _data: T | undefined;
     private _dataComparator!: (currentValue: T | undefined, newValue: T | undefined) => boolean;
 
@@ -15,6 +16,7 @@ export class Observable<T> {
         const equals = this._compareValues(this._data, data);
         if (equals) return;
 
+        this._previousData = this._data;
         this._data = data;
 
         for (const observer of this._observers) {
@@ -24,6 +26,10 @@ export class Observable<T> {
 
     subscribe(observerFunction: (data: T) => void): void {
         this._observers.push(observerFunction);
+    }
+
+    getPreviousValue(): T | undefined {
+        return this._previousData;
     }
 
     getValue(): T | undefined {

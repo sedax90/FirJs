@@ -9,18 +9,6 @@ export function readMousePosition(e: MouseEvent | WheelEvent): Vector {
     return vector;
 }
 
-export function readMousePositionInWorkspace(e: MouseEvent | WheelEvent, context: Context): Vector {
-    const mousePosition = readMousePosition(e);
-
-    const workspaceRect = context.designerState.workspaceRect;
-    if (workspaceRect) {
-        mousePosition.x = mousePosition.x - workspaceRect.left;
-        mousePosition.y = mousePosition.y - workspaceRect.top;
-    }
-
-    return mousePosition;
-}
-
 export enum MouseButton {
     LEFT = 'LEFT', MIDDLE = 'MIDDLE', RIGHT = 'RIGHT', FOURTH = 'FOURTH', FIFTH = 'FIFTH'
 }

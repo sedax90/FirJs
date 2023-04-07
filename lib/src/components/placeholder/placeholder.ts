@@ -7,7 +7,7 @@ export class Placeholder implements ComponentInstance {
     private constructor(
         readonly view: PlaceholderView,
         readonly context: Context,
-        readonly index: number,
+        readonly indexInSequence: number,
         readonly parentNode: Node | null,
     ) {
         context.designerState.selectedPlaceholder.subscribe(async (selectedPlaceholder) => {
@@ -81,7 +81,7 @@ export class Placeholder implements ComponentInstance {
         if (this.parentSequence) {
             totalNodes = this.parentSequence.nodes.length;
 
-            if (this.index === totalNodes) {
+            if (this.indexInSequence === totalNodes) {
                 placeholderIsLast = true;
             }
         }
@@ -94,7 +94,7 @@ export class Placeholder implements ComponentInstance {
 
         // Check if previous node is a terminator
         if (canDrop) {
-            const previousNodeIndex = this.index - 1;
+            const previousNodeIndex = this.indexInSequence - 1;
             if (previousNodeIndex >= 0) {
                 const previousNode = this.parentSequence.nodes[previousNodeIndex];
                 if (previousNode.type === 'terminator') {
@@ -113,7 +113,7 @@ export class Placeholder implements ComponentInstance {
                 const customValidationResult = await this.context.userDefinedFunctions.canDropNode({
                     node: this._node,
                     parent: this.parentNode,
-                    index: this.index,
+                    index: this.indexInSequence,
                 });
 
                 canDrop = customValidationResult.allowed;

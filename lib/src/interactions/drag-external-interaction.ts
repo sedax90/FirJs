@@ -68,6 +68,7 @@ export class DragExternalInteraction implements ClickInteraction {
                     node: draggedNode,
                     parent: null,
                     action: "add",
+                    index: null,
                 };
                 canAttachNodeFn(event).then(
                     (result) => {
@@ -97,6 +98,6 @@ export class DragExternalInteraction implements ClickInteraction {
         SequenceModifier.add(targetSequence, {
             node: node,
             parentNode: targetSequence.parentNode,
-        }, placeholder.index);
+        }, placeholder.indexInSequence);
     }
 }

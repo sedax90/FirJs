@@ -34,7 +34,6 @@ export class EventEmitter {
 
     static emitNodeSelectEvent(element: EventTarget, data: NodeSelectEvent): void {
         if (EventEmitter._suppressEvent('nodeSelect')) return;
-
         element.dispatchEvent(EventEmitter.createCustomEvent('nodeSelect', data));
     }
 
