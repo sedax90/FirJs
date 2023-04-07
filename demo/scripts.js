@@ -429,7 +429,7 @@ function showToast(type) {
 
     Toastify({
         text: `<div style="line-height: 1;">Event <b>${type}</b> fired.<br><small class="opacity-75">For more info open your console.</small></div>`,
-        duration: 4000,
+        duration: 2000,
         newWindow: true,
         close: false,
         gravity: "bottom",
