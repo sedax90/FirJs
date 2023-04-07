@@ -49,9 +49,9 @@ export class WorkflowMoveInteraction implements ClickInteraction {
         });
         workflowPosition = subtract(workflowPosition, this._mouseClickOffsetFromComponent);
 
-        const zoomLevel = this.context.designerState.zoomLevel;
+        const zoomLevel = this.context.designerState.scale;
         this._workflowWrapper.setAttribute('transform', `translate(${workflowPosition?.x ? workflowPosition.x : 0}, ${workflowPosition?.y ? workflowPosition.y : 0}) scale(${zoomLevel})`);
-        this.context.designerState.workspacePosition = workflowPosition;
+        this.context.designerState.workflowPositionInWorkspace = workflowPosition;
 
         this._hasMoved = true;
     }
@@ -59,7 +59,7 @@ export class WorkflowMoveInteraction implements ClickInteraction {
     onEnd(): void {
         this.workflow.view.element.classList.remove('moving');
 
-        const postion = this.context.designerState.workspacePosition;
+        const postion = this.context.designerState.workflowPositionInWorkspace;
         if (this._hasMoved && postion) {
             EventEmitter.emitWorkflowPanEvent(this.workflow.view.element, {
                 position: postion,

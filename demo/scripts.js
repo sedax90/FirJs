@@ -287,6 +287,22 @@ firjs.init({
             resolve(true);
         });
     },
+    canSelectNode: (e) => {
+        console.debug("ON CAN SELECT NODE", e);
+        showToast('canSelectNode');
+
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    },
+    canDeselectNode: (e) => {
+        console.debug("ON CAN DESELECT NODE", e);
+        showToast('canDeselectNode');
+
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    },
     overrideLabel: (node) => {
         return new Promise((resolve, reject) => {
             resolve(node.label.toLowerCase());
@@ -364,6 +380,11 @@ firjs.init({
     resetBtn.addEventListener('click', () => {
         workspace.setTree([...tree], true);
     }, false);
+
+    const redrawBtn = document.getElementById('redrawBtn');
+    redrawBtn.addEventListener('click', () => {
+        workspace.draw();
+    });
 });
 
 function showToast(type) {
@@ -398,11 +419,17 @@ function showToast(type) {
             bg = 'linear-gradient(90deg, hsla(312, 77%, 86%, 1) 0%, hsla(220, 61%, 79%, 1) 100%)';
             color = '#000';
             break;
+
+        case 'canSelectNode':
+        case 'canDeselectNode':
+            bg = 'linear-gradient(90deg, hsla(187, 82%, 65%, 1) 0%, hsla(65, 77%, 63%, 1) 50%, hsla(327, 67%, 74%, 1) 100%)';
+            color = '#000';
+            break;
     }
 
     Toastify({
-        text: `Event <b>${type}</b> fired.<br><small>For more info open your console.</small>`,
-        duration: 4000,
+        text: `<div style="line-height: 1;">Event <b>${type}</b> fired.<br><small class="opacity-75">For more info open your console.</small></div>`,
+        duration: 2000,
         newWindow: true,
         close: false,
         gravity: "bottom",

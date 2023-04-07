@@ -25,9 +25,13 @@ export class SequenceView implements ComponentView {
         let maxWidth = 0;
         let maxJoinX = 0;
         const components: ComponentInstance[] = [];
+
+        let index = 0;
         for (const node of nodes) {
             const component = await context.componentCreator.createComponent(node, parentNode, element, context);
             if (!component) continue;
+
+            component.indexInSequence = index;
 
             if (component.view.width > maxWidth) {
                 maxWidth = component.view.width;
@@ -38,6 +42,7 @@ export class SequenceView implements ComponentView {
             }
 
             components.push(component);
+            index++;
         }
 
         const placeholders: Placeholder[] = [];

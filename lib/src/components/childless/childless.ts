@@ -7,7 +7,7 @@ export abstract class ChildlessComponent implements ComponentInstance {
         readonly view: ComponentView,
         readonly context: Context,
     ) {
-        context.designerState?.selectedNode.subscribe(
+        context.designerState?.selectedComponent.subscribe(
             (data) => {
                 if (data && data === this) {
                     if (this.view.setSelected) {
@@ -25,6 +25,7 @@ export abstract class ChildlessComponent implements ComponentInstance {
     node!: Node;
     parentNode!: Node | null;
     parentSequence!: Sequence | null;
+    indexInSequence!: number;
 
     findByClick(click: ClickEvent): ComponentInstance | null {
         const viewContains = this.view.getSelectableElement()?.contains(click.target);

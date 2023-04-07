@@ -1,6 +1,6 @@
-import { Vector } from "../models";
+import { Context, Vector } from "../models";
 
-export function readMousePosition(e: MouseEvent): Vector {
+export function readMousePosition(e: MouseEvent | WheelEvent): Vector {
     const vector: Vector = {
         x: e.clientX,
         y: e.clientY,

@@ -24,7 +24,7 @@ export class UserInteractionController {
     }
 
     handleWheelInteraction(interaction: WheelInteraction, event: WheelEvent): void {
-        interaction.onWheel(event.deltaY);
+        interaction.onWheel(event.deltaY, readMousePosition(event));
     }
 
     handleDragInteraction(userInteraction: ClickInteraction, startPosition: Vector): void {

@@ -8,7 +8,7 @@ export class ComponentContextMenuView implements ContextMenu {
 
     static create(position: Vector, context: Context, onRemoveAction: (e: MouseEvent) => void, onDuplicateAction: (e: MouseEvent) => void): ComponentContextMenuView {
         const componentContextMenu = new ComponentContextMenuView();
-        const currentSelectedNodeInstance = context.designerState.selectedNode.getValue();
+        const currentSelectedNodeInstance = context.designerState.selectedComponent.getValue();
         const node = currentSelectedNodeInstance?.node;
 
         const items: ContextMenuItem[] = [

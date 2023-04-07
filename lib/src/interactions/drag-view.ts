@@ -24,7 +24,7 @@ export class DragView implements ElementView {
         height = componentView.height;
 
         clone.removeAttribute('transform');
-        const zoomLevel = context.designerState.zoomLevel;
+        const zoomLevel = context.designerState.scale;
         clone.setAttribute('transform', `scale(${zoomLevel})`);
 
         const dragSvg = DomHelper.svg('svg', {

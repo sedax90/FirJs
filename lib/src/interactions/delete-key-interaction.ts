@@ -1,5 +1,5 @@
 import { Context, KeyboardInteraction } from "../models";
-import { instanceOfComponentInstanc as instanceOfComponentInstance, instanceOfComponentWithNode } from "../utils/interface-utils";
+import { instanceOfComponentInstance as instanceOfComponentInstance, instanceOfComponentWithNode } from "../utils/interface-utils";
 import { delKey } from "../utils/keyboard-utils";
 import { removeNode } from "../utils/node-utils";
 
@@ -15,7 +15,7 @@ export class DeleteKeyInteraction implements KeyboardInteraction {
     onPress(e: KeyboardEvent): void {
         if (!delKey(e)) return;
 
-        const componentWithNode = this.context.designerState.selectedNode.getValue();
+        const componentWithNode = this.context.designerState.selectedComponent.getValue();
         if (!componentWithNode) return;
 
         if (instanceOfComponentInstance(componentWithNode)) {

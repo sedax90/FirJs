@@ -13,6 +13,7 @@ export interface ComponentInstance extends ComponentWithView {
     view: ComponentView;
     context: Context;
     parentSequence: Sequence | null;
+    indexInSequence: number;
 
     findByClick: (click: ClickEvent) => ComponentInstance | null;
     findById: (nodeId: string) => ComponentInstance | null;
@@ -82,6 +83,8 @@ interface PublicEvents {
         allowed: boolean;
         label?: string;
     }>;
+    canSelectNode?: (event: SelectNodeRequestEvent) => Promise<boolean>;
+    canDeselectNode?: (event: DeselectNodeRequestEvent) => Promise<boolean>;
 }
 
 interface PublicOverriders {
@@ -95,7 +98,7 @@ export interface WorkspaceStyleOptions {
     fontFamily: string;
 }
 
-export interface WorkspaceInitOptions {
+export interface WorkspaceOptions {
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
 }
@@ -103,7 +106,7 @@ export interface WorkspaceInitOptions {
 export interface WorkspaceInit extends PublicEvents {
     parent: HTMLElement;
     tree: Node[];
-    options?: WorkspaceInitOptions;
+    options?: Partial<WorkspaceOptions>;
 
     overrideLabel?: (node: Node) => Promise<string>;
     overrideIcon?: (node: Node) => Promise<string>;
@@ -113,7 +116,7 @@ export interface WorkspaceInit extends PublicEvents {
 export interface Context {
     tree: Node[];
     designerState: DesignerState;
-    options: WorkspaceInitOptions;
+    options: WorkspaceOptions;
 
     userDefinedFunctions?: PublicEvents;
     userDefinedOverriders?: PublicOverriders;
@@ -124,10 +127,9 @@ export interface Context {
 }
 
 export interface DesignerState {
-    selectedNode: Observable<ComponentWithNode | null>;
-    previousSelectedNode: Observable<ComponentWithNode>;
+    selectedComponent: Observable<ComponentWithNode | null>;
     selectedPlaceholder: Observable<Placeholder | null>;
-    zoomLevel: number;
+    scale: number;
 
     placeholders?: Placeholder[];
     draggedNode?: Node;
@@ -135,7 +137,7 @@ export interface DesignerState {
     isDragging?: boolean;
     isPressingCtrl?: boolean;
     wasMoving?: boolean; // Set when a user move a node or the workflow.
-    workspacePosition?: Vector;
+    workflowPositionInWorkspace?: Vector;
 }
 
 export interface ClickInteraction {
@@ -145,7 +147,7 @@ export interface ClickInteraction {
 }
 
 export interface WheelInteraction {
-    onWheel(delta: number): void;
+    onWheel(delta: number, mousePosition: Vector): void;
 }
 
 export interface KeyboardInteraction {
@@ -158,15 +160,25 @@ interface GenericNodeEvent {
     parent: Node | null;
 }
 
-export interface NodeSelectEvent extends GenericNodeEvent { }
+export interface NodeSelectEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeDeselectEvent extends GenericNodeEvent { }
+export interface NodeDeselectEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeRemoveEvent extends GenericNodeEvent { }
+export interface NodeRemoveEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeRemoveRequestEvent extends GenericNodeEvent { }
+export interface NodeRemoveRequestEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
-export interface NodeAddEvent extends GenericNodeEvent { }
+export interface NodeAddEvent extends GenericNodeEvent {
+    index: number | null;
+}
 
 export interface NodeMoveEvent extends GenericNodeEvent {
     previousParent: Node | null;
@@ -176,6 +188,7 @@ export interface NodeMoveEvent extends GenericNodeEvent {
 
 export interface NodeAttachEvent extends GenericNodeEvent {
     action: "add" | "move";
+    index: number | null;
 }
 
 export interface NodeHoverEvent extends GenericNodeEvent {
@@ -184,6 +197,14 @@ export interface NodeHoverEvent extends GenericNodeEvent {
 
 export interface TreeChangeEvent {
     tree: Node[];
+}
+
+export interface SelectNodeRequestEvent extends GenericNodeEvent {
+    index: number | null;
+}
+
+export interface DeselectNodeRequestEvent extends GenericNodeEvent {
+    index: number | null;
 }
 
 export interface Attributes {

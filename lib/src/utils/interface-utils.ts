@@ -12,7 +12,7 @@ export function instanceOfSequenceNode(value: any): value is Node {
     return 'id' in value && 'type' in value;
 }
 
-export function instanceOfComponentInstanc(value: any): value is ComponentInstance {
+export function instanceOfComponentInstance(value: any): value is ComponentInstance {
     if (typeof value !== 'object') return false;
 
     return 'view' in value && 'context' in value && 'parentSequence' in value;

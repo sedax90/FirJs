@@ -8,7 +8,7 @@ export class Choice implements ComponentWithNode {
         readonly view: ChoiceView,
         readonly context: Context,
     ) {
-        context.designerState?.selectedNode.subscribe(
+        context.designerState?.selectedComponent.subscribe(
             (data) => {
                 if (data && data === this) {
                     if (this.view.setSelected) {
@@ -26,6 +26,7 @@ export class Choice implements ComponentWithNode {
     node!: Node;
     parentNode!: Node | null;
     parentSequence!: Sequence | null;
+    indexInSequence!: number;
 
     public static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<Choice> {
         const view = await ChoiceView.create(parentElement, node, parentNode, context);

@@ -1,4 +1,5 @@
-<div class="topbar bg-light d-flex align-items-center justify-content-between p-2 position-relative mat-elevation-z1 sticky-top">
+<div
+  class="topbar bg-light d-flex align-items-center justify-content-between p-2 position-relative mat-elevation-z1 sticky-top">
   <div class="d-flex align-items-center">
     <span class="me-3">Drag and drop components:</span>
 
@@ -14,6 +15,10 @@
       (dragend)="onDragEnd($event)">
       <mat-icon class="me-1">alt_route</mat-icon> <span>Choice</span>
     </button>
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'terminator')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">stop</mat-icon> <span>Terminator</span>
+    </button>
   </div>
   <button mat-raised-button (click)="firjsWorkflow.fitAndCenter()">
     <mat-icon class="me-2">center_focus_weak</mat-icon>
@@ -21,14 +26,10 @@
   </button>
 </div>
 
-<firjs [tree]="tree" 
-  (onNodeAdd)="onNodeAdd($event)"
-  (onNodeMove)="onNodeMove($event)"
-  (onNodeSelect)="onNodeSelect($event)"
-  (onNodeDeselect)="onNodeDeselect($event)"
-  [canRemoveNode]="canRemoveNode.bind(this)"
-  (onNodeRemove)="onNodeRemove($event)"
-  (onTreeChange)="onTreeChange($event)"
-  (onWorkflowPan)="onWorkflowPan($event)"
-  (onWorkflowScale)="onWorkflowScale($event)">
+<firjs [tree]="tree" (onTreeChange)="onTreeChange($event)"
+  (onNodeAdd)="onNodeAdd($event)" (onNodeMove)="onNodeMove($event)"
+  [canSelectNode]="canSelectNode.bind(this)" (onNodeSelect)="onNodeSelect($event)" 
+  [canDeselectNode]="canDeselectNode.bind(this)" (onNodeDeselect)="onNodeDeselect($event)"
+  [canRemoveNode]="canRemoveNode.bind(this)" (onNodeRemove)="onNodeRemove($event)"
+  (onWorkflowPan)="onWorkflowPan($event)" (onWorkflowScale)="onWorkflowScale($event)">
 </firjs>
