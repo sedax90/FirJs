@@ -375,9 +375,9 @@ export class Workspace implements ComponentWithView {
                         const canDeselectNodeFn = this.context.userDefinedFunctions?.canDeselectNode;
                         if (canDeselectNodeFn) {
                             canDeselectNodeFn({
-                                node: componentInstance.node,
-                                parent: componentInstance.parentNode,
-                                index: componentInstance.indexInSequence,
+                                node: previousSelectedComponent.node,
+                                parent: previousSelectedComponent.parentNode,
+                                index: instanceOfComponentInstance(previousSelectedComponent) ? previousSelectedComponent.indexInSequence : null,
                             }).then((result) => {
                                 if (result === true) {
                                     this._deselectNode();
