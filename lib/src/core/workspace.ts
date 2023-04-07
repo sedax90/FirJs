@@ -229,7 +229,7 @@ export class Workspace implements ComponentWithView {
             }
         }
 
-        this.context.designerState.selectedComponent.next(null);
+        this._deselectNode();
     }
 
     private _userInteractionController!: UserInteractionController;
@@ -369,20 +369,29 @@ export class Workspace implements ComponentWithView {
                     // Select a node
                     const componentWithNode = componentInstance;
 
-                    const canSelectNodeFn = this.context.userDefinedFunctions?.canSelectNode;
-                    if (canSelectNodeFn) {
-                        canSelectNodeFn({
-                            node: componentInstance.node,
-                            parent: componentInstance.parentNode,
-                            index: componentInstance.indexInSequence,
-                        }).then((result) => {
-                            if (result === true) {
-                                this.context.designerState?.selectedComponent.next(componentWithNode);
-                            }
-                        });
+                    const previousSelectedComponent = this.context.designerState.selectedComponent.getValue();
+                    if (previousSelectedComponent) {
+                        // We have to check if we can deselect the previous component before
+                        const canDeselectNodeFn = this.context.userDefinedFunctions?.canDeselectNode;
+                        if (canDeselectNodeFn) {
+                            canDeselectNodeFn({
+                                node: componentInstance.node,
+                                parent: componentInstance.parentNode,
+                                index: componentInstance.indexInSequence,
+                            }).then((result) => {
+                                if (result === true) {
+                                    this._deselectNode();
+                                    this._selectNodeFlow(componentWithNode);
+                                }
+                            });
+                        }
+                        else {
+                            this._deselectNode();
+                            this._selectNodeFlow(componentWithNode);
+                        }
                     }
                     else {
-                        this.context.designerState?.selectedComponent.next(componentWithNode);
+                        this._selectNodeFlow(componentWithNode);
                     }
                 }
                 else {
@@ -398,12 +407,12 @@ export class Workspace implements ComponentWithView {
                                 index: instanceOfComponentInstance(previousSelectedNode) ? previousSelectedNode.indexInSequence : null,
                             }).then((result) => {
                                 if (result === true) {
-                                    this._deselectNode(previousSelectedNode);
+                                    this._deselectNode();
                                 }
                             });
                         }
                         else {
-                            this._deselectNode(previousSelectedNode);
+                            this._deselectNode();
                         }
                     }
                 }
@@ -416,7 +425,25 @@ export class Workspace implements ComponentWithView {
         }
     }
 
-    private _deselectNode(previousSelectedNode: ComponentWithNode): void {
+    private _selectNodeFlow(componentInstance: ComponentWithNode & ComponentInstance): void {
+        const canSelectNodeFn = this.context.userDefinedFunctions?.canSelectNode;
+        if (canSelectNodeFn) {
+            canSelectNodeFn({
+                node: componentInstance.node,
+                parent: componentInstance.parentNode,
+                index: componentInstance.indexInSequence,
+            }).then((result) => {
+                if (result === true) {
+                    this.context.designerState?.selectedComponent.next(componentInstance);
+                }
+            });
+        }
+        else {
+            this.context.designerState?.selectedComponent.next(componentInstance);
+        }
+    }
+
+    private _deselectNode(): void {
         this.context.designerState.selectedComponent.next(null);
     }
 
@@ -461,7 +488,7 @@ export class Workspace implements ComponentWithView {
             contextMenu = ComponentContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuRemoveAction(e, componentInstance), (e: MouseEvent) => this._onContextMenuDuplicateAction(e, componentInstance));
         }
         else {
-            this.context.designerState?.selectedComponent.next(null);
+            this._deselectNode();
             contextMenu = WorkspaceContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuFitAndCenter(e));
         }
 
