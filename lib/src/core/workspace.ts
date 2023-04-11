@@ -235,7 +235,7 @@ export class Workspace implements ComponentWithView {
     private _userInteractionController!: UserInteractionController;
 
     private _setViewBinds(): void {
-        this.view.bindClick((position: Vector, target: Element, button: MouseButton) => this._onClick(position, target, button));
+        this.view.bindMouseUp((position: Vector, target: Element, button: MouseButton) => this._onMouseUp(position, target, button));
         this.view.bindMouseDown((position: Vector, target: Element, button: MouseButton) => this._onMouseDown(position, target, button));
         this.view.bindWheel((e: WheelEvent) => this._onWheel(e));
         this.view.bindContextMenu((position: Vector, target: Element) => this._onContextMenu(position, target));
@@ -345,7 +345,7 @@ export class Workspace implements ComponentWithView {
         await this.draw();
     }
 
-    private _onClick(position: Vector, target: Element, button: MouseButton): void {
+    private _onMouseUp(position: Vector, target: Element, button: MouseButton): void {
         // We have to check if the previous interaction was a node or worklow movement, in that case we have to skip the mouseup event
         if (this.context.designerState.wasMoving) {
             this.context.designerState.wasMoving = false;

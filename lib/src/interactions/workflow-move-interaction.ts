@@ -1,7 +1,7 @@
 import { Workflow } from "../core/workflow";
 import { EventEmitter } from "../events/event-emitter";
 import { Context, ClickInteraction, Vector } from "../models";
-import { subtract } from "../utils/vector-utils";
+import { distance, subtract } from "../utils/vector-utils";
 
 export class WorkflowMoveInteraction implements ClickInteraction {
     private constructor(
@@ -13,6 +13,7 @@ export class WorkflowMoveInteraction implements ClickInteraction {
     private _mouseClickOffsetFromComponent!: Vector;
     private _workflowWrapper!: SVGElement;
     private _hasMoved: boolean = false;
+    private _offsetForDrag: number = 4;
 
     static create(
         workflow: Workflow,
@@ -38,6 +39,8 @@ export class WorkflowMoveInteraction implements ClickInteraction {
     }
 
     onMove(delta: Vector): void | ClickInteraction {
+        distance(delta) < this._offsetForDrag;
+
         const workflowRect = this.workflow.view.element.getBoundingClientRect();
 
         let workflowPosition = subtract(this._startPosition, delta);
@@ -54,6 +57,7 @@ export class WorkflowMoveInteraction implements ClickInteraction {
         this.context.designerState.workflowPositionInWorkspace = workflowPosition;
 
         this._hasMoved = true;
+        this.context.designerState.wasMoving = true;
     }
 
     onEnd(): void {
