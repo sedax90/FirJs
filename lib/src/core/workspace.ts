@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions, WorkflowDirectionType } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -67,6 +67,7 @@ export class Workspace implements ComponentWithView {
                 selectedComponent: new Observable<ComponentWithNode | null>(),
                 selectedPlaceholder: new Observable<Placeholder | null>(),
                 scale: 1,
+                direction: "horizontal",
             },
             options: combinedOptions,
             componentCreator: new ComponentCreator(),
@@ -236,6 +237,15 @@ export class Workspace implements ComponentWithView {
         }
 
         this._deselectNode();
+    }
+
+    getDirection(): WorkflowDirectionType {
+        return this.context.designerState.direction;
+    }
+
+    setDirection(direction: WorkflowDirectionType): void {
+        this.context.designerState.direction = direction;
+        this.draw();
     }
 
     private _userInteractionController!: UserInteractionController;
@@ -542,6 +552,7 @@ export class Workspace implements ComponentWithView {
 
     private static _getDefaultOptions(): WorkspaceOptions {
         return {
+            direction: "horizontal",
             style: {
                 fontSize: "1em",
                 fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',

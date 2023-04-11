@@ -3,8 +3,7 @@ import { DomHelper } from "../../../utils/dom-helper";
 
 
 export class JoinView {
-    public static createStraightJoin(parent: SVGElement, start: Vector, height: number): SVGElement {
-
+    public static createVerticalStraightJoin(parent: SVGElement, start: Vector, height: number): SVGElement {
         const line = DomHelper.svg('line', {
             class: "join-line",
             x1: start.x,
@@ -17,10 +16,23 @@ export class JoinView {
         return line;
     }
 
-    public static createConnectionJoin(parent: SVGElement, start: Vector, height: number, context: Context): SVGElement {
-        const line = JoinView.createStraightJoin(parent, start, height);
+    static createHorizontalStraightJoin(parent: SVGElement, start: Vector, width: number): SVGElement {
+        const line = DomHelper.svg('line', {
+            class: "join-line",
+            x1: start.x,
+            y1: start.y,
+            x2: start.x + width,
+            y2: start.y,
+        });
 
-        if (height) {
+        parent.insertBefore(line, parent.firstChild);
+        return line;
+    }
+
+    public static createConnectionJoin(parent: SVGElement, start: Vector, dimension: number, context: Context): SVGElement {
+        const line = (context.designerState.direction === 'vertical') ? JoinView.createVerticalStraightJoin(parent, start, dimension) : JoinView.createHorizontalStraightJoin(parent, start, dimension);
+
+        if (dimension) {
             line.setAttribute("marker-end", "url(#arrowEnd)");
         }
 

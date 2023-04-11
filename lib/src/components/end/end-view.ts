@@ -9,6 +9,7 @@ export class EndView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     public static create(parent: SVGElement, context: Context): EndView {
@@ -34,7 +35,7 @@ export class EndView implements ComponentView {
         element.appendChild(label.element);
         parent.appendChild(element);
 
-        return new EndView(element, parent, diameter, diameter, diameter / 2);
+        return new EndView(element, parent, diameter, diameter, diameter / 2, diameter / 2);
     }
 
     getSelectableElement(): HTMLElement | SVGElement | null {

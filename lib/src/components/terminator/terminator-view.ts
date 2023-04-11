@@ -12,6 +12,7 @@ export class TerminatorView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     private _selectableElement!: SVGElement;
@@ -25,23 +26,34 @@ export class TerminatorView implements ComponentView {
         const stepView = await StepView.create(node, context);
         element.appendChild(stepView.element);
 
-        const connectionHeight = 10;
+        const connectionSize = 10;
         const joinX = stepView.width / 2;
+        const joinY = stepView.height / 2;
 
         const endView = await TerminatorEndView.create(element, context);
-        DomHelper.translate(endView.element, joinX, stepView.height + connectionHeight);
 
-        JoinView.createStraightJoin(element, {
-            x: joinX,
-            y: stepView.height,
-        }, connectionHeight);
+        const direction = context.designerState.direction;
+        if (direction === 'vertical') {
+            DomHelper.translate(endView.element, joinX, stepView.height + connectionSize);
+            JoinView.createVerticalStraightJoin(element, {
+                x: joinX,
+                y: stepView.height,
+            }, connectionSize);
+        }
+        else {
+            DomHelper.translate(endView.element, stepView.width + endView.width / 2 + connectionSize, joinY - endView.height / 2);
+            JoinView.createHorizontalStraightJoin(element, {
+                x: stepView.width,
+                y: joinY,
+            }, connectionSize);
+        }
 
         parent.appendChild(element);
 
         await addHasErrorIfNecessary(element, node, parentNode, context);
 
-        const totalHeight = stepView.height + endView.height + connectionHeight;
-        const terminator = new TerminatorView(element, stepView.width, totalHeight, joinX);
+        const totalHeight = stepView.height + endView.height + connectionSize;
+        const terminator = new TerminatorView(element, stepView.width, totalHeight, joinX, joinY);
         terminator._selectableElement = stepView.element;
         return terminator;
     }

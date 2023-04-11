@@ -16,12 +16,15 @@ export class WorkflowView implements ElementView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     wrapper!: SVGElement;
     mainSequence!: Sequence;
 
     public static async create(parent: HTMLElement, context: Context): Promise<WorkflowView> {
+        const direction = context.designerState.direction;
+
         const svg = DomHelper.svg('svg', {
             class: "workflow-root",
             width: '100%',
@@ -38,41 +41,63 @@ export class WorkflowView implements ElementView {
 
         const start = Start.create(workflowWrapper, context);
         let maxJoinX = start.view.joinX;
+        let maxJoinY = start.view.joinY;
 
         const nodes = context.tree;
         const sequence = await Sequence.create(nodes, null, workflowWrapper, context);
-        const sequenceCenter = sequence.view.joinX;
 
-        if (sequenceCenter > maxJoinX) {
-            maxJoinX = sequenceCenter;
+        const sequenceCenterX = sequence.view.joinX;
+        if (sequenceCenterX > maxJoinX) {
+            maxJoinX = sequenceCenterX;
         }
-        else if (sequenceCenter === 0) {
+        else if (sequenceCenterX === 0) {
             maxJoinX = PlaceholderView.width / 2;
         }
 
+        const sequenceCenterY = sequence.view.joinY;
+        if (sequenceCenterY > maxJoinY) {
+            maxJoinY = sequenceCenterY;
+        }
+        else if (sequenceCenterY === 0) {
+            maxJoinY = PlaceholderView.height / 2;
+        }
+
+        let totalWidth = start.view.width + sequence.view.width;
         let totalHeight = start.view.height + sequence.view.height;
 
         const end = End.create(workflowWrapper, context);
 
-        // Add join to start element
-        JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: start.view.height - PlaceholderView.height }, PlaceholderView.height, context);
+        if (direction === 'vertical') {
+            // Add join to start element
+            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: start.view.height - PlaceholderView.height }, PlaceholderView.height, context);
 
-        // Add last join
-        JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - PlaceholderView.height }, PlaceholderView.height, context);
+            // Add last join
+            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - PlaceholderView.height }, PlaceholderView.height, context);
 
-        DomHelper.translate(sequence.view.element, 0, start.view.height);
+            DomHelper.translate(sequence.view.element, 0, start.view.height);
+            DomHelper.translate(start.view.element, maxJoinX, 0);
+            DomHelper.translate(end.view.element, maxJoinX, totalHeight);
+        }
+        else {
+            // Add join to start element
+            JoinView.createConnectionJoin(workflowWrapper, { x: start.view.width - PlaceholderView.width - 30, y: maxJoinY }, PlaceholderView.width, context);
 
-        // Center start and stop
-        DomHelper.translate(start.view.element, maxJoinX, 0);
-        DomHelper.translate(end.view.element, maxJoinX, totalHeight);
+            // Add last join
+            JoinView.createConnectionJoin(workflowWrapper, { x: totalWidth - PlaceholderView.width - 30, y: maxJoinY }, PlaceholderView.width, context);
 
-        const workflowOffsetY = 10;
-        totalHeight = totalHeight + end.view.height + workflowOffsetY;
+            DomHelper.translate(sequence.view.element, start.view.width - 30, 0);
+            DomHelper.translate(start.view.element, 0, maxJoinY - start.view.joinY);
+            DomHelper.translate(end.view.element, totalWidth, maxJoinY - start.view.joinY);
+        }
+
+        const workflowOffset = 10;
+        totalHeight = totalHeight + end.view.height + workflowOffset;
+        totalWidth = totalWidth + end.view.width + workflowOffset;
 
         svg.appendChild(workflowWrapper);
         parent.appendChild(svg);
 
-        const workflowView = new WorkflowView(svg, parent, context, workflowWrapper.clientWidth, totalHeight, maxJoinX);
+        const workflowView = new WorkflowView(svg, parent, context, workflowWrapper.clientWidth, totalHeight, maxJoinX, maxJoinY);
         workflowView.mainSequence = sequence;
         workflowView.wrapper = workflowWrapper;
 

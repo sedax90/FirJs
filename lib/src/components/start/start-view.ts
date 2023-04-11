@@ -10,6 +10,7 @@ export class StartView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     public static create(parent: SVGElement, context: Context): StartView {
@@ -35,7 +36,19 @@ export class StartView implements ComponentView {
         element.appendChild(circle);
         element.appendChild(label.element);
 
-        return new StartView(element, parent, diameter, diameter + PlaceholderView.height, diameter / 2);
+        let width;
+        let height;
+
+        if (context.designerState.direction === 'vertical') {
+            width = diameter;
+            height = diameter + PlaceholderView.height;
+        }
+        else {
+            width = diameter + PlaceholderView.width;
+            height = diameter;
+        }
+
+        return new StartView(element, parent, width, height, radius, radius);
     }
 
     getSelectableElement(): HTMLElement | SVGElement | null {

@@ -5,6 +5,8 @@ import { ComponentCreator } from "./utils/component-creator";
 import { ClickEvent } from "./utils/event-utils";
 import { Observable } from "./utils/observable";
 
+export type WorkflowDirectionType = 'vertical' | 'horizontal';
+
 export interface ComponentWithView {
     view: ElementView;
 }
@@ -28,6 +30,7 @@ export interface ComponentView extends ElementView {
     width: number;
     height: number;
     joinX: number;
+    joinY: number;
 
     getSelectableElement: () => HTMLElement | SVGElement | null;
     setSelected?: (status: boolean) => void;
@@ -102,6 +105,7 @@ export interface WorkspaceStyleOptions {
 }
 
 export interface WorkspaceOptions {
+    direction: WorkflowDirectionType;
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
 }
@@ -128,6 +132,7 @@ export interface DesignerState {
     selectedComponent: Observable<ComponentWithNode | null>;
     selectedPlaceholder: Observable<Placeholder | null>;
     scale: number;
+    direction: WorkflowDirectionType;
 
     placeholders?: Placeholder[];
     draggedNode?: Node;

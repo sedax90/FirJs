@@ -17,6 +17,7 @@ export class PlaceholderView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     labelText!: string;
@@ -47,7 +48,7 @@ export class PlaceholderView implements ComponentView {
         });
         element.appendChild(selector);
 
-        const placeholderView = new PlaceholderView(element, index, context, PlaceholderView.width, PlaceholderView.height, PlaceholderView.width / 2);
+        const placeholderView = new PlaceholderView(element, index, context, PlaceholderView.width, PlaceholderView.height, PlaceholderView.width / 2, PlaceholderView.height / 2);
         placeholderView._placeholderGroup = element;
         return placeholderView;
     }
