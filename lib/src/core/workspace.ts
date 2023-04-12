@@ -189,6 +189,7 @@ export class Workspace implements ComponentWithView {
             if (newInstance && instanceOfComponentWithNode(newInstance)) {
                 if (suppressEvents) {
                     const eventSuppressor = EventSuppressor.getInstance();
+                    eventSuppressor.suppress('nodeDeselect');
                     eventSuppressor.suppress('nodeSelect');
                 }
 
