@@ -149,7 +149,6 @@ export class Workspace implements ComponentWithView {
         workspace._setViewBinds();
         workspace._addEventListeners();
 
-        context.onDefinitionChange = workspace._onDefinitionChange.bind(workspace);
         context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
 
         workspace._rebuildPlaceholderCache();
@@ -158,9 +157,7 @@ export class Workspace implements ComponentWithView {
     }
 
     setTree(tree: Node[], preservePositionAndScale: boolean = false): void {
-        if (this.context.onDefinitionChange) {
-            this.context.onDefinitionChange(tree, preservePositionAndScale);
-        }
+        this._onDefinitionChange(tree, preservePositionAndScale);
     }
 
     async setOptions(options: Partial<WorkspaceOptions>): Promise<void> {
@@ -247,10 +244,11 @@ export class Workspace implements ComponentWithView {
         const workspaceViewElement = this.view.element;
 
         workspaceViewElement.addEventListener('treeChange', (event) => {
-            if (context.onDefinitionChange) {
-                context.onDefinitionChange(event.detail.tree, true);
+            if (context.userDefinedFunctions?.onTreeChange) {
+                context.userDefinedFunctions.onTreeChange(event.detail);
             }
 
+            this._onDefinitionChange(event.detail.tree, true);
             this._rebuildPlaceholderCache();
         });
 

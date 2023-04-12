@@ -121,8 +121,6 @@ export interface Context {
     userDefinedFunctions?: PublicEvents;
     userDefinedOverriders?: PublicOverriders;
 
-    onDefinitionChange?: (tree: Node[], preservePositionAndScale: boolean) => void;
-
     componentCreator: ComponentCreator;
 }
 
