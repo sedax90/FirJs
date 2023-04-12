@@ -10,3 +10,11 @@ body {
 .draggable {
   cursor: move;
 }
+
+.label-icon {
+  transform: scale(0.6) translate(15px, 15px);
+}
+
+g.label-icon path {
+  fill: currentColor;
+}

@@ -89,7 +89,7 @@ interface PublicEvents {
 
 interface PublicOverriders {
     overrideLabel?: (node: Node) => Promise<string>;
-    overrideIcon?: (node: Node) => Promise<string>;
+    overrideIcon?: (node: Node) => Promise<string | SVGElement>;
     overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 
@@ -109,7 +109,7 @@ export interface WorkspaceInit extends PublicEvents {
     options?: Partial<WorkspaceOptions>;
 
     overrideLabel?: (node: Node) => Promise<string>;
-    overrideIcon?: (node: Node) => Promise<string>;
+    overrideIcon?: (node: Node) => Promise<string | SVGElement>;
     overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 

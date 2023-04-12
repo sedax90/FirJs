@@ -25,7 +25,7 @@ export class StepView {
         });
         step.appendChild(container);
 
-        let customIcon = node?.icon;
+        let customIcon: string | SVGElement | undefined = node?.icon;
         if (context.userDefinedOverriders?.overrideIcon) {
             customIcon = await context.userDefinedOverriders.overrideIcon(node);
         }
@@ -69,7 +69,7 @@ export class StepView {
         return new StepView(step, containerWidth, StepView.defaultHeight);
     }
 
-    private static _createIcons(customIcon: string | undefined): SVGElement {
+    private static _createIcons(customIcon: string | SVGElement | undefined): SVGElement {
         const iconContainer = DomHelper.svg('g', {
             class: 'label-icon-container',
         });
@@ -99,14 +99,24 @@ export class StepView {
             });
 
             const iconSize = iconContainerHeight;
-            const iconImage = DomHelper.svg('image', {
-                class: "label-icon",
-                href: customIcon,
-                width: iconSize,
-                height: iconSize,
-                x: 0,
-                y: 0,
-            });
+            let iconImage: string | SVGElement;
+
+            if (typeof customIcon === 'string') {
+                iconImage = DomHelper.svg('image', {
+                    class: "label-icon",
+                    href: customIcon,
+                    width: iconSize,
+                    height: iconSize,
+                    x: 0,
+                    y: 0,
+                });
+            }
+            else {
+                iconImage = DomHelper.svg('g', {
+                    class: 'label-icon',
+                });
+                iconImage.appendChild(customIcon);
+            }
 
             customIconContainer.appendChild(iconBg);
             customIconContainer.appendChild(iconImage);
