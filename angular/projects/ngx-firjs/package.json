@@ -1,6 +1,6 @@
 {
   "name": "@sedax90/ngx-firjs",
-  "version": "0.0.14-dev",
+  "version": "0.0.15-dev",
   "author": {
     "name": "Cristian Sedaboni"
   },
@@ -9,7 +9,7 @@
     "@angular/core": "13 - 15"
   },
   "dependencies": {
-    "@sedax90/firjs": "0.0.9-dev",
+    "@sedax90/firjs": "0.0.10-dev",
     "tslib": "^2.3.0"
   },
   "sideEffects": false,
