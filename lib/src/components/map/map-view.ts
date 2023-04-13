@@ -7,11 +7,12 @@ import { Sequence } from "../sequence/sequence";
 import loopIcon from '../../assets/sync.svg';
 import { StepView } from "../common/step/step-view";
 import { getNodeClasses } from "../../utils/node-utils";
+import { addHasErrorIfNecessary } from "../../utils/error-helper";
 
 export class MapView extends ParentView {
     private _selectableElement!: SVGElement;
 
-    public static async create(parent: SVGElement, node: Node, context: Context): Promise<MapView> {
+    public static async create(parent: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<MapView> {
         const props = node.props as MapProps;
         const nodes = props?.children ? props.children : [];
 
@@ -88,7 +89,6 @@ export class MapView extends ParentView {
             JoinView.createConnectionJoin(childrenContainer, { x: childrenContainerBgWidth / 2, y: mapLabelHeight }, PlaceholderView.height, context);
         }
         else {
-            element.classList.add('has-error');
             sequenceOffsetLeft = childrenContainerBgWidth;
         }
 
@@ -108,6 +108,8 @@ export class MapView extends ParentView {
         DomHelper.translate(stepView.element, (childrenContainerBgWidth - mapLabelWidth) / 2, 0);
         DomHelper.translate(childrenContainerBg, 0, childrenContainerBgTopOffset);
         DomHelper.translate(sequenceComponent.view.element, (sequenceOffsetLeft / 2), sequenceViewTopOffset);
+
+        await addHasErrorIfNecessary(element, node, parentNode, context);
 
         const mapView = new MapView(element, parent, childrenContainerBgWidth, totalHeight, joinX, sequenceComponent);
         mapView._selectableElement = stepView.element;

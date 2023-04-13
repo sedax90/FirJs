@@ -64,14 +64,12 @@
   stroke-width: 2;
 }
 
-.map.selected
-  > .map-children-wrapper
-  > .children-container
-  > .children-container-bg {
-  stroke: var(--nodeSelectedStrokeColor);
-  stroke-width: 2;
+.map.selected {
+  & > .map-children-wrapper > .children-container > .children-container-bg {
+    stroke: var(--nodeSelectedStrokeColor);
+    stroke-width: 2;
+  }
 }
-
 .selected > .step > .label-container {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
@@ -140,8 +138,8 @@
 }
 
 .circle-label-icon {
-  fill: white;
-  stroke: black;
+  fill: var(--labelContainerFill);
+  stroke: var(--joinLineStroke);
 }
 
 .dragging {

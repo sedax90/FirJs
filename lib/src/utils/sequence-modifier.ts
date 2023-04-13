@@ -13,8 +13,10 @@ export class SequenceModifier {
         }
 
         const isSameSequence = sourceSequence === targetSequence;
-        if (isSameSequence && sourceIndex === targetIndex) {
-            return; // Nothing to do.
+        if (isSameSequence) {
+            if (sourceIndex === targetIndex || sourceIndex + 1 === targetIndex) {
+                return; // Nothing to do.
+            }
         }
 
         sourceSequence.nodes.splice(sourceIndex, 1);

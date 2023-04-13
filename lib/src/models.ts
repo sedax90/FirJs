@@ -67,7 +67,7 @@ export interface ComponentWithNode {
     parentNode: Node | null;
 }
 
-interface PublicEvents {
+interface PublicEventListeners {
     onNodeSelect?: (event: NodeSelectEvent) => void;
     onNodeDeselect?: (event: NodeDeselectEvent) => void;
     onNodeAdd?: (event: NodeAddEvent) => void;
@@ -76,7 +76,9 @@ interface PublicEvents {
     onWorkflowPan?: (event: WorkflowPanEvent) => void;
     onWorkflowScale?: (event: WorkflowScaleEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
+}
 
+interface PublicFunctions {
     canRemoveNode?: (event: NodeRemoveRequestEvent) => Promise<boolean>;
     canAttachNode?: (event: NodeAttachEvent) => Promise<boolean>;
     canDropNode?: (event: NodeHoverEvent) => Promise<{
@@ -85,6 +87,7 @@ interface PublicEvents {
     }>;
     canSelectNode?: (event: SelectNodeRequestEvent) => Promise<boolean>;
     canDeselectNode?: (event: DeselectNodeRequestEvent) => Promise<boolean>;
+    hasError?: (event: HasErrorEvent) => Promise<boolean>;
 }
 
 interface PublicOverriders {
@@ -103,14 +106,10 @@ export interface WorkspaceOptions {
     strings: Record<string, string>;
 }
 
-export interface WorkspaceInit extends PublicEvents {
+export interface WorkspaceInit extends PublicEventListeners, PublicFunctions, PublicOverriders {
     parent: HTMLElement;
     tree: Node[];
     options?: Partial<WorkspaceOptions>;
-
-    overrideLabel?: (node: Node) => Promise<string>;
-    overrideIcon?: (node: Node) => Promise<string | HTMLElement | SVGElement>;
-    overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 
 export interface Context {
@@ -118,7 +117,8 @@ export interface Context {
     designerState: DesignerState;
     options: WorkspaceOptions;
 
-    userDefinedFunctions?: PublicEvents;
+    userDefinedEventListeners?: PublicEventListeners;
+    userDefinedFunctions?: PublicFunctions;
     userDefinedOverriders?: PublicOverriders;
 
     componentCreator: ComponentCreator;
@@ -226,3 +226,5 @@ export interface WorkflowPanEvent {
 export interface WorkflowScaleEvent {
     scale: number;
 }
+
+export interface HasErrorEvent extends GenericNodeEvent { }

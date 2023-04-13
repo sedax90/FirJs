@@ -2,12 +2,12 @@ let = i = 0;
 const tree = [
     {
         id: i++,
-        label: "Pass 1",
+        label: "Starting passsss",
         type: "task",
     },
     {
         id: i++,
-        label: "Choice 1",
+        label: "HTTP request",
         type: "choice",
         props: {
             choices: [
@@ -305,7 +305,7 @@ firjs.init({
     },
     overrideLabel: (node) => {
         return new Promise((resolve, reject) => {
-            resolve(node.label.toLowerCase());
+            resolve(node.label);
         });
     },
     overrideIcon: (node) => {
@@ -336,6 +336,16 @@ firjs.init({
         return new Promise((resolve, reject) => {
             return resolve(`Rule for choice ${columnIndex + 1}`);
         })
+    },
+    hasError: (e) => {
+        return new Promise((resolve, reject) => {
+            if (e.node.type === 'map') {
+                resolve(e.node.props.children.length === 0);
+            }
+            else {
+                resolve(false);
+            }
+        });
     }
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");

@@ -7,6 +7,7 @@ import choiceIcon from '../../assets/call_split.svg';
 import { StepView } from "../common/step/step-view";
 import { getNodeClasses } from "../../utils/node-utils";
 import { ChoiceLabel as ChoiceLabel } from "./choice-label";
+import { addHasErrorIfNecessary } from "../../utils/error-helper";
 
 export class ChoiceView {
     public constructor(
@@ -269,6 +270,8 @@ export class ChoiceView {
         element.appendChild(choicesContainer);
         element.appendChild(stepView.element);
         parentElement.appendChild(element);
+
+        await addHasErrorIfNecessary(element, node, parentNode, context);
 
         const choiceView = new ChoiceView(element, parentElement, maxWidth, totalHeight, joinX, sequences);
         choiceView._selectableElement = stepView.element;

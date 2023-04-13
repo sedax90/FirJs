@@ -10,9 +10,9 @@
 
 ## Demo 🚀️
 
-|||
-|----------|-------------|
-|**Vanilla JS**|[https://sedax90.github.io/firjs-github-io/](https://sedax90.github.io/firjs-github-io/)|
+|                |                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| **Vanilla JS** | [https://sedax90.github.io/firjs-github-io/](https://sedax90.github.io/firjs-github-io/) |
 
 ## About this project ℹ️
 
@@ -24,10 +24,10 @@ This library is written entirely in Typescript and was born to remain simple and
 
 ## How to install 🥑️
 
-|||
-|----------|-------------|
-|**Vanilla JS**|`npm i @sedax90/firjs`|
-|**Angular**|`npm i @sedax90/ngx-firjs`|
+|                |                            |
+| -------------- | -------------------------- |
+| **Vanilla JS** | `npm i @sedax90/firjs`     |
+| **Angular**    | `npm i @sedax90/ngx-firjs` |
 
 ## Concepts 💡️
 
@@ -44,20 +44,20 @@ The workflow tree has a basic hierarchical structure:
 
 ```javascript
 [
-	{
-		id: "123",
-		type: 'task',
-		label: "Foo", // Optional
-		icon: "star", // Optional
-	},
-	{
-		id: "124",
-		type: 'map',
-		props: {
-			children: []
-		}
-	}
-]
+  {
+    id: "123",
+    type: "task",
+    label: "Foo", // Optional
+    icon: "star", // Optional
+  },
+  {
+    id: "124",
+    type: "map",
+    props: {
+      children: [],
+    },
+  },
+];
 ```
 
 You can attach all the data you need in the `props` field, they will always be kept.
@@ -89,8 +89,8 @@ onWorkflowScale: (e: WorkflowScaleEvent) => void;
 You are not required to initialize event responses when creating the workflow as events are emitted as native Javascript events from the Workspace, so you can subscribe to them simply with:
 
 ```javascript
-ws.addEventListener('nodeAdd', (event) => {
-	// Your logic
+ws.addEventListener("nodeAdd", (event) => {
+  // Your logic
 });
 ```
 
@@ -112,28 +112,41 @@ If you want to implement some logics during node drop or node remove, you can im
 canDropNode: (e) => Promise<{
 	allowed: boolean;
 	label?: string;
-}>
+}>;
 
 // This is triggered when you release a node over a placeholder. It's the last chance for you to implement a custom logic for allow/disallow node attachment.
-canAttachNode: (e) => Promise<boolean>
+canAttachNode: (e) => Promise<boolean>;
 
 // This is triggered before removing a node (with context menu or Del button).
-canRemoveNode: (e) => Promise<boolean>
+canRemoveNode: (e) => Promise<boolean>;
+
+// This is triggered before selecting a node.
+canSelectNode: (e) => Promise<boolean>;
+
+// This is triggered before deselecting a node.
+canDeselectNode: (e) => Promise<boolean>;
+
+// This is triggered before rendering a node. You can return a boolean indicating that node has an error (an `has-error` class will be applied to the node).
+hasError: (e) => Promise<boolean>;
 ```
 
 When you implement your drag&drop logic, you have to inform the Workspace that you are going to drop a node on the tree:
 
 ```javascript
-event.dataTransfer.setData('text/plain', JSON.stringify(node));
+event.dataTransfer.setData("text/plain", JSON.stringify(node));
 
-ws.startDrag(event.target, {
+ws.startDrag(
+  event.target,
+  {
     x: event.pageX,
     y: event.pageY,
-}, {
+  },
+  {
     id: (i++).toString(),
     type: element.dataset.type,
     label: `New node ${i}`, // Optional
-});
+  }
+);
 ```
 
 After all, you can pass some options to init for customize some data:
@@ -145,7 +158,6 @@ style: {
 };
 strings: {
     "context-menu.component.actions.remove.label": string,
-    "context-menu.component.actions.duplicate.label": string,
     "context-menu.workspace.actions.fitandcenter.label": string,
 	"placeholder.not-allowed-to-drop.label": string,
 }
@@ -163,11 +175,18 @@ strings: {
 
 FirJs provide this methods to override your data:
 
-- `overrideLabel(node: Node): Promise<string>`: to override your label.
-- `overrideIcon(node: Node): Promise<string>`: to assign a dynamic icon.
-- `overrideColumnLabel(node: Node, parent: Node | null, columnIndex: number): Promise<string>`: to assign a dynamic icon.
+```javascript
+// to override your label.
+overrideLabel(node: Node): Promise<string>;
 
-Both of this functions are executed when a node is drawed.
+// to assign a dynamic icon. If you return a string an <image> tag will be created with url as your string.
+overrideIcon(node: Node): Promise<string>;
+
+// to assign a label for each choice column.
+overrideColumnLabel(node: Node, parent: Node | null, columnIndex: number): Promise<string | HtmlElement | SvgElement>;
+```
+
+All of this functions are executed when a node is drawed.
 
 ### Style customizations
 
