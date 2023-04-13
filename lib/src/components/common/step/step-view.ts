@@ -25,13 +25,15 @@ export class StepView {
         });
         step.appendChild(container);
 
-        let customIcon: string | SVGElement | undefined = node?.icon;
+        let customIcon: string | HTMLElement | SVGElement | undefined = node?.icon;
         if (context.userDefinedOverriders?.overrideIcon) {
             customIcon = await context.userDefinedOverriders.overrideIcon(node);
         }
 
-        const iconContainer = StepView._createIcons(customIcon);
-        step.appendChild(iconContainer);
+        if (customIcon) {
+            const iconContainer = StepView._createIcons(customIcon);
+            step.appendChild(iconContainer);
+        }
 
         let text: string = "";
         if (context?.userDefinedOverriders?.overrideLabel) {
@@ -69,7 +71,7 @@ export class StepView {
         return new StepView(step, containerWidth, StepView.defaultHeight);
     }
 
-    private static _createIcons(customIcon: string | SVGElement | undefined): SVGElement {
+    private static _createIcons(customIcon: string | HTMLElement | SVGElement | undefined): SVGElement {
         const iconContainer = DomHelper.svg('g', {
             class: 'label-icon-container',
         });
@@ -111,19 +113,34 @@ export class StepView {
                     y: 0,
                 });
             }
-            else {
+            else if (customIcon instanceof SVGElement) {
                 iconImage = DomHelper.svg('g', {
                     class: 'label-icon',
                 });
                 iconImage.appendChild(customIcon);
             }
+            else {
+                iconImage = DomHelper.svg('foreignObject', {
+                    width: iconSize,
+                    height: iconSize,
+                    x: 0,
+                    y: 0,
+                });
+                const labelIcon = DomHelper.element('div', {
+                    class: 'label-icon',
+                });
+                iconImage.appendChild(labelIcon);
+                labelIcon.appendChild(customIcon);
+            }
 
-            customIconContainer.appendChild(iconBg);
-            customIconContainer.appendChild(iconImage);
+            if (iconImage) {
+                customIconContainer.appendChild(iconBg);
+                customIconContainer.appendChild(iconImage);
 
-            DomHelper.translate(customIconContainer, dragIconSize, 0);
+                DomHelper.translate(customIconContainer, dragIconSize, 0);
 
-            iconContainer.appendChild(customIconContainer);
+                iconContainer.appendChild(customIconContainer);
+            }
         }
 
         return iconContainer

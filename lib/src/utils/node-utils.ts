@@ -1,4 +1,4 @@
-import { ComponentInstance, ComponentWithNode, Context, Node, NodeRemoveRequestEvent } from "../models";
+import { ComponentInstance, Context, Node, NodeRemoveRequestEvent } from "../models";
 import { instanceOfComponentWithNode } from "./interface-utils";
 import { SequenceModifier } from "./sequence-modifier";
 
@@ -30,32 +30,6 @@ export function removeNode(componentInstance: ComponentInstance, context: Contex
         }
         else {
             SequenceModifier.remove(sequence, componentInstance);
-        }
-    }
-}
-
-export function duplicateNode(componentInstance: ComponentInstance): void {
-    if (instanceOfComponentWithNode(componentInstance)) {
-        const node = componentInstance.node;
-
-        if (node.type === 'terminator') {
-            // Cannot duplicate terminator component
-            return;
-        }
-
-        const sequence = componentInstance.parentSequence;
-        if (!sequence?.nodes) return;
-
-        const index = sequence.getNodeIndex(componentInstance.node);
-        if (index >= 0) {
-            const clone = {
-                ...componentInstance,
-                node: {
-                    ...componentInstance.node,
-                    id: componentInstance.node.id + '-clone',
-                }
-            };
-            SequenceModifier.add(sequence, clone, index + 1);
         }
     }
 }
