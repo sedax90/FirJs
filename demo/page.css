@@ -18,3 +18,14 @@ body {
 g.label-icon path {
   fill: currentColor;
 }
+
+div.label-icon {
+  transform: translateY(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.label-icon i {
+  font-size: 20px;
+}

@@ -12,7 +12,7 @@ import { instanceOfComponentInstance, instanceOfComponentWithNode } from "../uti
 import { CtrlInteraction } from "../interactions/ctrl-interaction";
 import { spacebarKey } from "../utils/keyboard-utils";
 import { ComponentContextMenuView } from "../components/common/context-menu/component-context-menu-view";
-import { duplicateNode, removeNode } from "../utils/node-utils";
+import { removeNode } from "../utils/node-utils";
 import { WorkspaceContextMenuView } from "../components/common/context-menu/workspace-context-menu-view";
 import deepMerge from "../utils/object-utils";
 import { EventEmitter } from "../events/event-emitter";
@@ -484,7 +484,12 @@ export class Workspace implements ComponentWithView {
         let contextMenu!: any;
         if (componentInstance && instanceOfComponentWithNode(componentInstance)) {
             this.context.designerState?.selectedComponent.next(componentInstance);
-            contextMenu = ComponentContextMenuView.create(position, this.context, (e: MouseEvent) => this._onContextMenuRemoveAction(e, componentInstance), (e: MouseEvent) => this._onContextMenuDuplicateAction(e, componentInstance));
+            contextMenu = ComponentContextMenuView.create(position, this.context, {
+                'remove': {
+                    label: this.context.options.strings['context-menu.component.actions.remove.label'],
+                    action: (e: MouseEvent) => this._onContextMenuRemoveAction(e, componentInstance),
+                },
+            });
         }
         else {
             this._deselectNode();
@@ -520,11 +525,6 @@ export class Workspace implements ComponentWithView {
     private _onContextMenuRemoveAction(e: MouseEvent, componentInstance: ComponentInstance): void {
         e.preventDefault();
         removeNode(componentInstance, this.context);
-    }
-
-    private _onContextMenuDuplicateAction(e: MouseEvent, componentInstance: ComponentInstance): void {
-        e.preventDefault();
-        duplicateNode(componentInstance);
     }
 
     private _onContextMenuFitAndCenter(e: MouseEvent): void {

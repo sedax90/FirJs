@@ -322,6 +322,11 @@ firjs.init({
 
                 return resolve(svg);
             }
+            else if (node.type === 'choice') {
+                const element = document.createElement('i');
+                element.classList.add('bi', 'bi-shuffle');
+                return resolve(element);
+            }
             else {
                 resolve('');
             }

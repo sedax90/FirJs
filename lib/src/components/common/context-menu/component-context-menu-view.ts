@@ -6,27 +6,24 @@ export class ComponentContextMenuView implements ContextMenu {
 
     contextMenu!: ContextMenuView
 
-    static create(position: Vector, context: Context, onRemoveAction: (e: MouseEvent) => void, onDuplicateAction: (e: MouseEvent) => void): ComponentContextMenuView {
+    static create(position: Vector, context: Context, actions: Record<string, ContextMenuItem>): ComponentContextMenuView {
         const componentContextMenu = new ComponentContextMenuView();
         const currentSelectedNodeInstance = context.designerState.selectedComponent.getValue();
         const node = currentSelectedNodeInstance?.node;
 
-        const items: ContextMenuItem[] = [
-            {
-                label: context.options.strings['context-menu.component.actions.remove.label'],
-                action: onRemoveAction,
-            },
-            {
-                label: context.options.strings['context-menu.component.actions.duplicate.label'],
-                action: onDuplicateAction,
-                disabled: (node && node.type === 'terminator'),
-            }
-        ];
+        const items: ContextMenuItem[] = [];
+
+        for (const item of Object.values(actions)) {
+            items.push({
+                label: item.label,
+                action: item.action,
+                disabled: item.disabled
+            });
+        }
 
         const contextMenu = ContextMenuView.create(position, items, context);
         componentContextMenu.contextMenu = contextMenu;
 
         return componentContextMenu;
     }
-
 }

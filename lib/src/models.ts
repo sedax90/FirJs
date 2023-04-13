@@ -89,7 +89,7 @@ interface PublicEvents {
 
 interface PublicOverriders {
     overrideLabel?: (node: Node) => Promise<string>;
-    overrideIcon?: (node: Node) => Promise<string | SVGElement>;
+    overrideIcon?: (node: Node) => Promise<string | HTMLElement | SVGElement>;
     overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 
@@ -109,7 +109,7 @@ export interface WorkspaceInit extends PublicEvents {
     options?: Partial<WorkspaceOptions>;
 
     overrideLabel?: (node: Node) => Promise<string>;
-    overrideIcon?: (node: Node) => Promise<string | SVGElement>;
+    overrideIcon?: (node: Node) => Promise<string | HTMLElement | SVGElement>;
     overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
 }
 
@@ -216,7 +216,7 @@ export interface ContextMenu {
 export interface ContextMenuItem {
     label: string;
     action: (e: MouseEvent) => void;
-    disabled?: boolean;
+    disabled?: boolean | (() => boolean);
 }
 
 export interface WorkflowPanEvent {
