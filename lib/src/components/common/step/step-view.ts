@@ -55,12 +55,7 @@ export class StepView {
         const totalIconSizes = iconMarginRight + ((customIcon) ? (22 + StepView.defaultHeight) : 22);
 
         const labelWidth = label.textLength;
-        if (labelWidth + totalIconSizes > containerWidth) {
-            containerWidth = labelWidth + totalIconSizes * 2;
-        }
-        else {
-            containerWidth = containerWidth + totalIconSizes / 2;
-        }
+        containerWidth = labelWidth + totalIconSizes * 2;
 
         const labelOffsetX = containerWidth / 2;
         const labelOffsetY = StepView.defaultHeight / 2;

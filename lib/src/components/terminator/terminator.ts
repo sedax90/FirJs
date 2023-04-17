@@ -5,7 +5,7 @@ import { TerminatorView } from "./terminator-view";
 export class Terminator extends ChildlessComponent implements ComponentWithNode {
 
     static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<Terminator> {
-        const view = await TerminatorView.create(parentElement, node, context);
+        const view = await TerminatorView.create(parentElement, node, parentNode, context);
         const terminator = new Terminator(view, context);
 
         terminator.node = node;

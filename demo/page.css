@@ -20,10 +20,11 @@ g.label-icon path {
 }
 
 div.label-icon {
-  transform: translateY(8px);
+  transform: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 div.label-icon i {

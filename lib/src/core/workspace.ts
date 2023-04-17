@@ -72,40 +72,44 @@ export class Workspace implements ComponentWithView {
             componentCreator: new ComponentCreator(),
         };
 
-        if (!context.userDefinedFunctions) {
-            context.userDefinedFunctions = {};
+        if (!context.userDefinedEventListeners) {
+            context.userDefinedEventListeners = {};
         }
 
         if (initData.onNodeAdd) {
-            context.userDefinedFunctions.onNodeAdd = initData.onNodeAdd;
+            context.userDefinedEventListeners.onNodeAdd = initData.onNodeAdd;
         }
 
         if (initData.onNodeMove) {
-            context.userDefinedFunctions.onNodeMove = initData.onNodeMove;
+            context.userDefinedEventListeners.onNodeMove = initData.onNodeMove;
         }
 
         if (initData.onNodeSelect) {
-            context.userDefinedFunctions.onNodeSelect = initData.onNodeSelect;
+            context.userDefinedEventListeners.onNodeSelect = initData.onNodeSelect;
         }
 
         if (initData.onNodeDeselect) {
-            context.userDefinedFunctions.onNodeDeselect = initData.onNodeDeselect;
+            context.userDefinedEventListeners.onNodeDeselect = initData.onNodeDeselect;
         }
 
         if (initData.onNodeRemove) {
-            context.userDefinedFunctions.onNodeRemove = initData.onNodeRemove;
+            context.userDefinedEventListeners.onNodeRemove = initData.onNodeRemove;
         }
 
         if (initData.onWorkflowPan) {
-            context.userDefinedFunctions.onWorkflowPan = initData.onWorkflowPan;
+            context.userDefinedEventListeners.onWorkflowPan = initData.onWorkflowPan;
         }
 
         if (initData.onWorkflowScale) {
-            context.userDefinedFunctions.onWorkflowScale = initData.onWorkflowScale;
+            context.userDefinedEventListeners.onWorkflowScale = initData.onWorkflowScale;
         }
 
         if (initData.onTreeChange) {
-            context.userDefinedFunctions.onTreeChange = initData.onTreeChange;
+            context.userDefinedEventListeners.onTreeChange = initData.onTreeChange;
+        }
+
+        if (!context.userDefinedFunctions) {
+            context.userDefinedFunctions = {};
         }
 
         if (initData.canRemoveNode) {
@@ -126,6 +130,10 @@ export class Workspace implements ComponentWithView {
 
         if (initData.canDeselectNode) {
             context.userDefinedFunctions.canDeselectNode = initData.canDeselectNode;
+        }
+
+        if (initData.hasError) {
+            context.userDefinedFunctions.hasError = initData.hasError;
         }
 
         if (!context.userDefinedOverriders) {
@@ -245,8 +253,8 @@ export class Workspace implements ComponentWithView {
         const workspaceViewElement = this.view.element;
 
         workspaceViewElement.addEventListener('treeChange', (event) => {
-            if (context.userDefinedFunctions?.onTreeChange) {
-                context.userDefinedFunctions.onTreeChange(event.detail);
+            if (context.userDefinedEventListeners?.onTreeChange) {
+                context.userDefinedEventListeners.onTreeChange(event.detail);
             }
 
             this._onDefinitionChange(event.detail.tree, true);
@@ -254,11 +262,11 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('nodeSelect', (event) => {
-            if (context.userDefinedFunctions?.onNodeSelect) {
+            if (context.userDefinedEventListeners?.onNodeSelect) {
                 const data = event.detail;
 
                 if (instanceOfComponentWithNode(data)) {
-                    context.userDefinedFunctions.onNodeSelect({
+                    context.userDefinedEventListeners.onNodeSelect({
                         node: data.node,
                         parent: data.parent,
                         index: data.index,
@@ -271,11 +279,11 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('nodeDeselect', (event) => {
-            if (context.userDefinedFunctions?.onNodeDeselect) {
+            if (context.userDefinedEventListeners?.onNodeDeselect) {
                 const data = event.detail;
 
                 if (instanceOfComponentWithNode(data)) {
-                    context.userDefinedFunctions.onNodeDeselect({
+                    context.userDefinedEventListeners.onNodeDeselect({
                         node: data.node,
                         parent: data.parent,
                         index: data.index,
@@ -285,7 +293,7 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('nodeMove', (event) => {
-            const onNodeMoveCallback = context.userDefinedFunctions?.onNodeMove;
+            const onNodeMoveCallback = context.userDefinedEventListeners?.onNodeMove;
             if (onNodeMoveCallback) {
                 onNodeMoveCallback(event.detail);
             }
@@ -296,7 +304,7 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('nodeAdd', (event) => {
-            const onNodeAddCallback = context.userDefinedFunctions?.onNodeAdd;
+            const onNodeAddCallback = context.userDefinedEventListeners?.onNodeAdd;
             if (onNodeAddCallback) {
                 onNodeAddCallback(event.detail);
             }
@@ -307,8 +315,8 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('nodeRemove', (event) => {
-            if (context.userDefinedFunctions?.onNodeRemove) {
-                context.userDefinedFunctions.onNodeRemove(event.detail);
+            if (context.userDefinedEventListeners?.onNodeRemove) {
+                context.userDefinedEventListeners.onNodeRemove(event.detail);
             }
 
             EventEmitter.emitTreeChangeEvent(workspaceViewElement, {
@@ -317,16 +325,16 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('workflowPan', (event) => {
-            if (context.userDefinedFunctions?.onWorkflowPan) {
-                context.userDefinedFunctions.onWorkflowPan(event.detail);
+            if (context.userDefinedEventListeners?.onWorkflowPan) {
+                context.userDefinedEventListeners.onWorkflowPan(event.detail);
             }
 
             this._rebuildPlaceholderCache();
         });
 
         workspaceViewElement.addEventListener('workflowScale', (event) => {
-            if (context.userDefinedFunctions?.onWorkflowScale) {
-                context.userDefinedFunctions.onWorkflowScale(event.detail);
+            if (context.userDefinedEventListeners?.onWorkflowScale) {
+                context.userDefinedEventListeners.onWorkflowScale(event.detail);
             }
 
             this._rebuildPlaceholderCache();
@@ -540,7 +548,6 @@ export class Workspace implements ComponentWithView {
             },
             strings: {
                 "context-menu.component.actions.remove.label": "Remove",
-                "context-menu.component.actions.duplicate.label": "Duplicate",
                 "context-menu.workspace.actions.fitandcenter.label": "Fit and center",
                 "placeholder.not-allowed-to-drop.label": "You can't attach a node here",
             }

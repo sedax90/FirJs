@@ -1,5 +1,6 @@
 import { ComponentView, Context, Node } from "../../models";
 import { DomHelper } from "../../utils/dom-helper";
+import { addHasErrorIfNecessary } from "../../utils/error-helper";
 import { getNodeClasses } from "../../utils/node-utils";
 import { JoinView } from "../common/join/join-view";
 import { StepView } from "../common/step/step-view";
@@ -15,7 +16,7 @@ export class TerminatorView implements ComponentView {
 
     private _selectableElement!: SVGElement;
 
-    public static async create(parent: SVGElement, node: Node, context: Context): Promise<TerminatorView> {
+    public static async create(parent: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<TerminatorView> {
         const element = DomHelper.svg('g', {
             class: "terminator",
         });
@@ -36,6 +37,8 @@ export class TerminatorView implements ComponentView {
         }, connectionHeight);
 
         parent.appendChild(element);
+
+        await addHasErrorIfNecessary(element, node, parentNode, context);
 
         const totalHeight = stepView.height + endView.height + connectionHeight;
         const terminator = new TerminatorView(element, stepView.width, totalHeight, joinX);

@@ -14,7 +14,7 @@ export class Map extends ParentComponent implements ComponentWithNode {
             props.children = [];
         }
 
-        const view = await MapView.create(parentElement, node, context);
+        const view = await MapView.create(parentElement, node, parentNode, context);
         const mapComponent = new Map(view, view.sequence, props.children, context);
 
         mapComponent.node = node;
