@@ -114,8 +114,8 @@ export class SequenceView implements ComponentView {
                 JoinView.createConnectionJoin(element, { x: lastTaskOffsetX, y: maxJoinY }, sequenceWidth - lastTaskOffsetX, context);
             }
 
-            sequenceHeight = sequenceHeight + nodeView.height;
             sequenceWidth = sequenceWidth + nodeView.width;
+            sequenceHeight = sequenceHeight + nodeView.height;
 
             lastTaskOffsetX = sequenceWidth;
             lastTaskOffsetY = sequenceHeight;
