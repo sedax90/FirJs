@@ -2,12 +2,12 @@ let = i = 0;
 const tree = [
     {
         id: i++,
-        label: "Starting passsss",
+        label: "Pass 1",
         type: "task",
     },
     {
         id: i++,
-        label: "HTTP request",
+        label: "Choice 1",
         type: "choice",
         props: {
             choices: [
