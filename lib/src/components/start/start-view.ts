@@ -25,12 +25,12 @@ export class StartView implements ComponentView {
             class: "start-bg",
             "stroke-width": 1,
             r: radius,
-            cx: 0,
+            cx: radius,
             cy: radius,
         });
 
         const label = LabelView.create('Start', context);
-        DomHelper.translate(label.element, 0, radius);
+        DomHelper.translate(label.element, radius, radius);
 
         parent.appendChild(element);
         element.appendChild(circle);
@@ -39,12 +39,15 @@ export class StartView implements ComponentView {
         let width;
         let height;
 
+        const placeholderWidth = context.options.style.placeholder.width;
+        const placeholderHeight = context.options.style.placeholder.height;
+
         if (context.designerState.direction === 'vertical') {
             width = diameter;
-            height = diameter + PlaceholderView.height;
+            height = diameter + placeholderHeight;
         }
         else {
-            width = diameter + PlaceholderView.width;
+            width = diameter + placeholderWidth;
             height = diameter;
         }
 

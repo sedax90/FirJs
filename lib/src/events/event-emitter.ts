@@ -1,4 +1,4 @@
-import { NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from "../models";
+import { DirectionChangeEvent, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from "../models";
 import { EventSuppressor } from "./event-suppressor";
 
 export class EventEmitter {
@@ -40,6 +40,11 @@ export class EventEmitter {
     static emitNodeDeselectEvent(element: EventTarget, data: NodeDeselectEvent): void {
         if (EventEmitter._suppressEvent('nodeDeselect')) return;
         element.dispatchEvent(EventEmitter.createCustomEvent('nodeDeselect', data));
+    }
+
+    static emitDirectionChangeEvent(element: EventTarget, data: DirectionChangeEvent): void {
+        if (EventEmitter._suppressEvent('directionChange')) return;
+        element.dispatchEvent(EventEmitter.createCustomEvent('directionChange', data));
     }
 
     private static createCustomEvent(name: string, data: unknown): CustomEvent {

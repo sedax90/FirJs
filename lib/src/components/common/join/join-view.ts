@@ -39,16 +39,29 @@ export class JoinView {
         return line;
     }
 
-    public static createJoins(parent: SVGElement, start: Vector, targets: Vector[]) {
+    public static createHorizontalJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
         const totalTarget = targets.length;
         if (totalTarget === 0) return;
 
         for (let i = 0; i < totalTarget; i++) {
             const end = targets[i];
 
-            // const d = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
-            // const d = `M ${start.x} ${start.y} C ${c1x1} ${c1y1} ${c1x2} ${c1y2} ${end.x} ${end.y} L ${end.x} ${end.y}`;
             const d = `M ${start.x} ${start.y} L ${end.x} ${start.y} L ${end.x} ${end.y}`;
+            parent.insertBefore(DomHelper.svg('path', {
+                class: "join-line",
+                d: d,
+            }), parent.firstChild);
+        }
+    }
+
+    public static createVerticalJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
+        const totalTarget = targets.length;
+        if (totalTarget === 0) return;
+
+        for (let i = 0; i < totalTarget; i++) {
+            const end = targets[i];
+
+            const d = `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
             parent.insertBefore(DomHelper.svg('path', {
                 class: "join-line",
                 d: d,

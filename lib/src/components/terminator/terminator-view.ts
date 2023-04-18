@@ -52,8 +52,19 @@ export class TerminatorView implements ComponentView {
 
         await addHasErrorIfNecessary(element, node, parentNode, context);
 
-        const totalHeight = stepView.height + endView.height + connectionSize;
-        const terminator = new TerminatorView(element, stepView.width, totalHeight, joinX, joinY);
+        let width;
+        let height;
+
+        if (direction === 'vertical') {
+            width = stepView.width;
+            height = stepView.height + endView.height + connectionSize;
+        }
+        else {
+            width = stepView.width + endView.width + connectionSize;
+            height = stepView.height;
+        }
+
+        const terminator = new TerminatorView(element, width, height, joinX, joinY);
         terminator._selectableElement = stepView.element;
         return terminator;
     }

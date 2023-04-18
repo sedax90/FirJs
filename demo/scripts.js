@@ -1,219 +1,217 @@
 let = i = 0;
 const tree = [
-    {
-        id: i++,
-        label: "Pass 1",
-        type: "task",
-    },
-    {
-        id: i++,
-        label: "Choice 1",
-        type: "choice",
-        props: {
-            choices: [
-                [
-                    {
-                        id: i++,
-                        label: "Condition 1",
-                        type: 'task',
-                    },
-                    {
-                        id: i++,
-                        label: "Terminator 1",
-                        type: 'terminator',
-                    }
-                ],
-                [],
-                [
-                    {
-                        id: i++,
-                        label: "Condition 2",
-                        type: 'task',
-                    }
-                ],
-                [
-                    {
-                        id: i++,
-                        label: "Terminator 2",
-                        type: "terminator",
-                    },
-                ]
-            ]
-        }
-    },
-    {
-        id: i++,
-        label: "Pass 2",
-        type: "task",
-    },
-
-
     // {
     //     id: i++,
-    //     label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
+    //     label: "Pass 1",
     //     type: "task",
     // },
     // {
     //     id: i++,
-    //     label: "Choice (node-3)",
+    //     label: "Choice 1",
     //     type: "choice",
     //     props: {
     //         choices: [
     //             [
     //                 {
     //                     id: i++,
-    //                     label: "node-10",
-    //                     type: "task",
+    //                     label: "Condition 1",
+    //                     type: 'task',
     //                 },
     //                 {
     //                     id: i++,
-    //                     label: "Choice (node-15)",
-    //                     type: "choice",
-    //                     props: {
-    //                         choices: [
-    //                             [
-    //                                 {
-    //                                     id: i++,
-    //                                     label: "node-16",
-    //                                     type: "task",
-    //                                 },
-    //                                 {
-    //                                     id: i++,
-    //                                     label: "node-17",
-    //                                     type: "task",
-    //                                 },
-    //                             ],
-    //                             [
-    //                                 {
-    //                                     id: i++,
-    //                                     label: "node-18",
-    //                                     type: "task",
-    //                                 },
-    //                             ],
-    //                         ]
-    //                     }
-    //                 },
+    //                     label: "Terminator 1",
+    //                     type: 'terminator',
+    //                 }
+    //             ],
+    //             [],
+    //             [
     //                 {
     //                     id: i++,
-    //                     label: "node-1",
-    //                     type: "task",
-    //                 },
+    //                     label: "Condition 2",
+    //                     type: 'task',
+    //                 }
     //             ],
     //             [
     //                 {
     //                     id: i++,
-    //                     label: "Map (node-4)",
-    //                     type: "map",
-    //                     props: {
-    //                         children: [],
-    //                     }
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "node-11",
-    //                     type: "task",
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "node-12",
-    //                     type: "task",
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "node-13",
-    //                     type: "task",
-    //                 },
-    //             ],
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "node-14",
-    //                     type: "task",
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "Map (node-4)",
-    //                     type: "map",
-    //                     props: {
-    //                         children: [
-    //                             {
-    //                                 id: i++,
-    //                                 label: "node-5",
-    //                                 type: "task",
-    //                             },
-    //                             {
-    //                                 id: i++,
-    //                                 label: "Map (node-4)",
-    //                                 type: "map",
-    //                                 props: {
-    //                                     children: [
-    //                                         {
-    //                                             id: i++,
-    //                                             label: "node-5",
-    //                                             type: "task",
-    //                                         },
-    //                                         {
-    //                                             id: i++,
-    //                                             label: "Choice (node-15)",
-    //                                             type: "choice",
-    //                                             props: {
-    //                                                 choices: [
-    //                                                     [
-    //                                                         {
-    //                                                             id: i++,
-    //                                                             label: "node-16",
-    //                                                             type: "task",
-    //                                                         },
-    //                                                         {
-    //                                                             id: i++,
-    //                                                             label: "node-17",
-    //                                                             type: "task",
-    //                                                         },
-    //                                                     ],
-    //                                                     [
-    //                                                         {
-    //                                                             id: i++,
-    //                                                             label: "node-18",
-    //                                                             type: "task",
-    //                                                         },
-    //                                                     ],
-    //                                                 ]
-    //                                             }
-    //                                         },
-    //                                     ],
-    //                                 }
-    //                             },
-    //                         ],
-    //                     }
+    //                     label: "Terminator 2",
+    //                     type: "terminator",
     //                 },
     //             ]
     //         ]
     //     }
     // },
+    // {
+    //     id: i++,
+    //     label: "Pass 2",
+    //     type: "task",
+    // },
+    // {
+    //     id: i++,
+    //     label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
+    //     type: "task",
+    // },
     {
         id: i++,
-        label: "Map (node-4)",
-        type: "map",
+        label: "Choice (node-3)",
+        type: "choice",
         props: {
-            children: [
-                {
-                    id: i++,
-                    label: "node-5",
-                    type: "task",
-                },
-                {
-                    id: i++,
-                    label: "node-6",
-                    type: "task",
-                },
-            ],
+            choices: [
+                [
+                    // {
+                    //     id: i++,
+                    //     label: "node-10",
+                    //     type: "task",
+                    // },
+                    // {
+                    //     id: i++,
+                    //     label: "Choice (node-15)",
+                    //     type: "choice",
+                    //     props: {
+                    //         choices: [
+                    //             [
+                    //                 {
+                    //                     id: i++,
+                    //                     label: "node-16",
+                    //                     type: "task",
+                    //                 },
+                    //                 {
+                    //                     id: i++,
+                    //                     label: "node-17",
+                    //                     type: "task",
+                    //                 },
+                    //             ],
+                    //             [
+                    //                 {
+                    //                     id: i++,
+                    //                     label: "node-18",
+                    //                     type: "task",
+                    //                 },
+                    //             ],
+                    //         ]
+                    //     }
+                    // },
+                    {
+                        id: i++,
+                        label: "node-1",
+                        type: "task",
+                    },
+                ],
+                [
+                    // {
+                    //     id: i++,
+                    //     label: "Map (node-4)",
+                    //     type: "map",
+                    //     props: {
+                    //         children: [],
+                    //     }
+                    // },
+                    // {
+                    //     id: i++,
+                    //     label: "node-11",
+                    //     type: "task",
+                    // },
+                    // {
+                    //     id: i++,
+                    //     label: "node-12",
+                    //     type: "task",
+                    // },
+                    {
+                        id: i++,
+                        label: "node-13",
+                        type: "task",
+                    },
+                ],
+                // [
+                //     {
+                //         id: i++,
+                //         label: "node-14",
+                //         type: "task",
+                //     },
+                //     {
+                //         id: i++,
+                //         label: "Map (node-4)",
+                //         type: "map",
+                //         props: {
+                //             children: [
+                //                 {
+                //                     id: i++,
+                //                     label: "node-5",
+                //                     type: "task",
+                //                 },
+                //                 {
+                //                     id: i++,
+                //                     label: "Map (node-4)",
+                //                     type: "map",
+                //                     props: {
+                //                         children: [
+                //                             {
+                //                                 id: i++,
+                //                                 label: "node-5",
+                //                                 type: "task",
+                //                             },
+                //                             {
+                //                                 id: i++,
+                //                                 label: "Choice (node-15)",
+                //                                 type: "choice",
+                //                                 props: {
+                //                                     choices: [
+                //                                         [
+                //                                             {
+                //                                                 id: i++,
+                //                                                 label: "node-16",
+                //                                                 type: "task",
+                //                                             },
+                //                                             {
+                //                                                 id: i++,
+                //                                                 label: "node-17",
+                //                                                 type: "task",
+                //                                             },
+                //                                         ],
+                //                                         [
+                //                                             {
+                //                                                 id: i++,
+                //                                                 label: "node-18",
+                //                                                 type: "task",
+                //                                             },
+                //                                         ],
+                //                                     ]
+                //                                 }
+                //                             },
+                //                         ],
+                //                     }
+                //                 },
+                //             ],
+                //         }
+                //     },
+                // ]
+            ]
         }
     },
-    {
-        id: i++,
-        label: "node-2",
-        type: "task",
-    },
+    // {
+    //     id: i++,
+    //     label: "Map (node-4)",
+    //     type: "map",
+    //     props: {
+    //         children: [
+    //             {
+    //                 id: i++,
+    //                 label: "node-5",
+    //                 type: "task",
+    //             },
+    //             {
+    //                 id: i++,
+    //                 label: "node-6",
+    //                 type: "task",
+    //             },
+    //         ],
+    //     }
+    // },
+    // {
+    //     id: i++,
+    //     label: "node-2",
+    //     type: "task",
+    // },
 ];
 
 const root = document.getElementById('root');
@@ -221,6 +219,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
+        direction: "horizontal",
         style: {
             fontSize: "0.875em",
         },
@@ -259,6 +258,10 @@ firjs.init({
     onWorkflowScale: (e) => {
         console.debug("ON WORKFLOW SCALE", e);
         showToast('onWorkflowScale');
+    },
+    onDirectionChange: (e) => {
+        console.debug("ON DIRECTION CHANGE", e);
+        showToast('onDirectionChange');
     },
     // canDropNode: (e) => {
     //     console.debug("ON CAN NODE DROP", e);
@@ -451,6 +454,10 @@ function showToast(type) {
         case 'canDeselectNode':
             bg = 'linear-gradient(90deg, hsla(187, 82%, 65%, 1) 0%, hsla(65, 77%, 63%, 1) 50%, hsla(327, 67%, 74%, 1) 100%)';
             color = '#000';
+            break;
+
+        case 'onDirectionChange':
+            bg = 'linear-gradient(90deg, hsla(202, 71%, 27%, 1) 0%, hsla(176, 45%, 66%, 1) 100%)';
             break;
     }
 

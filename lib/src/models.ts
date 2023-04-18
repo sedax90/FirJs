@@ -79,6 +79,7 @@ interface PublicEventListeners {
     onWorkflowPan?: (event: WorkflowPanEvent) => void;
     onWorkflowScale?: (event: WorkflowScaleEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
+    onDirectionChange?: (event: DirectionChangeEvent) => void;
 }
 
 interface PublicFunctions {
@@ -102,6 +103,10 @@ interface PublicOverriders {
 export interface WorkspaceStyleOptions {
     fontSize: string;
     fontFamily: string;
+    placeholder: {
+        width: number;
+        height: number;
+    }
 }
 
 export interface WorkspaceOptions {
@@ -233,3 +238,7 @@ export interface WorkflowScaleEvent {
 }
 
 export interface HasErrorEvent extends GenericNodeEvent { }
+
+export interface DirectionChangeEvent {
+    direction: WorkflowDirectionType;
+}

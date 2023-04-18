@@ -2,7 +2,6 @@ import { JoinView } from "../common/join/join-view";
 import { DomHelper } from "../../utils/dom-helper";
 import { ComponentInstance, ComponentView, Context, Node } from "../../models";
 import { Placeholder } from "../placeholder/placeholder";
-import { PlaceholderView } from "../placeholder/placeholder-view";
 
 export class SequenceView implements ComponentView {
     constructor(
@@ -20,6 +19,8 @@ export class SequenceView implements ComponentView {
 
     public static async create(parentElement: SVGElement, nodes: Node[], parentNode: Node | null, context: Context): Promise<SequenceView> {
         const direction = context.designerState.direction;
+        const placeholderWidth = context.options.style.placeholder.width;
+        const placeholderHeight = context.options.style.placeholder.height;
 
         const element = DomHelper.svg('g', {
             class: "sequence nodes",
@@ -52,7 +53,7 @@ export class SequenceView implements ComponentView {
             }
 
             if (component.view.joinY > maxJoinY) {
-                maxJoinY = component.view.joinX;
+                maxJoinY = component.view.joinY;
             }
 
             components.push(component);
@@ -60,28 +61,27 @@ export class SequenceView implements ComponentView {
         }
 
         const placeholders: Placeholder[] = [];
-        let placeholder!: Placeholder;
 
         // Create first placeholder
-        placeholder = await Placeholder.create(element, parentNode, context, 0);
-        placeholders.push(placeholder);
-        let offsetX = maxJoinX - PlaceholderView.width / 2;
+        const firstPlaceholder = await Placeholder.create(element, parentNode, context, 0);
+        placeholders.push(firstPlaceholder);
+        let offsetX = maxJoinX - placeholderWidth / 2;
         if (!maxJoinX && !parentNode) {
             // The sequence is empty and this is the only placeholder
             offsetX = 0;
         }
 
-        let offsetY = maxJoinY - PlaceholderView.height / 2;
+        let offsetY = maxJoinY - placeholderHeight / 2;
         if (!maxJoinY && !parentNode) {
             // The sequence is empty and this is the only placeholder
             offsetY = 0;
         }
 
         if (direction === 'vertical') {
-            DomHelper.translate(placeholder.view.element, offsetX, -PlaceholderView.height);
+            DomHelper.translate(firstPlaceholder.view.element, offsetX, -placeholderHeight);
         }
         else {
-            DomHelper.translate(placeholder.view.element, -PlaceholderView.width, offsetY);
+            DomHelper.translate(firstPlaceholder.view.element, -placeholderWidth, offsetY);
         }
 
         const totalComponents = components.length;
@@ -98,19 +98,18 @@ export class SequenceView implements ComponentView {
             const offsetX = maxJoinX - component.view.joinX;
             const offsetY = maxJoinY - component.view.joinY;
 
-            // Center component
             if (direction === 'vertical') {
+                // Center component
                 DomHelper.translate(nodeView.element, offsetX, sequenceHeight);
-            }
-            else {
-                DomHelper.translate(nodeView.element, sequenceWidth, offsetY);
-            }
 
-            // Add join to previous element
-            if (direction === 'vertical') {
+                // Add join to previous element
                 JoinView.createConnectionJoin(element, { x: maxJoinX, y: lastTaskOffsetY }, sequenceHeight - lastTaskOffsetY, context);
             }
             else {
+                // Center component
+                DomHelper.translate(nodeView.element, sequenceWidth, offsetY);
+
+                // Add join to previous element
                 JoinView.createConnectionJoin(element, { x: lastTaskOffsetX, y: maxJoinY }, sequenceWidth - lastTaskOffsetX, context);
             }
 
@@ -120,29 +119,32 @@ export class SequenceView implements ComponentView {
             lastTaskOffsetX = sequenceWidth;
             lastTaskOffsetY = sequenceHeight;
 
-            placeholder = await Placeholder.create(element, parentNode, context, i + 1);
+            const placeholder = await Placeholder.create(element, parentNode, context, i + 1);
             placeholders.push(placeholder);
 
             if (direction === 'vertical') {
-                DomHelper.translate(placeholder.view.element, maxJoinX - PlaceholderView.width / 2, sequenceHeight);
+                DomHelper.translate(placeholder.view.element, maxJoinX - placeholderWidth / 2, sequenceHeight);
                 sequenceHeight = sequenceHeight + placeholder.view.height;
             }
             else {
-                DomHelper.translate(placeholder.view.element, sequenceWidth, maxJoinY - PlaceholderView.height / 2);
+                DomHelper.translate(placeholder.view.element, sequenceWidth, maxJoinY - placeholderHeight / 2);
                 sequenceWidth = sequenceWidth + placeholder.view.width;
             }
         }
 
         if (totalComponents === 0) {
-            maxWidth = PlaceholderView.width;
-            maxHeight = PlaceholderView.height;
+            maxWidth = placeholderWidth;
+            maxHeight = placeholderHeight;
             maxJoinX = maxWidth / 2;
             maxJoinY = maxHeight / 2;
         }
 
         parentElement.appendChild(element);
 
-        return new SequenceView(element, parentElement, nodes, (direction === 'vertical') ? maxWidth : sequenceWidth, (direction === 'vertical') ? sequenceHeight : maxHeight, maxJoinX, maxJoinY, components, context, placeholders);
+        const width = (direction === 'vertical') ? maxWidth : sequenceWidth;
+        const height = (direction === 'vertical') ? sequenceHeight : maxHeight;
+
+        return new SequenceView(element, parentElement, nodes, width, height, maxJoinX, maxJoinY, components, context, placeholders);
     }
 
     getSelectableElement(): HTMLElement | SVGElement | null {

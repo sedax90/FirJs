@@ -16,6 +16,9 @@ export class MapView extends ParentView {
         const props = node.props as MapProps;
         const nodes = props?.children ? props.children : [];
 
+        const placeholderWidth = context.options.style.placeholder.width;
+        const placeholderHeight = context.options.style.placeholder.height;
+
         const element = DomHelper.svg('g', {
             class: "map",
         });
@@ -34,8 +37,6 @@ export class MapView extends ParentView {
         });
         mapLabelIcon.appendChild(DomHelper.svg('circle', {
             r: 12,
-            cx: mapLabelWidth / 2,
-            cy: mapLabelHeight + 2,
             class: 'circle-label-icon',
             'stroke-width': 1.25,
         }));
@@ -45,8 +46,8 @@ export class MapView extends ParentView {
             href: loopIcon,
             width: iconSize,
             height: iconSize,
-            x: mapLabelWidth / 2 - iconSize / 2,
-            y: mapLabelHeight + 2 - iconSize / 2,
+            x: -iconSize / 2,
+            y: -iconSize / 2,
         }));
 
         stepView.element.appendChild(mapLabelIcon);
@@ -68,7 +69,7 @@ export class MapView extends ParentView {
         const direction = context.designerState.direction;
 
         // Create sequence
-        let sequenceViewTopOffset = (direction === 'vertical') ? (mapLabelHeight + PlaceholderView.height) : 0;
+        let sequenceViewTopOffset = (direction === 'vertical') ? (mapLabelHeight + placeholderHeight) : 0;
 
         const sequenceComponent = await Sequence.create(nodes, node, childrenContainer, context);
         let totalHeight;
@@ -99,7 +100,7 @@ export class MapView extends ParentView {
             childrenContainerBgHeight = childrenContainerBgHeight - childrenContainerBgTopOffset;
         }
         else {
-            childrenContainerBgWidth = childrenContainerBgWidth + PlaceholderView.width + stepView.width;
+            childrenContainerBgWidth = childrenContainerBgWidth + placeholderWidth + stepView.width;
             childrenContainerBgHeight = childrenContainerBgHeight + childrenContainerBgLeftOffset;
         }
 
@@ -113,10 +114,10 @@ export class MapView extends ParentView {
         let sequenceOffsetLeft = childrenContainerBgLeftOffset;
         if (nodes.length) {
             if (direction === 'vertical') {
-                JoinView.createConnectionJoin(childrenContainer, { x: childrenContainerBgWidth / 2, y: mapLabelHeight }, PlaceholderView.height, context);
+                JoinView.createConnectionJoin(childrenContainer, { x: childrenContainerBgWidth / 2, y: mapLabelHeight }, placeholderHeight, context);
             }
             else {
-                JoinView.createConnectionJoin(childrenContainer, { x: mapLabelWidth, y: joinY }, PlaceholderView.width, context);
+                JoinView.createConnectionJoin(childrenContainer, { x: mapLabelWidth, y: joinY }, placeholderWidth, context);
             }
         }
         else {
@@ -138,11 +139,13 @@ export class MapView extends ParentView {
             DomHelper.translate(childrenContainerBg, 0, childrenContainerBgTopOffset);
             DomHelper.translate(stepView.element, (childrenContainerBgWidth - mapLabelWidth) / 2, 0);
             DomHelper.translate(sequenceComponent.view.element, (sequenceOffsetLeft / 2), sequenceViewTopOffset);
+            DomHelper.translate(mapLabelIcon, stepView.width / 2, stepView.height);
         }
         else {
             DomHelper.translate(childrenContainerBg, childrenContainerBgTopOffset, -childrenContainerBgLeftOffset / 2);
             DomHelper.translate(stepView.element, 0, 0);
-            DomHelper.translate(sequenceComponent.view.element, mapLabelWidth + PlaceholderView.width, joinY - sequenceComponent.view.joinY);
+            DomHelper.translate(sequenceComponent.view.element, mapLabelWidth + placeholderWidth, joinY - sequenceComponent.view.joinY);
+            DomHelper.translate(mapLabelIcon, stepView.width, stepView.height / 2);
         }
 
         await addHasErrorIfNecessary(element, node, parentNode, context);

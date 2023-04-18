@@ -39,10 +39,9 @@ export class WorkflowMoveInteraction implements ClickInteraction {
     }
 
     onMove(delta: Vector): void | ClickInteraction {
-        distance(delta) < this._offsetForDrag;
+        if (distance(delta) < this._offsetForDrag) return;
 
         const workflowRect = this.workflow.view.element.getBoundingClientRect();
-
         let workflowPosition = subtract(this._startPosition, delta);
 
         // Compensate the workflow view translation

@@ -55,10 +55,12 @@ export class Workspace implements ComponentWithView {
     // Public methods
 
     static async init(initData: WorkspaceInit): Promise<Workspace> {
-        let combinedOptions: WorkspaceOptions = Workspace._getDefaultOptions();
+        let options: WorkspaceOptions = Workspace._getDefaultOptions();
         if (initData.options) {
-            combinedOptions = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), initData.options);
+            options = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), initData.options);
         }
+
+        options.style.placeholder = Workspace._getPlaceholderStyle(options.direction);
 
         const context: Context = {
             tree: initData.tree,
@@ -67,9 +69,9 @@ export class Workspace implements ComponentWithView {
                 selectedComponent: new Observable<ComponentWithNode | null>(),
                 selectedPlaceholder: new Observable<Placeholder | null>(),
                 scale: 1,
-                direction: "horizontal",
+                direction: options.direction,
             },
-            options: combinedOptions,
+            options: options,
             componentCreator: new ComponentCreator(),
         };
 
@@ -111,6 +113,10 @@ export class Workspace implements ComponentWithView {
 
         if (!context.userDefinedFunctions) {
             context.userDefinedFunctions = {};
+        }
+
+        if (initData.onDirectionChange) {
+            context.userDefinedFunctions.onDirectionChange = initData.onDirectionChange;
         }
 
         if (initData.canRemoveNode) {
@@ -245,7 +251,14 @@ export class Workspace implements ComponentWithView {
 
     setDirection(direction: WorkflowDirectionType): void {
         this.context.designerState.direction = direction;
-        this.draw();
+        this.context.options.style.placeholder = Workspace._getPlaceholderStyle(direction);
+
+        EventEmitter.emitDirectionChangeEvent(this.view.element, {
+            direction: direction,
+        });
+        this.draw().then(() => {
+            this.fitAndCenter();
+        });
     }
 
     private _userInteractionController!: UserInteractionController;
@@ -348,6 +361,12 @@ export class Workspace implements ComponentWithView {
             }
 
             this._rebuildPlaceholderCache();
+        });
+
+        workspaceViewElement.addEventListener('directionChange', (event) => {
+            if (context.userDefinedFunctions?.onDirectionChange) {
+                context.userDefinedFunctions.onDirectionChange(event.detail);
+            }
         });
     }
 
@@ -552,10 +571,11 @@ export class Workspace implements ComponentWithView {
 
     private static _getDefaultOptions(): WorkspaceOptions {
         return {
-            direction: "horizontal",
+            direction: "vertical",
             style: {
                 fontSize: "1em",
                 fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                placeholder: Workspace._getPlaceholderStyle('vertical'),
             },
             strings: {
                 "context-menu.component.actions.remove.label": "Remove",
@@ -570,6 +590,21 @@ export class Workspace implements ComponentWithView {
         if (placeholders != null) {
             const placeholderFinder = PlaceholderFinder.getInstance();
             placeholderFinder.buildCache(placeholders);
+        }
+    }
+
+    private static _getPlaceholderStyle(direction: WorkflowDirectionType): { width: number, height: number } {
+        if (direction === 'vertical') {
+            return {
+                width: 120,
+                height: 40,
+            };
+        }
+        else {
+            return {
+                width: 60,
+                height: 60,
+            };
         }
     }
 }

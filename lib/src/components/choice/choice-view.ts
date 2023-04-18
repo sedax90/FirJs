@@ -1,7 +1,6 @@
 import { JoinView } from "../common/join/join-view";
 import { DomHelper } from "../../utils/dom-helper";
 import { ChoiceProps, Context, Node, Vector } from "../../models";
-import { PlaceholderView } from "../placeholder/placeholder-view";
 import { Sequence } from "../sequence/sequence";
 import choiceIcon from '../../assets/call_split.svg';
 import { StepView } from "../common/step/step-view";
@@ -32,14 +31,15 @@ export class ChoiceView {
         const choiceLabelWidth = stepView.width;
         const choiceLabelHeight = stepView.height;
 
+        const placeholderWidth = context.options.style.placeholder.width;
+        const placeholderHeight = context.options.style.placeholder.height;
+
         // Bottom circle icon
         const labelIcon = DomHelper.svg('g', {
             class: "map-label-icon",
         });
         labelIcon.appendChild(DomHelper.svg('circle', {
             r: 12,
-            cx: choiceLabelWidth / 2,
-            cy: choiceLabelHeight + 2,
             class: 'circle-label-icon',
             'stroke-width': 1.25,
         }));
@@ -49,8 +49,8 @@ export class ChoiceView {
             href: choiceIcon,
             width: iconSize,
             height: iconSize,
-            x: choiceLabelWidth / 2 - iconSize / 2,
-            y: choiceLabelHeight + 2 - iconSize / 2,
+            x: -iconSize / 2,
+            y: -iconSize / 2,
         }));
 
         const choicesContainer = DomHelper.svg('g', {
@@ -68,7 +68,6 @@ export class ChoiceView {
         stepView.element.appendChild(labelIcon);
 
         // Create choices
-
 
         if (!node.props) {
             node.props = {
@@ -92,7 +91,7 @@ export class ChoiceView {
         const sequences: Sequence[] = [];
         const columnMargin = 10;
         const columnPadding = 15;
-        const columnTopOffsetForLabel = PlaceholderView.height + PlaceholderView.height / 3;
+        const columnTopOffsetForLabel = placeholderHeight + placeholderHeight / 3;
         const direction = context.designerState.direction;
 
         let totalColumnsWidth = 0;
@@ -127,10 +126,6 @@ export class ChoiceView {
             // Add padding
             sequenceHeight = sequenceHeight + (columnPadding * 2);
 
-            if (sequenceHeight > maxHeight) {
-                maxHeight = sequenceHeight;
-            }
-
             const choiceColumn = DomHelper.svg('g', {
                 class: `choice-column choice-column-index-${i}`,
             });
@@ -144,10 +139,6 @@ export class ChoiceView {
 
             // Add padding
             sequenceWidth = sequenceWidth + (columnPadding * 2);
-
-            if (sequenceWidth > maxWidth) {
-                maxWidth = sequenceWidth;
-            }
 
             if (choiceInfoLabel.width > sequenceWidth) {
                 sequenceWidth = choiceInfoLabel.width;
@@ -168,17 +159,26 @@ export class ChoiceView {
                 column: choiceColumn,
                 container: choiceColumnContainer,
                 infoLabel: choiceInfoLabel,
-                width: (direction === 'vertical') ? sequenceWidth : maxWidth,
-                height: (direction === 'vertical') ? maxHeight : sequenceHeight,
+                width: sequenceWidth,
+                height: sequenceHeight,
                 joinX: joinX,
                 joinY: joinY,
                 offsetX: 0,
                 offsetY: 0,
                 hasTerminator: false,
             });
+
+            if (sequenceWidth > maxWidth) {
+                maxWidth = sequenceWidth;
+            }
+            if (sequenceHeight > maxHeight) {
+                maxHeight = sequenceHeight;
+            }
         }
 
-        const choicesContainerTopOffset = choiceLabelHeight + PlaceholderView.height;
+        let totalHeight = 0;
+
+        const choicesContainerTopOffset = choiceLabelHeight + placeholderHeight;
         let previousOffsetX = 0;
         let previousOffsetY = 0;
         for (let i = 0; i < columnsMap.length; i++) {
@@ -193,14 +193,14 @@ export class ChoiceView {
 
             const choiceColumnBg = DomHelper.svg('rect', {
                 class: "choice-column-bg",
-                width: column.width,
-                height: column.height,
+                width: (direction === 'vertical') ? column.width : maxWidth + choiceInfoLabel.width + placeholderWidth,
+                height: (direction === 'vertical') ? maxHeight : column.height,
                 rx: 6,
             });
             choiceColumn.insertBefore(choiceColumnBg, choiceColumn.firstChild);
 
             choiceColumn.appendChild(choiceColumnContainer);
-            choiceColumnContainer.appendChild(sequenceView.element); ''
+            choiceColumnContainer.appendChild(sequenceView.element);
 
             if (direction === 'vertical') {
                 const columnWidthWithGutter = column.width + columnMargin;
@@ -208,7 +208,7 @@ export class ChoiceView {
 
                 DomHelper.translate(choiceColumn, columnOffset, 0);
 
-                let sequenceOffsetX = totalNodesInSequence === 0 ? PlaceholderView.width / 2 : 0;
+                let sequenceOffsetX = totalNodesInSequence === 0 ? placeholderWidth / 2 : 0;
                 DomHelper.translate(sequenceView.element, sequenceOffsetX, columnTopOffsetForLabel);
 
                 // First connection
@@ -234,10 +234,15 @@ export class ChoiceView {
                 // TODO
                 const columnHeightWithGutter = column.height + columnMargin;
 
-                DomHelper.translate(choiceColumn, stepView.width + PlaceholderView.width, previousOffsetY);
+                DomHelper.translate(choiceColumn, stepView.width + placeholderWidth, previousOffsetY);
 
-                let sequenceOffsetY = totalNodesInSequence === 0 ? PlaceholderView.height / 2 : -(sequenceView.joinY - sequenceView.height / 2);
-                DomHelper.translate(sequenceView.element, choiceLabelWidth, sequenceOffsetY);
+                let sequenceOffsetY = totalNodesInSequence === 0 ? placeholderHeight / 2 : -(sequenceView.joinY - sequenceView.height / 2);
+                DomHelper.translate(sequenceView.element, choiceInfoLabel.width + placeholderWidth, sequenceOffsetY);
+
+                // First connection
+                if (totalNodesInSequence) {
+                    JoinView.createConnectionJoin(choiceColumnContainer, { x: choiceInfoLabel.width, y: column.height / 2 - columnPadding }, placeholderWidth, context);
+                }
 
                 // Add connection info
                 const choiceInfoLabelOffsetY = (column.height - columnPadding * 2 - choiceInfoLabel.height) / 2;
@@ -250,6 +255,9 @@ export class ChoiceView {
                 previousOffsetY = previousOffsetY + columnHeightWithGutter;
 
                 DomHelper.translate(choiceColumnContainer, 0, columnPadding);
+                DomHelper.translate(choiceColumnBg, choiceLabelHeight / 4, 0);
+
+                totalHeight = totalHeight + column.height;
             }
 
             choicesContainer.appendChild(choiceColumn);
@@ -262,78 +270,100 @@ export class ChoiceView {
             }
         }
 
-        maxHeight = maxHeight + PlaceholderView.height;
-
-        if (totalColumnsWidth > maxWidth) {
-            maxWidth = totalColumnsWidth;
-        }
+        maxHeight = maxHeight + placeholderHeight;
 
         if (direction === 'vertical') {
             DomHelper.translate(choicesContainer, totalColumnsWidth + columnMargin / 2, choicesContainerTopOffset);
+
+            if (totalColumnsWidth > maxWidth) {
+                maxWidth = totalColumnsWidth;
+            }
         }
         else {
             DomHelper.translate(choicesContainer, 0, 0);
+
+            maxWidth = maxWidth + placeholderWidth + stepView.width + choiceLabelWidth;
         }
 
-        const choicesContainerBgTopOffset = 10;
-
-        const labelOffsetX = (maxWidth - choiceLabelWidth) / 2;
+        let joinX = maxWidth / 2;
+        let joinY = 0;
 
         if (direction === 'vertical') {
+            const labelOffsetX = (maxWidth - choiceLabelWidth) / 2;
             DomHelper.translate(stepView.element, labelOffsetX, 0);
+            totalHeight = choiceLabelHeight + maxHeight + placeholderHeight;
+            joinY = maxHeight / 2;
         }
         else {
-            DomHelper.translate(stepView.element, 0, 0);
-        }
+            totalHeight = totalHeight + choiceLabelHeight;
+            joinY = totalHeight / 2;
 
-        const totalHeight = choiceLabelHeight + maxHeight + PlaceholderView.height;
-        const joinX = maxWidth / 2;
-        const joinY = maxHeight / 2;
+            const labeloffsetY = (joinY - choiceLabelHeight / 2);
+            DomHelper.translate(stepView.element, 0, labeloffsetY);
+        }
 
         // Output connection dot
         const endConnection = DomHelper.svg('circle', {
             r: 5,
-            cx: joinX,
-            cy: totalHeight,
+            cx: direction === 'vertical' ? joinX : maxWidth,
+            cy: direction === 'vertical' ? totalHeight : joinY,
             class: 'output choicesContainerConnection',
             fill: "black",
             stroke: "black",
         });
 
         if (sequences.length > 1) {
-            // Start join line
-            if (direction === 'vertical') {
-                JoinView.createVerticalStraightJoin(element, { x: joinX, y: choicesContainerTopOffset - PlaceholderView.height }, PlaceholderView.height / 2);
-            }
-            else {
-                // TODO
-            }
-
             const firstJoinTargets: Vector[] = [];
-
             const lastJoinTargets: Vector[] = [];
-            for (const column of columnsMap) {
-                const columnJoinX = column.offsetX + column.joinX + totalColumnsWidth + columnMargin + columnPadding;
-
-                firstJoinTargets.push({
-                    x: columnJoinX,
-                    y: choicesContainerTopOffset,
-                });
-
-                if (column.hasTerminator) continue;
-
-                lastJoinTargets.push({
-                    x: columnJoinX,
-                    y: column.joinY + choiceLabelHeight + PlaceholderView.height,
-                });
-            }
 
             if (direction === 'vertical') {
-                JoinView.createJoins(element, { x: joinX, y: choicesContainerTopOffset - PlaceholderView.height / 2 }, firstJoinTargets);
-                JoinView.createJoins(element, { x: joinX, y: totalHeight }, lastJoinTargets);
+                JoinView.createVerticalStraightJoin(element, { x: joinX, y: choicesContainerTopOffset - placeholderHeight }, placeholderHeight / 2);
+
+                for (const column of columnsMap) {
+                    const columnJoinX = column.offsetX + column.joinX + totalColumnsWidth + columnMargin + columnPadding;
+
+                    firstJoinTargets.push({
+                        x: columnJoinX,
+                        y: choicesContainerTopOffset,
+                    });
+
+                    if (column.hasTerminator) continue;
+
+                    lastJoinTargets.push({
+                        x: columnJoinX,
+                        y: column.joinY + choiceLabelHeight + placeholderHeight,
+                    });
+                }
+
+                JoinView.createHorizontalJoins(element, { x: joinX, y: choicesContainerTopOffset - placeholderHeight / 2 }, firstJoinTargets);
+                JoinView.createHorizontalJoins(element, { x: joinX, y: totalHeight }, lastJoinTargets);
+
+                DomHelper.translate(labelIcon, stepView.width / 2, stepView.height);
             }
             else {
                 // TODO
+                JoinView.createHorizontalStraightJoin(element, { x: choiceLabelWidth, y: joinY }, placeholderWidth / 2);
+
+                for (const column of columnsMap) {
+                    const columnJoinY = totalHeight + column.offsetY + column.height / 2;
+
+                    firstJoinTargets.push({
+                        x: choiceLabelWidth + placeholderWidth,
+                        y: columnJoinY,
+                    });
+
+                    if (column.hasTerminator) continue;
+
+                    lastJoinTargets.push({
+                        x: column.joinX + choiceLabelWidth + placeholderWidth,
+                        y: columnJoinY,
+                    });
+                }
+
+                JoinView.createVerticalJoins(element, { x: choiceLabelWidth + placeholderWidth / 2, y: joinY }, firstJoinTargets);
+                JoinView.createVerticalJoins(element, { x: maxWidth, y: joinY }, lastJoinTargets);
+
+                DomHelper.translate(labelIcon, stepView.width, stepView.height / 2);
             }
         }
 
@@ -346,11 +376,11 @@ export class ChoiceView {
         choicesContainerBg.setAttribute('height', `${totalHeight}px`);
 
         if (direction === 'vertical') {
+            const choicesContainerBgTopOffset = 10;
             DomHelper.translate(choicesContainerBg, -(totalColumnsWidth + columnMargin / 2), -choicesContainerTopOffset + choicesContainerBgTopOffset);
         }
         else {
             // TODO
-
         }
 
         element.appendChild(endConnection);
