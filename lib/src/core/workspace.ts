@@ -116,7 +116,7 @@ export class Workspace implements ComponentWithView {
         }
 
         if (initData.onDirectionChange) {
-            context.userDefinedFunctions.onDirectionChange = initData.onDirectionChange;
+            context.userDefinedEventListeners.onDirectionChange = initData.onDirectionChange;
         }
 
         if (initData.canRemoveNode) {
@@ -364,8 +364,8 @@ export class Workspace implements ComponentWithView {
         });
 
         workspaceViewElement.addEventListener('directionChange', (event) => {
-            if (context.userDefinedFunctions?.onDirectionChange) {
-                context.userDefinedFunctions.onDirectionChange(event.detail);
+            if (context.userDefinedEventListeners?.onDirectionChange) {
+                context.userDefinedEventListeners.onDirectionChange(event.detail);
             }
         });
     }

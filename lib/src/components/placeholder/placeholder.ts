@@ -97,7 +97,7 @@ export class Placeholder implements ComponentInstance {
             const previousNodeIndex = this.indexInSequence - 1;
             if (previousNodeIndex >= 0) {
                 const previousNode = this.parentSequence.nodes[previousNodeIndex];
-                if (previousNode.type === 'terminator') {
+                if (previousNode && previousNode.type === 'terminator') {
                     canDrop = false;
                 }
             }

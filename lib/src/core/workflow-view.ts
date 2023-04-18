@@ -7,6 +7,7 @@ import { ComponentInstance, ElementView, Context } from "../models";
 import { ClickEvent } from "../utils/event-utils";
 import { JoinView } from "../components/common/join/join-view";
 import { PlaceholderFinder } from "../utils/placeholder-finder";
+import { WorkflowScaleInteraction } from "../interactions/workflow-scale-interaction";
 
 export class WorkflowView implements ElementView {
 
@@ -130,7 +131,11 @@ export class WorkflowView implements ElementView {
         const parentWidth = parentRect.width;
 
         const workflowPadding = 50;
-        const scale = Math.min(parentWidth / (this.width + workflowPadding), parentHeight / (this.height + workflowPadding));
+
+        let scale = Math.min(parentWidth / (this.width + workflowPadding), parentHeight / (this.height + workflowPadding));
+        if (scale > WorkflowScaleInteraction.maxZoomLevel) {
+            scale = WorkflowScaleInteraction.maxZoomLevel;
+        }
 
         const scaledWidth = this.width * scale;
         const scaledHeight = this.height * scale;

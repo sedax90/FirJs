@@ -61,29 +61,6 @@ export class SequenceView implements ComponentView {
         }
 
         const placeholders: Placeholder[] = [];
-
-        // Create first placeholder
-        const firstPlaceholder = await Placeholder.create(element, parentNode, context, 0);
-        placeholders.push(firstPlaceholder);
-        let offsetX = maxJoinX - placeholderWidth / 2;
-        if (!maxJoinX && !parentNode) {
-            // The sequence is empty and this is the only placeholder
-            offsetX = 0;
-        }
-
-        let offsetY = maxJoinY - placeholderHeight / 2;
-        if (!maxJoinY && !parentNode) {
-            // The sequence is empty and this is the only placeholder
-            offsetY = 0;
-        }
-
-        if (direction === 'vertical') {
-            DomHelper.translate(firstPlaceholder.view.element, offsetX, -placeholderHeight);
-        }
-        else {
-            DomHelper.translate(firstPlaceholder.view.element, -placeholderWidth, offsetY);
-        }
-
         const totalComponents = components.length;
 
         let sequenceHeight: number = 0;
@@ -137,6 +114,28 @@ export class SequenceView implements ComponentView {
             maxHeight = placeholderHeight;
             maxJoinX = maxWidth / 2;
             maxJoinY = maxHeight / 2;
+        }
+
+        // Create first placeholder
+        const firstPlaceholder = await Placeholder.create(element, parentNode, context, 0);
+        placeholders.push(firstPlaceholder);
+        let offsetX = maxJoinX - placeholderWidth / 2;
+        if (!maxJoinX && !parentNode) {
+            // The sequence is empty and this is the only placeholder
+            offsetX = 0;
+        }
+
+        let offsetY = maxJoinY - placeholderHeight / 2;
+        if (!maxJoinY && !parentNode) {
+            // The sequence is empty and this is the only placeholder
+            offsetY = 0;
+        }
+
+        if (direction === 'vertical') {
+            DomHelper.translate(firstPlaceholder.view.element, offsetX, -placeholderHeight);
+        }
+        else {
+            DomHelper.translate(firstPlaceholder.view.element, -placeholderWidth, offsetY);
         }
 
         parentElement.appendChild(element);

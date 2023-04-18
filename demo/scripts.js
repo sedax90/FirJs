@@ -5,52 +5,62 @@ const tree = [
     //     label: "Pass 1",
     //     type: "task",
     // },
-    // {
-    //     id: i++,
-    //     label: "Choice 1",
-    //     type: "choice",
-    //     props: {
-    //         choices: [
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "Condition 1",
-    //                     type: 'task',
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "Terminator 1",
-    //                     type: 'terminator',
-    //                 }
-    //             ],
-    //             [],
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "Condition 2",
-    //                     type: 'task',
-    //                 }
-    //             ],
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "Terminator 2",
-    //                     type: "terminator",
-    //                 },
-    //             ]
-    //         ]
-    //     }
-    // },
-    // {
-    //     id: i++,
-    //     label: "Pass 2",
-    //     type: "task",
-    // },
-    // {
-    //     id: i++,
-    //     label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
-    //     type: "task",
-    // },
+    {
+        id: i++,
+        label: "Choice 1",
+        type: "choice",
+        props: {
+            choices: [
+                [
+                    {
+                        id: i++,
+                        label: "Condition 1",
+                        type: 'task',
+                    },
+                    {
+                        id: i++,
+                        label: "Terminator 1",
+                        type: 'terminator',
+                    }
+                ],
+                [],
+                [
+                    {
+                        id: i++,
+                        label: "Map (node-4)",
+                        type: "map",
+                        props: {
+                            children: [
+
+                            ],
+                        }
+                    },
+                    {
+                        id: i++,
+                        label: "Condition 2",
+                        type: 'task',
+                    }
+                ],
+                [
+                    {
+                        id: i++,
+                        label: "Terminator 2",
+                        type: "terminator",
+                    },
+                ]
+            ]
+        }
+    },
+    {
+        id: i++,
+        label: "Pass 2",
+        type: "task",
+    },
+    {
+        id: i++,
+        label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
+        type: "task",
+    },
     {
         id: i++,
         label: "Choice (node-3)",
@@ -58,39 +68,39 @@ const tree = [
         props: {
             choices: [
                 [
-                    // {
-                    //     id: i++,
-                    //     label: "node-10",
-                    //     type: "task",
-                    // },
-                    // {
-                    //     id: i++,
-                    //     label: "Choice (node-15)",
-                    //     type: "choice",
-                    //     props: {
-                    //         choices: [
-                    //             [
-                    //                 {
-                    //                     id: i++,
-                    //                     label: "node-16",
-                    //                     type: "task",
-                    //                 },
-                    //                 {
-                    //                     id: i++,
-                    //                     label: "node-17",
-                    //                     type: "task",
-                    //                 },
-                    //             ],
-                    //             [
-                    //                 {
-                    //                     id: i++,
-                    //                     label: "node-18",
-                    //                     type: "task",
-                    //                 },
-                    //             ],
-                    //         ]
-                    //     }
-                    // },
+                    {
+                        id: i++,
+                        label: "node-10",
+                        type: "task",
+                    },
+                    {
+                        id: i++,
+                        label: "Choice (node-15)",
+                        type: "choice",
+                        props: {
+                            choices: [
+                                [
+                                    {
+                                        id: i++,
+                                        label: "node-16",
+                                        type: "task",
+                                    },
+                                    {
+                                        id: i++,
+                                        label: "node-17",
+                                        type: "task",
+                                    },
+                                ],
+                                [
+                                    {
+                                        id: i++,
+                                        label: "node-18",
+                                        type: "task",
+                                    },
+                                ],
+                            ]
+                        }
+                    },
                     {
                         id: i++,
                         label: "node-1",
@@ -98,120 +108,120 @@ const tree = [
                     },
                 ],
                 [
-                    // {
-                    //     id: i++,
-                    //     label: "Map (node-4)",
-                    //     type: "map",
-                    //     props: {
-                    //         children: [],
-                    //     }
-                    // },
-                    // {
-                    //     id: i++,
-                    //     label: "node-11",
-                    //     type: "task",
-                    // },
-                    // {
-                    //     id: i++,
-                    //     label: "node-12",
-                    //     type: "task",
-                    // },
+                    {
+                        id: i++,
+                        label: "Map (node-4)",
+                        type: "map",
+                        props: {
+                            children: [],
+                        }
+                    },
+                    {
+                        id: i++,
+                        label: "node-11",
+                        type: "task",
+                    },
+                    {
+                        id: i++,
+                        label: "node-12",
+                        type: "task",
+                    },
                     {
                         id: i++,
                         label: "node-13",
                         type: "task",
                     },
                 ],
-                // [
-                //     {
-                //         id: i++,
-                //         label: "node-14",
-                //         type: "task",
-                //     },
-                //     {
-                //         id: i++,
-                //         label: "Map (node-4)",
-                //         type: "map",
-                //         props: {
-                //             children: [
-                //                 {
-                //                     id: i++,
-                //                     label: "node-5",
-                //                     type: "task",
-                //                 },
-                //                 {
-                //                     id: i++,
-                //                     label: "Map (node-4)",
-                //                     type: "map",
-                //                     props: {
-                //                         children: [
-                //                             {
-                //                                 id: i++,
-                //                                 label: "node-5",
-                //                                 type: "task",
-                //                             },
-                //                             {
-                //                                 id: i++,
-                //                                 label: "Choice (node-15)",
-                //                                 type: "choice",
-                //                                 props: {
-                //                                     choices: [
-                //                                         [
-                //                                             {
-                //                                                 id: i++,
-                //                                                 label: "node-16",
-                //                                                 type: "task",
-                //                                             },
-                //                                             {
-                //                                                 id: i++,
-                //                                                 label: "node-17",
-                //                                                 type: "task",
-                //                                             },
-                //                                         ],
-                //                                         [
-                //                                             {
-                //                                                 id: i++,
-                //                                                 label: "node-18",
-                //                                                 type: "task",
-                //                                             },
-                //                                         ],
-                //                                     ]
-                //                                 }
-                //                             },
-                //                         ],
-                //                     }
-                //                 },
-                //             ],
-                //         }
-                //     },
-                // ]
+                [
+                    {
+                        id: i++,
+                        label: "node-14",
+                        type: "task",
+                    },
+                    {
+                        id: i++,
+                        label: "Map (node-4)",
+                        type: "map",
+                        props: {
+                            children: [
+                                {
+                                    id: i++,
+                                    label: "node-5",
+                                    type: "task",
+                                },
+                                {
+                                    id: i++,
+                                    label: "Map (node-4)",
+                                    type: "map",
+                                    props: {
+                                        children: [
+                                            {
+                                                id: i++,
+                                                label: "node-5",
+                                                type: "task",
+                                            },
+                                            {
+                                                id: i++,
+                                                label: "Choice (node-15)",
+                                                type: "choice",
+                                                props: {
+                                                    choices: [
+                                                        [
+                                                            {
+                                                                id: i++,
+                                                                label: "node-16",
+                                                                type: "task",
+                                                            },
+                                                            {
+                                                                id: i++,
+                                                                label: "node-17",
+                                                                type: "task",
+                                                            },
+                                                        ],
+                                                        [
+                                                            {
+                                                                id: i++,
+                                                                label: "node-18",
+                                                                type: "task",
+                                                            },
+                                                        ],
+                                                    ]
+                                                }
+                                            },
+                                        ],
+                                    }
+                                },
+                            ],
+                        }
+                    },
+                ]
             ]
         }
     },
-    // {
-    //     id: i++,
-    //     label: "Map (node-4)",
-    //     type: "map",
-    //     props: {
-    //         children: [
-    //             {
-    //                 id: i++,
-    //                 label: "node-5",
-    //                 type: "task",
-    //             },
-    //             {
-    //                 id: i++,
-    //                 label: "node-6",
-    //                 type: "task",
-    //             },
-    //         ],
-    //     }
-    // },
-    // {
-    //     id: i++,
-    //     label: "node-2",
-    //     type: "task",
-    // },
+    {
+        id: i++,
+        label: "Map (node-4)",
+        type: "map",
+        props: {
+            children: [
+                {
+                    id: i++,
+                    label: "node-5",
+                    type: "task",
+                },
+                {
+                    id: i++,
+                    label: "node-6",
+                    type: "task",
+                },
+            ],
+        }
+    },
+    {
+        id: i++,
+        label: "node-2",
+        type: "task",
+    },
 ];
 
 const root = document.getElementById('root');
@@ -219,7 +229,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
-        direction: "horizontal",
+        direction: "vertical",
         style: {
             fontSize: "0.875em",
         },
@@ -308,7 +318,7 @@ firjs.init({
     },
     overrideLabel: (node) => {
         return new Promise((resolve, reject) => {
-            resolve(node.label);
+            resolve(node.label.toLowerCase());
         });
     },
     overrideIcon: (node) => {
@@ -339,16 +349,6 @@ firjs.init({
         return new Promise((resolve, reject) => {
             return resolve(`Rule for choice ${columnIndex + 1}`);
         })
-    },
-    hasError: (e) => {
-        return new Promise((resolve, reject) => {
-            if (e.node.type === 'map') {
-                resolve(e.node.props.children.length === 0);
-            }
-            else {
-                resolve(false);
-            }
-        });
     }
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");
