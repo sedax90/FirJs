@@ -1,11 +1,12 @@
 import { End } from "../components/end/end";
-import { PlaceholderView } from "../components/placeholder/placeholder-view";
 import { Sequence } from "../components/sequence/sequence";
 import { Start } from "../components/start/start";
 import { DomHelper } from "../utils/dom-helper";
 import { ComponentInstance, ElementView, Context } from "../models";
 import { ClickEvent } from "../utils/event-utils";
 import { JoinView } from "../components/common/join/join-view";
+import { PlaceholderFinder } from "../utils/placeholder-finder";
+import { WorkflowScaleInteraction } from "../interactions/workflow-scale-interaction";
 
 export class WorkflowView implements ElementView {
 
@@ -16,12 +17,17 @@ export class WorkflowView implements ElementView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     wrapper!: SVGElement;
     mainSequence!: Sequence;
 
     public static async create(parent: HTMLElement, context: Context): Promise<WorkflowView> {
+        const flowMode = context.designerState.flowMode;
+        const placeholderWidth = context.options.style.placeholder.width;
+        const placeholderHeight = context.options.style.placeholder.height;
+
         const svg = DomHelper.svg('svg', {
             class: "workflow-root",
             width: '100%',
@@ -37,42 +43,43 @@ export class WorkflowView implements ElementView {
         });
 
         const start = Start.create(workflowWrapper, context);
-        let maxJoinX = start.view.joinX;
 
         const nodes = context.tree;
         const sequence = await Sequence.create(nodes, null, workflowWrapper, context);
-        const sequenceCenter = sequence.view.joinX;
 
-        if (sequenceCenter > maxJoinX) {
-            maxJoinX = sequenceCenter;
-        }
-        else if (sequenceCenter === 0) {
-            maxJoinX = PlaceholderView.width / 2;
-        }
+        let maxJoinX = sequence.view.joinX;
+        let maxJoinY = sequence.view.joinY;
 
+        let totalWidth = start.view.width + sequence.view.width;
         let totalHeight = start.view.height + sequence.view.height;
 
         const end = End.create(workflowWrapper, context);
 
-        // Add join to start element
-        JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: start.view.height - PlaceholderView.height }, PlaceholderView.height, context);
+        if (flowMode === 'vertical') {
+            // Add last join
+            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight }, placeholderHeight, context);
 
-        // Add last join
-        JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - PlaceholderView.height }, PlaceholderView.height, context);
+            DomHelper.translate(sequence.view.element, 0, start.view.height);
+            DomHelper.translate(start.view.element, maxJoinX - start.view.joinX, 0);
+            DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight);
 
-        DomHelper.translate(sequence.view.element, 0, start.view.height);
+            totalHeight = totalHeight + end.view.height;
+        }
+        else {
+            // Add last join
+            JoinView.createConnectionJoin(workflowWrapper, { x: totalWidth - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
 
-        // Center start and stop
-        DomHelper.translate(start.view.element, maxJoinX, 0);
-        DomHelper.translate(end.view.element, maxJoinX, totalHeight);
+            DomHelper.translate(sequence.view.element, start.view.width, 0);
+            DomHelper.translate(start.view.element, 0, maxJoinY - start.view.joinY);
+            DomHelper.translate(end.view.element, totalWidth, maxJoinY - end.view.joinY);
 
-        const workflowOffsetY = 10;
-        totalHeight = totalHeight + end.view.height + workflowOffsetY;
+            totalWidth = totalWidth + end.view.width;
+        }
 
         svg.appendChild(workflowWrapper);
         parent.appendChild(svg);
 
-        const workflowView = new WorkflowView(svg, parent, context, workflowWrapper.clientWidth, totalHeight, maxJoinX);
+        const workflowView = new WorkflowView(svg, parent, context, totalWidth, totalHeight, maxJoinX, maxJoinY);
         workflowView.mainSequence = sequence;
         workflowView.wrapper = workflowWrapper;
 
@@ -99,25 +106,33 @@ export class WorkflowView implements ElementView {
     // Center workflowWrapper into svg
     fitAndCenter(): void {
         const parentRect = this.parent.getBoundingClientRect();
-        const workflowOffsetY = 10;
+        const parentHeight = parentRect.height;
+        const parentWidth = parentRect.width;
 
-        let scale = this.context.designerState.scale;
-        const parentHeight = parentRect.height - workflowOffsetY;
-        if (this.height > parentHeight) {
-            // We have to scale the workflow because it's too big
-            scale = (parentHeight / this.height);
+        const workflowPadding = 50;
+
+        let scale = Math.min(parentWidth / (this.width + workflowPadding), parentHeight / (this.height + workflowPadding));
+        if (scale > WorkflowScaleInteraction.maxZoomLevel) {
+            scale = WorkflowScaleInteraction.maxZoomLevel;
         }
 
-        const workflowOffsetX = (parentRect.width / 2) - (this.joinX * scale);
+        const scaledWidth = this.width * scale;
+        const scaledHeight = this.height * scale;
+
+        const offsetX = (parentWidth - scaledWidth) / 2;
+        const offsetY = (parentHeight - scaledHeight) / 2;
+
         let workflowPosition = {
-            x: workflowOffsetX,
-            y: workflowOffsetY,
+            x: offsetX,
+            y: offsetY,
         }
 
         this.context.designerState.scale = scale;
         this.context.designerState.workflowPositionInWorkspace = workflowPosition;
 
         this.wrapper.setAttribute('transform', `translate(${workflowPosition.x}, ${workflowPosition.y}) scale(${scale})`);
+
+        PlaceholderFinder.getInstance().recalculatePositions();
     }
 
     private static _addSvgDefs(svg: SVGElement): void {

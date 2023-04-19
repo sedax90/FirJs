@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { DeselectNodeRequestEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '@sedax90/firjs';
+import { DeselectNodeRequestEvent, FlowMode, FlowModeChangeEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '@sedax90/firjs';
 
 @Component({
   selector: 'firjs',
@@ -99,6 +99,20 @@ export class NgxFirjsComponent implements OnInit {
     }
   }
 
+  getFlowMode(): FlowMode | null {
+    if (this._workspace) {
+      return this._workspace.getFlowMode();
+    }
+
+    return null;
+  }
+
+  setFlowMode(flowMode: FlowMode): void {
+    if (this._workspace) {
+      this._workspace.setFlowMode(flowMode);
+    }
+  }
+
   @Output() onNodeAdd: EventEmitter<NodeAddEvent> = new EventEmitter<NodeAddEvent>();
   @Output() onNodeMove: EventEmitter<NodeMoveEvent> = new EventEmitter<NodeMoveEvent>();
   @Output() onNodeSelect: EventEmitter<NodeSelectEvent> = new EventEmitter<NodeSelectEvent>();
@@ -107,6 +121,7 @@ export class NgxFirjsComponent implements OnInit {
   @Output() onTreeChange: EventEmitter<TreeChangeEvent> = new EventEmitter<TreeChangeEvent>();
   @Output() onWorkflowPan: EventEmitter<WorkflowPanEvent> = new EventEmitter<WorkflowPanEvent>();
   @Output() onWorkflowScale: EventEmitter<WorkflowScaleEvent> = new EventEmitter<WorkflowScaleEvent>();
+  @Output() onFlowModeChange: EventEmitter<FlowModeChangeEvent> = new EventEmitter<FlowModeChangeEvent>();
 
   private _canDropNode!: (event: NodeHoverEvent) => Promise<{
     allowed: boolean;
@@ -153,6 +168,9 @@ export class NgxFirjsComponent implements OnInit {
       },
       onWorkflowScale: (event: WorkflowScaleEvent) => {
         this.onWorkflowScale.emit(event);
+      },
+      onFlowModeChange: (event: FlowModeChangeEvent) => {
+        this.onFlowModeChange.emit(event);
       },
       canDropNode: this._canDropNode,
       canRemoveNode: this._canRemoveNode,

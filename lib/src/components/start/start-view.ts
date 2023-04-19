@@ -1,7 +1,6 @@
 import { LabelView } from "../common/label/label-view";
 import { DomHelper } from "../../utils/dom-helper";
 import { ComponentView, Context } from "../../models";
-import { PlaceholderView } from "../placeholder/placeholder-view";
 
 export class StartView implements ComponentView {
     private constructor(
@@ -10,6 +9,7 @@ export class StartView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     public static create(parent: SVGElement, context: Context): StartView {
@@ -24,18 +24,18 @@ export class StartView implements ComponentView {
             class: "start-bg",
             "stroke-width": 1,
             r: radius,
-            cx: 0,
+            cx: radius,
             cy: radius,
         });
 
         const label = LabelView.create('Start', context);
-        DomHelper.translate(label.element, 0, radius);
+        DomHelper.translate(label.element, radius, radius);
 
         parent.appendChild(element);
         element.appendChild(circle);
         element.appendChild(label.element);
 
-        return new StartView(element, parent, diameter, diameter + PlaceholderView.height, diameter / 2);
+        return new StartView(element, parent, diameter, diameter, radius, radius);
     }
 
     getSelectableElement(): HTMLElement | SVGElement | null {

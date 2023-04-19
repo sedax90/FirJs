@@ -26,6 +26,10 @@ export class PlaceholderFinder {
         this.placeholders = placeholders;
         this._cache = [];
 
+        this.recalculatePositions();
+    }
+
+    recalculatePositions(): void {
         for (const placeholder of this.placeholders) {
             const position = getComponentPositionInWorkspace(placeholder);
             this._cache.push({

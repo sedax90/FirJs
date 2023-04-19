@@ -9,9 +9,10 @@ export class WorkflowScaleInteraction implements WheelInteraction {
     ) { }
 
     private _workflowWrapper!: SVGElement;
-    private _minZoomLevel: number = 0.05;
-    private _maxZoomLevel: number = 2;
     private _scaleStep: number = 1.1;
+
+    static minZoomLevel: number = 0.05;
+    static maxZoomLevel: number = 2;
 
     static create(
         workflow: Workflow,
@@ -29,15 +30,15 @@ export class WorkflowScaleInteraction implements WheelInteraction {
         if (delta > 0) {
             // Scroll down
             nextScale = nextScale / this._scaleStep;
-            if (nextScale < this._minZoomLevel) {
-                nextScale = this._minZoomLevel;
+            if (nextScale < WorkflowScaleInteraction.minZoomLevel) {
+                nextScale = WorkflowScaleInteraction.minZoomLevel;
             }
         }
         else {
             // Scroll up
             nextScale = nextScale * this._scaleStep;
-            if (nextScale > this._maxZoomLevel) {
-                nextScale = this._maxZoomLevel;
+            if (nextScale > WorkflowScaleInteraction.maxZoomLevel) {
+                nextScale = WorkflowScaleInteraction.maxZoomLevel;
             }
         }
 

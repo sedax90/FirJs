@@ -9,6 +9,7 @@ export class EndView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     public static create(parent: SVGElement, context: Context): EndView {
@@ -23,18 +24,18 @@ export class EndView implements ComponentView {
             class: "end-bg",
             "stroke-width": 1,
             r: radius,
-            cx: 0,
+            cx: radius,
             cy: radius,
         });
 
         const label = LabelView.create('End', context);
-        DomHelper.translate(label.element, 0, radius);
+        DomHelper.translate(label.element, radius, radius);
 
+        parent.appendChild(element);
         element.appendChild(circle);
         element.appendChild(label.element);
-        parent.appendChild(element);
 
-        return new EndView(element, parent, diameter, diameter, diameter / 2);
+        return new EndView(element, parent, diameter, diameter, radius, radius);
     }
 
     getSelectableElement(): HTMLElement | SVGElement | null {

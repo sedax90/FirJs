@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { DeselectNodeRequestEvent, NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, SelectNodeRequestEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from '../../../ngx-firjs/src/public-api';
+import { DeselectNodeRequestEvent, FlowMode, NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, SelectNodeRequestEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from '../../../ngx-firjs/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +14,7 @@ export class AppComponent {
   constructor() { }
 
   tree: Node[] = [];
+  currentFlowMode: FlowMode = 'vertical'
 
   private _ghost!: HTMLElement;
 
@@ -253,5 +254,10 @@ export class AppComponent {
     if (this._ghost) {
       this._ghost.remove();
     }
+  }
+
+  changeFlowMode(): void {
+    const currentFlowMode = this.firjsWorkflow.getFlowMode();
+    this.firjsWorkflow.setFlowMode(currentFlowMode === 'horizontal' ? 'vertical' : "horizontal");
   }
 }

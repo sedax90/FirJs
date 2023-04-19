@@ -5,6 +5,8 @@ import { ComponentCreator } from "./utils/component-creator";
 import { ClickEvent } from "./utils/event-utils";
 import { Observable } from "./utils/observable";
 
+export type FlowMode = 'vertical' | 'horizontal';
+
 export interface ComponentWithView {
     view: ElementView;
 }
@@ -28,6 +30,7 @@ export interface ComponentView extends ElementView {
     width: number;
     height: number;
     joinX: number;
+    joinY: number;
 
     getSelectableElement: () => HTMLElement | SVGElement | null;
     setSelected?: (status: boolean) => void;
@@ -76,6 +79,7 @@ interface PublicEventListeners {
     onWorkflowPan?: (event: WorkflowPanEvent) => void;
     onWorkflowScale?: (event: WorkflowScaleEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
+    onFlowModeChange?: (event: FlowModeChangeEvent) => void;
 }
 
 interface PublicFunctions {
@@ -99,9 +103,14 @@ interface PublicOverriders {
 export interface WorkspaceStyleOptions {
     fontSize: string;
     fontFamily: string;
+    placeholder: {
+        width: number;
+        height: number;
+    }
 }
 
 export interface WorkspaceOptions {
+    flowMode: FlowMode;
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
 }
@@ -128,6 +137,7 @@ export interface DesignerState {
     selectedComponent: Observable<ComponentWithNode | null>;
     selectedPlaceholder: Observable<Placeholder | null>;
     scale: number;
+    flowMode: FlowMode;
 
     placeholders?: Placeholder[];
     draggedNode?: Node;
@@ -228,3 +238,7 @@ export interface WorkflowScaleEvent {
 }
 
 export interface HasErrorEvent extends GenericNodeEvent { }
+
+export interface FlowModeChangeEvent {
+    flowMode: FlowMode;
+}

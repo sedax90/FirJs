@@ -20,16 +20,23 @@
       <mat-icon class="me-1">stop</mat-icon> <span>Terminator</span>
     </button>
   </div>
-  <button mat-raised-button (click)="firjsWorkflow.fitAndCenter()">
-    <mat-icon class="me-2">center_focus_weak</mat-icon>
-    <span>Fit & center</span>
-  </button>
+  <div class="d-flex justify-content-end align-items-center">
+    <button mat-raised-button (click)="changeFlowMode()">
+      <mat-icon class="me-2" *ngIf="currentFlowMode === 'vertical'">vertical_distribute</mat-icon>
+      <mat-icon class="me-2" *ngIf="currentFlowMode === 'horizontal'">horizontal_distribute</mat-icon>
+      <span>Change orientation</span>
+    </button>
+    <button mat-raised-button (click)="firjsWorkflow.fitAndCenter()" class="ms-2">
+      <mat-icon class="me-2">center_focus_weak</mat-icon>
+      <span>Fit & center</span>
+    </button>
+  </div>
 </div>
 
-<firjs [tree]="tree" (onTreeChange)="onTreeChange($event)"
-  (onNodeAdd)="onNodeAdd($event)" (onNodeMove)="onNodeMove($event)"
-  [canSelectNode]="canSelectNode.bind(this)" (onNodeSelect)="onNodeSelect($event)" 
+<firjs [tree]="tree" (onTreeChange)="onTreeChange($event)" (onNodeAdd)="onNodeAdd($event)"
+  (onNodeMove)="onNodeMove($event)" [canSelectNode]="canSelectNode.bind(this)" (onNodeSelect)="onNodeSelect($event)"
   [canDeselectNode]="canDeselectNode.bind(this)" (onNodeDeselect)="onNodeDeselect($event)"
   [canRemoveNode]="canRemoveNode.bind(this)" (onNodeRemove)="onNodeRemove($event)"
-  (onWorkflowPan)="onWorkflowPan($event)" (onWorkflowScale)="onWorkflowScale($event)">
+  (onWorkflowPan)="onWorkflowPan($event)" (onWorkflowScale)="onWorkflowScale($event)"
+  (onFlowModeChange)="currentFlowMode = $event.flowMode">
 </firjs>

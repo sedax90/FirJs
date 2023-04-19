@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions, FlowMode } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -55,10 +55,12 @@ export class Workspace implements ComponentWithView {
     // Public methods
 
     static async init(initData: WorkspaceInit): Promise<Workspace> {
-        let combinedOptions: WorkspaceOptions = Workspace._getDefaultOptions();
+        let options: WorkspaceOptions = Workspace._getDefaultOptions();
         if (initData.options) {
-            combinedOptions = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), initData.options);
+            options = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), initData.options);
         }
+
+        options.style.placeholder = Workspace._getPlaceholderStyle(options.flowMode);
 
         const context: Context = {
             tree: initData.tree,
@@ -67,8 +69,9 @@ export class Workspace implements ComponentWithView {
                 selectedComponent: new Observable<ComponentWithNode | null>(),
                 selectedPlaceholder: new Observable<Placeholder | null>(),
                 scale: 1,
+                flowMode: options.flowMode,
             },
-            options: combinedOptions,
+            options: options,
             componentCreator: new ComponentCreator(),
         };
 
@@ -110,6 +113,10 @@ export class Workspace implements ComponentWithView {
 
         if (!context.userDefinedFunctions) {
             context.userDefinedFunctions = {};
+        }
+
+        if (initData.onFlowModeChange) {
+            context.userDefinedEventListeners.onFlowModeChange = initData.onFlowModeChange;
         }
 
         if (initData.canRemoveNode) {
@@ -238,6 +245,22 @@ export class Workspace implements ComponentWithView {
         this._deselectNode();
     }
 
+    getFlowMode(): FlowMode {
+        return this.context.designerState.flowMode;
+    }
+
+    setFlowMode(flowMode: FlowMode): void {
+        this.context.designerState.flowMode = flowMode;
+        this.context.options.style.placeholder = Workspace._getPlaceholderStyle(flowMode);
+
+        EventEmitter.emitFlowModeChangeEvent(this.view.element, {
+            flowMode: flowMode,
+        });
+        this.draw().then(() => {
+            this.fitAndCenter();
+        });
+    }
+
     private _userInteractionController!: UserInteractionController;
 
     private _setViewBinds(): void {
@@ -338,6 +361,12 @@ export class Workspace implements ComponentWithView {
             }
 
             this._rebuildPlaceholderCache();
+        });
+
+        workspaceViewElement.addEventListener('flowModeChange', (event) => {
+            if (context.userDefinedEventListeners?.onFlowModeChange) {
+                context.userDefinedEventListeners.onFlowModeChange(event.detail);
+            }
         });
     }
 
@@ -542,9 +571,11 @@ export class Workspace implements ComponentWithView {
 
     private static _getDefaultOptions(): WorkspaceOptions {
         return {
+            flowMode: "vertical",
             style: {
                 fontSize: "1em",
                 fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                placeholder: Workspace._getPlaceholderStyle('vertical'),
             },
             strings: {
                 "context-menu.component.actions.remove.label": "Remove",
@@ -559,6 +590,21 @@ export class Workspace implements ComponentWithView {
         if (placeholders != null) {
             const placeholderFinder = PlaceholderFinder.getInstance();
             placeholderFinder.buildCache(placeholders);
+        }
+    }
+
+    private static _getPlaceholderStyle(flowMode: FlowMode): { width: number, height: number } {
+        if (flowMode === 'vertical') {
+            return {
+                width: 120,
+                height: 40,
+            };
+        }
+        else {
+            return {
+                width: 60,
+                height: 45,
+            };
         }
     }
 }

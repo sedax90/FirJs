@@ -8,6 +8,7 @@ export abstract class ParentView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
         readonly sequence: Sequence,
     ) { }
 

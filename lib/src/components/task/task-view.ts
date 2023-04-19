@@ -10,6 +10,7 @@ export class TaskView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     private _selectableElement!: SVGElement;
@@ -26,7 +27,7 @@ export class TaskView implements ComponentView {
 
         await addHasErrorIfNecessary(element, node, parentNode, context);
 
-        const taskView = new TaskView(element, stepView.width, stepView.height, stepView.width / 2);
+        const taskView = new TaskView(element, stepView.width, stepView.height, stepView.width / 2, stepView.height / 2);
         taskView._selectableElement = element;
         return taskView;
     }

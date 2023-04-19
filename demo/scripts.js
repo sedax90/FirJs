@@ -27,6 +27,16 @@ const tree = [
                 [
                     {
                         id: i++,
+                        label: "Map (node-4)",
+                        type: "map",
+                        props: {
+                            children: [
+
+                            ],
+                        }
+                    },
+                    {
+                        id: i++,
                         label: "Condition 2",
                         type: 'task',
                     }
@@ -46,8 +56,6 @@ const tree = [
         label: "Pass 2",
         type: "task",
     },
-
-
     {
         id: i++,
         label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
@@ -192,11 +200,6 @@ const tree = [
     },
     {
         id: i++,
-        label: "node-2",
-        type: "task",
-    },
-    {
-        id: i++,
         label: "Map (node-4)",
         type: "map",
         props: {
@@ -214,6 +217,11 @@ const tree = [
             ],
         }
     },
+    {
+        id: i++,
+        label: "node-2",
+        type: "task",
+    },
 ];
 
 const root = document.getElementById('root');
@@ -221,6 +229,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
+        flowMode: "horizontal",
         style: {
             fontSize: "0.875em",
         },
@@ -259,6 +268,10 @@ firjs.init({
     onWorkflowScale: (e) => {
         console.debug("ON WORKFLOW SCALE", e);
         showToast('onWorkflowScale');
+    },
+    onFlowModeChange: (e) => {
+        console.debug("ON FLOW MODE CHANGE", e);
+        showToast('onFlowModeChange');
     },
     // canDropNode: (e) => {
     //     console.debug("ON CAN NODE DROP", e);
@@ -305,7 +318,7 @@ firjs.init({
     },
     overrideLabel: (node) => {
         return new Promise((resolve, reject) => {
-            resolve(node.label);
+            resolve(node.label.toLowerCase());
         });
     },
     overrideIcon: (node) => {
@@ -336,16 +349,6 @@ firjs.init({
         return new Promise((resolve, reject) => {
             return resolve(`Rule for choice ${columnIndex + 1}`);
         })
-    },
-    hasError: (e) => {
-        return new Promise((resolve, reject) => {
-            if (e.node.type === 'map') {
-                resolve(e.node.props.children.length === 0);
-            }
-            else {
-                resolve(false);
-            }
-        });
     }
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");
@@ -406,6 +409,12 @@ firjs.init({
     redrawBtn.addEventListener('click', () => {
         workspace.draw();
     });
+
+    const changeFlowModeBtn = document.getElementById('changeFlowMode');
+    changeFlowModeBtn.addEventListener('click', () => {
+        const dir = workspace.getFlowMode();
+        workspace.setFlowMode((dir === 'horizontal') ? 'vertical' : 'horizontal');
+    });
 });
 
 function showToast(type) {
@@ -445,6 +454,10 @@ function showToast(type) {
         case 'canDeselectNode':
             bg = 'linear-gradient(90deg, hsla(187, 82%, 65%, 1) 0%, hsla(65, 77%, 63%, 1) 50%, hsla(327, 67%, 74%, 1) 100%)';
             color = '#000';
+            break;
+
+        case 'onFlowModeChange':
+            bg = 'linear-gradient(90deg, hsla(202, 71%, 27%, 1) 0%, hsla(176, 45%, 66%, 1) 100%)';
             break;
     }
 

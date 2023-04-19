@@ -4,11 +4,9 @@ import { PlaceholderLabel } from "./placeholder-label";
 
 const HOVER_CLASS = 'hover';
 const NOT_ALLOWED_CLASS = 'not-allowed';
-const DROPPABLE_CLASS = 'dropppable';
+const DROPPABLE_CLASS = 'droppable';
 
 export class PlaceholderView implements ComponentView {
-    public static width: number = 120;
-    public static height: number = 40;
 
     private constructor(
         readonly element: SVGElement,
@@ -17,6 +15,7 @@ export class PlaceholderView implements ComponentView {
         readonly width: number,
         readonly height: number,
         readonly joinX: number,
+        readonly joinY: number,
     ) { }
 
     labelText!: string;
@@ -25,6 +24,10 @@ export class PlaceholderView implements ComponentView {
     private _notAllowedLabel!: PlaceholderLabel;
 
     public static async create(parent: SVGElement, index: number, context: Context): Promise<PlaceholderView> {
+        const flowMode = context.designerState.flowMode;
+        const placeholderWidth = context.options.style.placeholder.width;
+        const placeholderHeight = context.options.style.placeholder.height;
+
         const element = DomHelper.svg('g', {
             class: 'placeholder-area',
             visibility: 'hidden',
@@ -33,21 +36,23 @@ export class PlaceholderView implements ComponentView {
 
         const dropArea = DomHelper.svg('rect', {
             class: 'placeholder-drop-area',
-            width: PlaceholderView.width,
-            height: PlaceholderView.height,
+            width: placeholderWidth,
+            height: placeholderHeight,
         });
         element.appendChild(dropArea);
 
         const selector = DomHelper.svg('rect', {
             class: 'placeholder-selector',
-            width: PlaceholderView.width,
-            height: 5,
-            y: PlaceholderView.height / 2,
+            width: flowMode === 'vertical' ? placeholderWidth : 3,
+            height: flowMode === 'vertical' ? 6 : placeholderHeight,
+            x: flowMode === 'vertical' ? 0 : (placeholderWidth - 3) / 2,
+            y: flowMode === 'vertical' ? (placeholderHeight - 5) / 2 : 0,
             rx: 2,
         });
+
         element.appendChild(selector);
 
-        const placeholderView = new PlaceholderView(element, index, context, PlaceholderView.width, PlaceholderView.height, PlaceholderView.width / 2);
+        const placeholderView = new PlaceholderView(element, index, context, placeholderWidth, placeholderHeight, placeholderWidth / 2, placeholderHeight / 2);
         placeholderView._placeholderGroup = element;
         return placeholderView;
     }
@@ -88,6 +93,9 @@ export class PlaceholderView implements ComponentView {
     }
 
     private async _addLabel(): Promise<void> {
+        const placeholderWidth = this.context.options.style.placeholder.width;
+        const placeholderHeight = this.context.options.style.placeholder.height;
+
         this._placeholderGroup.classList.add(NOT_ALLOWED_CLASS);
 
         if (!this.labelText) return;
@@ -95,8 +103,8 @@ export class PlaceholderView implements ComponentView {
         const label = await PlaceholderLabel.create(this.element, this.labelText, this.index, this.context);
         this._notAllowedLabel = label;
 
-        const labelOffsetX = (PlaceholderView.width - label.width) / 2;
-        const labelOffsetY = (PlaceholderView.height - label.height) / 2;
+        const labelOffsetX = (placeholderWidth - label.width) / 2;
+        const labelOffsetY = (placeholderHeight - label.height) / 2;
         DomHelper.translate(label.element, labelOffsetX, labelOffsetY);
     }
 
