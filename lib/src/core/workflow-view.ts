@@ -73,18 +73,18 @@ export class WorkflowView implements ElementView {
 
         if (direction === 'vertical') {
             // Add join to start element
-            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: start.view.height - placeholderHeight }, placeholderHeight, context);
+            // JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: start.view.height - placeholderHeight }, placeholderHeight, context);
 
             // Add last join
-            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight }, placeholderHeight, context);
+            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight * 2 }, placeholderHeight, context);
 
-            DomHelper.translate(sequence.view.element, 0, start.view.height);
+            DomHelper.translate(sequence.view.element, 0, start.view.height - placeholderHeight);
             DomHelper.translate(start.view.element, maxJoinX - start.view.joinX, 0);
-            DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight);
+            DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight - placeholderHeight);
         }
         else {
             // Add join to start element
-            JoinView.createConnectionJoin(workflowWrapper, { x: start.view.width - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
+            // JoinView.createConnectionJoin(workflowWrapper, { x: start.view.width - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
 
             // Add last join
             JoinView.createConnectionJoin(workflowWrapper, { x: totalWidth - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
@@ -136,6 +136,8 @@ export class WorkflowView implements ElementView {
         if (scale > WorkflowScaleInteraction.maxZoomLevel) {
             scale = WorkflowScaleInteraction.maxZoomLevel;
         }
+
+        scale = 1;
 
         const scaledWidth = this.width * scale;
         const scaledHeight = this.height * scale;

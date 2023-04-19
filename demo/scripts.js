@@ -5,62 +5,62 @@ const tree = [
     //     label: "Pass 1",
     //     type: "task",
     // },
-    {
-        id: i++,
-        label: "Choice 1",
-        type: "choice",
-        props: {
-            choices: [
-                [
-                    {
-                        id: i++,
-                        label: "Condition 1",
-                        type: 'task',
-                    },
-                    {
-                        id: i++,
-                        label: "Terminator 1",
-                        type: 'terminator',
-                    }
-                ],
-                [],
-                [
-                    {
-                        id: i++,
-                        label: "Map (node-4)",
-                        type: "map",
-                        props: {
-                            children: [
+    // {
+    //     id: i++,
+    //     label: "Choice 1",
+    //     type: "choice",
+    //     props: {
+    //         choices: [
+    //             [
+    //                 {
+    //                     id: i++,
+    //                     label: "Condition 1",
+    //                     type: 'task',
+    //                 },
+    //                 {
+    //                     id: i++,
+    //                     label: "Terminator 1",
+    //                     type: 'terminator',
+    //                 }
+    //             ],
+    //             [],
+    //             [
+    //                 {
+    //                     id: i++,
+    //                     label: "Map (node-4)",
+    //                     type: "map",
+    //                     props: {
+    //                         children: [
 
-                            ],
-                        }
-                    },
-                    {
-                        id: i++,
-                        label: "Condition 2",
-                        type: 'task',
-                    }
-                ],
-                [
-                    {
-                        id: i++,
-                        label: "Terminator 2",
-                        type: "terminator",
-                    },
-                ]
-            ]
-        }
-    },
-    {
-        id: i++,
-        label: "Pass 2",
-        type: "task",
-    },
-    {
-        id: i++,
-        label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
-        type: "task",
-    },
+    //                         ],
+    //                     }
+    //                 },
+    //                 {
+    //                     id: i++,
+    //                     label: "Condition 2",
+    //                     type: 'task',
+    //                 }
+    //             ],
+    //             [
+    //                 {
+    //                     id: i++,
+    //                     label: "Terminator 2",
+    //                     type: "terminator",
+    //                 },
+    //             ]
+    //         ]
+    //     }
+    // },
+    // {
+    //     id: i++,
+    //     label: "Pass 2",
+    //     type: "task",
+    // },
+    // {
+    //     id: i++,
+    //     label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
+    //     type: "task",
+    // },
     {
         id: i++,
         label: "Choice (node-3)",
@@ -229,7 +229,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
-        direction: "vertical",
+        direction: "horizontal",
         style: {
             fontSize: "0.875em",
         },

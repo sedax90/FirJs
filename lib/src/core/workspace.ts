@@ -603,7 +603,7 @@ export class Workspace implements ComponentWithView {
         else {
             return {
                 width: 60,
-                height: 60,
+                height: 45,
             };
         }
     }

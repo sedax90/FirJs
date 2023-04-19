@@ -61,12 +61,37 @@ export class SequenceView implements ComponentView {
         }
 
         const placeholders: Placeholder[] = [];
+        let sequenceHeight: number = 0;
+
+        // Create first placeholder
+        const firstPlaceholder = await Placeholder.create(element, parentNode, context, 0);
+        placeholders.push(firstPlaceholder);
+        sequenceHeight = sequenceHeight + placeholderHeight;
+
+        let offsetX = maxJoinX - placeholderWidth / 2;
+        if (!maxJoinX && !parentNode || nodes.length === 0) {
+            // The sequence is empty and this is the only placeholder
+            offsetX = 0;
+        }
+
+        let offsetY = maxJoinY - placeholderHeight / 2;
+        if (!maxJoinY && !parentNode || nodes.length === 0) {
+            // The sequence is empty and this is the only placeholder
+            offsetY = 0;
+        }
+
+        if (direction === 'vertical') {
+            DomHelper.translate(firstPlaceholder.view.element, offsetX, 0);
+        }
+        else {
+            DomHelper.translate(firstPlaceholder.view.element, -placeholderWidth, offsetY);
+        }
+
         const totalComponents = components.length;
 
-        let sequenceHeight: number = 0;
         let sequenceWidth: number = 0;
 
-        let lastTaskOffsetX = 0;
+        let lastTaskOffsetX = -placeholderWidth;
         let lastTaskOffsetY = 0;
         for (let i = 0; i < totalComponents; i++) {
             const component = components[i];
@@ -101,41 +126,21 @@ export class SequenceView implements ComponentView {
 
             if (direction === 'vertical') {
                 DomHelper.translate(placeholder.view.element, maxJoinX - placeholderWidth / 2, sequenceHeight);
-                sequenceHeight = sequenceHeight + placeholder.view.height;
+                sequenceHeight = sequenceHeight + placeholderHeight;
             }
             else {
                 DomHelper.translate(placeholder.view.element, sequenceWidth, maxJoinY - placeholderHeight / 2);
-                sequenceWidth = sequenceWidth + placeholder.view.width;
+                sequenceWidth = sequenceWidth + placeholderWidth;
             }
         }
 
         if (totalComponents === 0) {
+            sequenceWidth = placeholderWidth;
+            sequenceHeight = placeholderHeight;
             maxWidth = placeholderWidth;
             maxHeight = placeholderHeight;
             maxJoinX = maxWidth / 2;
             maxJoinY = maxHeight / 2;
-        }
-
-        // Create first placeholder
-        const firstPlaceholder = await Placeholder.create(element, parentNode, context, 0);
-        placeholders.push(firstPlaceholder);
-        let offsetX = maxJoinX - placeholderWidth / 2;
-        if (!maxJoinX && !parentNode) {
-            // The sequence is empty and this is the only placeholder
-            offsetX = 0;
-        }
-
-        let offsetY = maxJoinY - placeholderHeight / 2;
-        if (!maxJoinY && !parentNode) {
-            // The sequence is empty and this is the only placeholder
-            offsetY = 0;
-        }
-
-        if (direction === 'vertical') {
-            DomHelper.translate(firstPlaceholder.view.element, offsetX, -placeholderHeight);
-        }
-        else {
-            DomHelper.translate(firstPlaceholder.view.element, -placeholderWidth, offsetY);
         }
 
         parentElement.appendChild(element);
