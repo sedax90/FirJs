@@ -1,7 +1,6 @@
 import { LabelView } from "../common/label/label-view";
 import { DomHelper } from "../../utils/dom-helper";
 import { ComponentView, Context } from "../../models";
-import { PlaceholderView } from "../placeholder/placeholder-view";
 
 export class EndView implements ComponentView {
     private constructor(
@@ -36,22 +35,7 @@ export class EndView implements ComponentView {
         element.appendChild(circle);
         element.appendChild(label.element);
 
-        let width;
-        let height;
-
-        const placeholderWidth = context.options.style.placeholder.width;
-        const placeholderHeight = context.options.style.placeholder.height;
-
-        if (context.designerState.direction === 'vertical') {
-            width = diameter;
-            height = diameter + placeholderHeight;
-        }
-        else {
-            width = diameter + placeholderWidth;
-            height = diameter;
-        }
-
-        return new EndView(element, parent, width, height, radius, radius);
+        return new EndView(element, parent, diameter, diameter, radius, radius);
     }
 
     getSelectableElement(): HTMLElement | SVGElement | null {

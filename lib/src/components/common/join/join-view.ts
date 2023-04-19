@@ -30,7 +30,7 @@ export class JoinView {
     }
 
     public static createConnectionJoin(parent: SVGElement, start: Vector, dimension: number, context: Context): SVGElement {
-        const line = (context.designerState.direction === 'vertical') ? JoinView.createVerticalStraightJoin(parent, start, dimension) : JoinView.createHorizontalStraightJoin(parent, start, dimension);
+        const line = (context.designerState.flowMode === 'vertical') ? JoinView.createVerticalStraightJoin(parent, start, dimension) : JoinView.createHorizontalStraightJoin(parent, start, dimension);
 
         if (dimension) {
             line.setAttribute("marker-end", "url(#arrowEnd)");

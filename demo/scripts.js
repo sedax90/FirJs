@@ -1,66 +1,66 @@
 let = i = 0;
 const tree = [
-    // {
-    //     id: i++,
-    //     label: "Pass 1",
-    //     type: "task",
-    // },
-    // {
-    //     id: i++,
-    //     label: "Choice 1",
-    //     type: "choice",
-    //     props: {
-    //         choices: [
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "Condition 1",
-    //                     type: 'task',
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "Terminator 1",
-    //                     type: 'terminator',
-    //                 }
-    //             ],
-    //             [],
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "Map (node-4)",
-    //                     type: "map",
-    //                     props: {
-    //                         children: [
+    {
+        id: i++,
+        label: "Pass 1",
+        type: "task",
+    },
+    {
+        id: i++,
+        label: "Choice 1",
+        type: "choice",
+        props: {
+            choices: [
+                [
+                    {
+                        id: i++,
+                        label: "Condition 1",
+                        type: 'task',
+                    },
+                    {
+                        id: i++,
+                        label: "Terminator 1",
+                        type: 'terminator',
+                    }
+                ],
+                [],
+                [
+                    {
+                        id: i++,
+                        label: "Map (node-4)",
+                        type: "map",
+                        props: {
+                            children: [
 
-    //                         ],
-    //                     }
-    //                 },
-    //                 {
-    //                     id: i++,
-    //                     label: "Condition 2",
-    //                     type: 'task',
-    //                 }
-    //             ],
-    //             [
-    //                 {
-    //                     id: i++,
-    //                     label: "Terminator 2",
-    //                     type: "terminator",
-    //                 },
-    //             ]
-    //         ]
-    //     }
-    // },
-    // {
-    //     id: i++,
-    //     label: "Pass 2",
-    //     type: "task",
-    // },
-    // {
-    //     id: i++,
-    //     label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
-    //     type: "task",
-    // },
+                            ],
+                        }
+                    },
+                    {
+                        id: i++,
+                        label: "Condition 2",
+                        type: 'task',
+                    }
+                ],
+                [
+                    {
+                        id: i++,
+                        label: "Terminator 2",
+                        type: "terminator",
+                    },
+                ]
+            ]
+        }
+    },
+    {
+        id: i++,
+        label: "Pass 2",
+        type: "task",
+    },
+    {
+        id: i++,
+        label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
+        type: "task",
+    },
     {
         id: i++,
         label: "Choice (node-3)",
@@ -229,7 +229,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
-        direction: "horizontal",
+        flowMode: "horizontal",
         style: {
             fontSize: "0.875em",
         },
@@ -269,9 +269,9 @@ firjs.init({
         console.debug("ON WORKFLOW SCALE", e);
         showToast('onWorkflowScale');
     },
-    onDirectionChange: (e) => {
-        console.debug("ON DIRECTION CHANGE", e);
-        showToast('onDirectionChange');
+    onFlowModeChange: (e) => {
+        console.debug("ON FLOW MODE CHANGE", e);
+        showToast('onFlowModeChange');
     },
     // canDropNode: (e) => {
     //     console.debug("ON CAN NODE DROP", e);
@@ -410,10 +410,10 @@ firjs.init({
         workspace.draw();
     });
 
-    const changeDirectionBtn = document.getElementById('changeDirection');
-    changeDirectionBtn.addEventListener('click', () => {
-        const dir = workspace.getDirection();
-        workspace.setDirection((dir === 'horizontal') ? 'vertical' : 'horizontal');
+    const changeFlowModeBtn = document.getElementById('changeFlowMode');
+    changeFlowModeBtn.addEventListener('click', () => {
+        const dir = workspace.getFlowMode();
+        workspace.setFlowMode((dir === 'horizontal') ? 'vertical' : 'horizontal');
     });
 });
 
@@ -456,7 +456,7 @@ function showToast(type) {
             color = '#000';
             break;
 
-        case 'onDirectionChange':
+        case 'onFlowModeChange':
             bg = 'linear-gradient(90deg, hsla(202, 71%, 27%, 1) 0%, hsla(176, 45%, 66%, 1) 100%)';
             break;
     }

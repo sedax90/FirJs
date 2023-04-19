@@ -5,7 +5,7 @@ import { ComponentCreator } from "./utils/component-creator";
 import { ClickEvent } from "./utils/event-utils";
 import { Observable } from "./utils/observable";
 
-export type WorkflowDirectionType = 'vertical' | 'horizontal';
+export type FlowMode = 'vertical' | 'horizontal';
 
 export interface ComponentWithView {
     view: ElementView;
@@ -79,7 +79,7 @@ interface PublicEventListeners {
     onWorkflowPan?: (event: WorkflowPanEvent) => void;
     onWorkflowScale?: (event: WorkflowScaleEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
-    onDirectionChange?: (event: DirectionChangeEvent) => void;
+    onFlowModeChange?: (event: FlowModeChangeEvent) => void;
 }
 
 interface PublicFunctions {
@@ -110,7 +110,7 @@ export interface WorkspaceStyleOptions {
 }
 
 export interface WorkspaceOptions {
-    direction: WorkflowDirectionType;
+    flowMode: FlowMode;
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
 }
@@ -137,7 +137,7 @@ export interface DesignerState {
     selectedComponent: Observable<ComponentWithNode | null>;
     selectedPlaceholder: Observable<Placeholder | null>;
     scale: number;
-    direction: WorkflowDirectionType;
+    flowMode: FlowMode;
 
     placeholders?: Placeholder[];
     draggedNode?: Node;
@@ -239,6 +239,6 @@ export interface WorkflowScaleEvent {
 
 export interface HasErrorEvent extends GenericNodeEvent { }
 
-export interface DirectionChangeEvent {
-    direction: WorkflowDirectionType;
+export interface FlowModeChangeEvent {
+    flowMode: FlowMode;
 }

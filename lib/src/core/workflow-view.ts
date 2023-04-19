@@ -1,5 +1,4 @@
 import { End } from "../components/end/end";
-import { PlaceholderView } from "../components/placeholder/placeholder-view";
 import { Sequence } from "../components/sequence/sequence";
 import { Start } from "../components/start/start";
 import { DomHelper } from "../utils/dom-helper";
@@ -25,7 +24,7 @@ export class WorkflowView implements ElementView {
     mainSequence!: Sequence;
 
     public static async create(parent: HTMLElement, context: Context): Promise<WorkflowView> {
-        const direction = context.designerState.direction;
+        const flowMode = context.designerState.flowMode;
         const placeholderWidth = context.options.style.placeholder.width;
         const placeholderHeight = context.options.style.placeholder.height;
 
@@ -44,58 +43,38 @@ export class WorkflowView implements ElementView {
         });
 
         const start = Start.create(workflowWrapper, context);
-        let maxJoinX = start.view.joinX;
-        let maxJoinY = start.view.joinY;
 
         const nodes = context.tree;
         const sequence = await Sequence.create(nodes, null, workflowWrapper, context);
 
-        const sequenceCenterX = sequence.view.joinX;
-        if (sequenceCenterX > maxJoinX) {
-            maxJoinX = sequenceCenterX;
-        }
-        else if (sequenceCenterX === 0) {
-            maxJoinX = placeholderWidth / 2;
-        }
-
-        const sequenceCenterY = sequence.view.joinY;
-        if (sequenceCenterY > maxJoinY) {
-            maxJoinY = sequenceCenterY;
-        }
-        else if (sequenceCenterY === 0) {
-            maxJoinY = placeholderHeight / 2;
-        }
+        let maxJoinX = sequence.view.joinX;
+        let maxJoinY = sequence.view.joinY;
 
         let totalWidth = start.view.width + sequence.view.width;
         let totalHeight = start.view.height + sequence.view.height;
 
         const end = End.create(workflowWrapper, context);
 
-        if (direction === 'vertical') {
-            // Add join to start element
-            // JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: start.view.height - placeholderHeight }, placeholderHeight, context);
-
+        if (flowMode === 'vertical') {
             // Add last join
-            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight * 2 }, placeholderHeight, context);
+            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight }, placeholderHeight, context);
 
-            DomHelper.translate(sequence.view.element, 0, start.view.height - placeholderHeight);
+            DomHelper.translate(sequence.view.element, 0, start.view.height);
             DomHelper.translate(start.view.element, maxJoinX - start.view.joinX, 0);
-            DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight - placeholderHeight);
+            DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight);
+
+            totalHeight = totalHeight + end.view.height;
         }
         else {
-            // Add join to start element
-            // JoinView.createConnectionJoin(workflowWrapper, { x: start.view.width - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
-
             // Add last join
             JoinView.createConnectionJoin(workflowWrapper, { x: totalWidth - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
 
             DomHelper.translate(sequence.view.element, start.view.width, 0);
             DomHelper.translate(start.view.element, 0, maxJoinY - start.view.joinY);
             DomHelper.translate(end.view.element, totalWidth, maxJoinY - end.view.joinY);
-        }
 
-        totalWidth = totalWidth + end.view.width - placeholderWidth;
-        totalHeight = totalHeight + end.view.height - placeholderHeight;
+            totalWidth = totalWidth + end.view.width;
+        }
 
         svg.appendChild(workflowWrapper);
         parent.appendChild(svg);
@@ -136,8 +115,6 @@ export class WorkflowView implements ElementView {
         if (scale > WorkflowScaleInteraction.maxZoomLevel) {
             scale = WorkflowScaleInteraction.maxZoomLevel;
         }
-
-        scale = 1;
 
         const scaledWidth = this.width * scale;
         const scaledHeight = this.height * scale;

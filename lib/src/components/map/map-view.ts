@@ -64,7 +64,7 @@ export class MapView extends ParentView {
         element.appendChild(stepView.element);
         parent.appendChild(element);
 
-        const direction = context.designerState.direction;
+        const flowMode = context.designerState.flowMode;
 
         // Create sequence
         const sequenceComponent = await Sequence.create(nodes, node, childrenContainer, context);
@@ -78,7 +78,7 @@ export class MapView extends ParentView {
 
         let childrenContainerBgWidth;
 
-        if (direction === 'vertical') {
+        if (flowMode === 'vertical') {
             totalWidth = sequenceComponent.view.width + childrenContainerBgLeftOffset;
             totalHeight = sequenceComponent.view.height + mapLabelHeight - childrenContainerBgTopOffset;
 
@@ -104,14 +104,14 @@ export class MapView extends ParentView {
         const endConnection = DomHelper.svg('circle', {
             r: 5,
             cx: joinX,
-            cy: direction === 'vertical' ? (joinY + childrenContainerBgTopOffset) : joinY,
+            cy: flowMode === 'vertical' ? (joinY + childrenContainerBgTopOffset) : joinY,
             class: 'output',
             fill: "black",
             stroke: "black",
         });
         childrenContainer.appendChild(endConnection);
 
-        if (direction === 'vertical') {
+        if (flowMode === 'vertical') {
             DomHelper.translate(childrenContainerBg, 0, childrenContainerBgTopOffset);
             DomHelper.translate(stepView.element, (totalWidth - mapLabelWidth) / 2, 0);
             DomHelper.translate(sequenceComponent.view.element, childrenContainerBgLeftOffset / 2, placeholderHeight);

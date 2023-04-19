@@ -18,7 +18,7 @@ export class SequenceView implements ComponentView {
     ) { }
 
     public static async create(parentElement: SVGElement, nodes: Node[], parentNode: Node | null, context: Context): Promise<SequenceView> {
-        const direction = context.designerState.direction;
+        const flowMode = context.designerState.flowMode;
         const placeholderWidth = context.options.style.placeholder.width;
         const placeholderHeight = context.options.style.placeholder.height;
 
@@ -62,11 +62,14 @@ export class SequenceView implements ComponentView {
 
         const placeholders: Placeholder[] = [];
         let sequenceHeight: number = 0;
+        let sequenceWidth: number = 0;
 
         // Create first placeholder
         const firstPlaceholder = await Placeholder.create(element, parentNode, context, 0);
         placeholders.push(firstPlaceholder);
+
         sequenceHeight = sequenceHeight + placeholderHeight;
+        sequenceWidth = sequenceWidth + placeholderWidth;
 
         let offsetX = maxJoinX - placeholderWidth / 2;
         if (!maxJoinX && !parentNode || nodes.length === 0) {
@@ -80,27 +83,24 @@ export class SequenceView implements ComponentView {
             offsetY = 0;
         }
 
-        if (direction === 'vertical') {
+        if (flowMode === 'vertical') {
             DomHelper.translate(firstPlaceholder.view.element, offsetX, 0);
         }
         else {
-            DomHelper.translate(firstPlaceholder.view.element, -placeholderWidth, offsetY);
+            DomHelper.translate(firstPlaceholder.view.element, 0, offsetY);
         }
 
-        const totalComponents = components.length;
-
-        let sequenceWidth: number = 0;
-
-        let lastTaskOffsetX = -placeholderWidth;
+        let lastTaskOffsetX = 0;
         let lastTaskOffsetY = 0;
+
+        const totalComponents = components.length;
         for (let i = 0; i < totalComponents; i++) {
             const component = components[i];
             const nodeView = component.view;
 
-            const offsetX = maxJoinX - component.view.joinX;
-            const offsetY = maxJoinY - component.view.joinY;
+            if (flowMode === 'vertical') {
+                const offsetX = maxJoinX - component.view.joinX;
 
-            if (direction === 'vertical') {
                 // Center component
                 DomHelper.translate(nodeView.element, offsetX, sequenceHeight);
 
@@ -108,6 +108,8 @@ export class SequenceView implements ComponentView {
                 JoinView.createConnectionJoin(element, { x: maxJoinX, y: lastTaskOffsetY }, sequenceHeight - lastTaskOffsetY, context);
             }
             else {
+                const offsetY = maxJoinY - component.view.joinY;
+
                 // Center component
                 DomHelper.translate(nodeView.element, sequenceWidth, offsetY);
 
@@ -124,7 +126,7 @@ export class SequenceView implements ComponentView {
             const placeholder = await Placeholder.create(element, parentNode, context, i + 1);
             placeholders.push(placeholder);
 
-            if (direction === 'vertical') {
+            if (flowMode === 'vertical') {
                 DomHelper.translate(placeholder.view.element, maxJoinX - placeholderWidth / 2, sequenceHeight);
                 sequenceHeight = sequenceHeight + placeholderHeight;
             }
@@ -145,8 +147,8 @@ export class SequenceView implements ComponentView {
 
         parentElement.appendChild(element);
 
-        const width = (direction === 'vertical') ? maxWidth : sequenceWidth;
-        const height = (direction === 'vertical') ? sequenceHeight : maxHeight;
+        const width = (flowMode === 'vertical') ? maxWidth : sequenceWidth;
+        const height = (flowMode === 'vertical') ? sequenceHeight : maxHeight;
 
         return new SequenceView(element, parentElement, nodes, width, height, maxJoinX, maxJoinY, components, context, placeholders);
     }

@@ -1,4 +1,4 @@
-import { DirectionChangeEvent, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent as WorkflowScaleEvent } from "./src";
+import { FlowModeChangeEvent, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent as WorkflowScaleEvent } from "./src";
 
 export { }
 
@@ -12,6 +12,6 @@ declare global {
         'nodeDeselect': CustomEvent<NodeDeselectEvent>,
         'workflowPan': CustomEvent<WorkflowPanEvent>,
         'workflowScale': CustomEvent<WorkflowScaleEvent>,
-        'directionChange': CustomEvent<DirectionChangeEvent>,
+        'flowModeChange': CustomEvent<FlowModeChangeEvent>,
     }
 }

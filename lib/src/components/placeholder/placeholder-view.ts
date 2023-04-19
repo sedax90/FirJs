@@ -24,7 +24,7 @@ export class PlaceholderView implements ComponentView {
     private _notAllowedLabel!: PlaceholderLabel;
 
     public static async create(parent: SVGElement, index: number, context: Context): Promise<PlaceholderView> {
-        const direction = context.designerState.direction;
+        const flowMode = context.designerState.flowMode;
         const placeholderWidth = context.options.style.placeholder.width;
         const placeholderHeight = context.options.style.placeholder.height;
 
@@ -43,10 +43,10 @@ export class PlaceholderView implements ComponentView {
 
         const selector = DomHelper.svg('rect', {
             class: 'placeholder-selector',
-            width: direction === 'vertical' ? placeholderWidth : 3,
-            height: direction === 'vertical' ? 6 : placeholderHeight,
-            x: direction === 'vertical' ? 0 : (placeholderWidth - 3) / 2,
-            y: direction === 'vertical' ? (placeholderHeight - 5) / 2 : 0,
+            width: flowMode === 'vertical' ? placeholderWidth : 3,
+            height: flowMode === 'vertical' ? 6 : placeholderHeight,
+            x: flowMode === 'vertical' ? 0 : (placeholderWidth - 3) / 2,
+            y: flowMode === 'vertical' ? (placeholderHeight - 5) / 2 : 0,
             rx: 2,
         });
 

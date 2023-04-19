@@ -32,8 +32,8 @@ export class TerminatorView implements ComponentView {
 
         const endView = await TerminatorEndView.create(element, context);
 
-        const direction = context.designerState.direction;
-        if (direction === 'vertical') {
+        const flowMode = context.designerState.flowMode;
+        if (flowMode === 'vertical') {
             DomHelper.translate(endView.element, joinX, stepView.height + connectionSize);
             JoinView.createVerticalStraightJoin(element, {
                 x: joinX,
@@ -55,7 +55,7 @@ export class TerminatorView implements ComponentView {
         let width;
         let height;
 
-        if (direction === 'vertical') {
+        if (flowMode === 'vertical') {
             width = stepView.width;
             height = stepView.height + endView.height + connectionSize;
         }

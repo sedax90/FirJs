@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions, WorkflowDirectionType } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions, FlowMode } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -60,7 +60,7 @@ export class Workspace implements ComponentWithView {
             options = deepMerge<WorkspaceOptions>(Workspace._getDefaultOptions(), initData.options);
         }
 
-        options.style.placeholder = Workspace._getPlaceholderStyle(options.direction);
+        options.style.placeholder = Workspace._getPlaceholderStyle(options.flowMode);
 
         const context: Context = {
             tree: initData.tree,
@@ -69,7 +69,7 @@ export class Workspace implements ComponentWithView {
                 selectedComponent: new Observable<ComponentWithNode | null>(),
                 selectedPlaceholder: new Observable<Placeholder | null>(),
                 scale: 1,
-                direction: options.direction,
+                flowMode: options.flowMode,
             },
             options: options,
             componentCreator: new ComponentCreator(),
@@ -115,8 +115,8 @@ export class Workspace implements ComponentWithView {
             context.userDefinedFunctions = {};
         }
 
-        if (initData.onDirectionChange) {
-            context.userDefinedEventListeners.onDirectionChange = initData.onDirectionChange;
+        if (initData.onFlowModeChange) {
+            context.userDefinedEventListeners.onFlowModeChange = initData.onFlowModeChange;
         }
 
         if (initData.canRemoveNode) {
@@ -245,16 +245,16 @@ export class Workspace implements ComponentWithView {
         this._deselectNode();
     }
 
-    getDirection(): WorkflowDirectionType {
-        return this.context.designerState.direction;
+    getFlowMode(): FlowMode {
+        return this.context.designerState.flowMode;
     }
 
-    setDirection(direction: WorkflowDirectionType): void {
-        this.context.designerState.direction = direction;
-        this.context.options.style.placeholder = Workspace._getPlaceholderStyle(direction);
+    setFlowMode(flowMode: FlowMode): void {
+        this.context.designerState.flowMode = flowMode;
+        this.context.options.style.placeholder = Workspace._getPlaceholderStyle(flowMode);
 
-        EventEmitter.emitDirectionChangeEvent(this.view.element, {
-            direction: direction,
+        EventEmitter.emitFlowModeChangeEvent(this.view.element, {
+            flowMode: flowMode,
         });
         this.draw().then(() => {
             this.fitAndCenter();
@@ -363,9 +363,9 @@ export class Workspace implements ComponentWithView {
             this._rebuildPlaceholderCache();
         });
 
-        workspaceViewElement.addEventListener('directionChange', (event) => {
-            if (context.userDefinedEventListeners?.onDirectionChange) {
-                context.userDefinedEventListeners.onDirectionChange(event.detail);
+        workspaceViewElement.addEventListener('flowModeChange', (event) => {
+            if (context.userDefinedEventListeners?.onFlowModeChange) {
+                context.userDefinedEventListeners.onFlowModeChange(event.detail);
             }
         });
     }
@@ -571,7 +571,7 @@ export class Workspace implements ComponentWithView {
 
     private static _getDefaultOptions(): WorkspaceOptions {
         return {
-            direction: "vertical",
+            flowMode: "vertical",
             style: {
                 fontSize: "1em",
                 fontFamily: 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
@@ -593,8 +593,8 @@ export class Workspace implements ComponentWithView {
         }
     }
 
-    private static _getPlaceholderStyle(direction: WorkflowDirectionType): { width: number, height: number } {
-        if (direction === 'vertical') {
+    private static _getPlaceholderStyle(flowMode: FlowMode): { width: number, height: number } {
+        if (flowMode === 'vertical') {
             return {
                 width: 120,
                 height: 40,
