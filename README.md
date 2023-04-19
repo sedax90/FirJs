@@ -42,7 +42,7 @@ FirJs provides these basic nodes:
 
 The workflow tree has a basic hierarchical structure:
 
-```javascript
+```typescript
 [
   {
     id: "123",
@@ -66,7 +66,7 @@ You can attach all the data you need in the `props` field, they will always be k
 
 Import the library and create a simple JS object:
 
-```javascript
+```typescript
 firjs.init({
     parent: document.getElementById('root'),
     tree: [],
@@ -75,7 +75,7 @@ firjs.init({
 
 The library does not do anything automatically (except node removal), you have to use the exposed functions and events to adapt the library to your needs:
 
-```javascript
+```typescript
 onNodeAdd: (e: NodeAddeEvent) => void;
 onNodeMove: (e: NodeMoveEvent) => void;
 onNodeSelect: (e: NodeSelectEvent) => void;
@@ -84,11 +84,12 @@ onNodeRemove: (e: NodeRemoveEvent) => void;
 onTreeChange: (e: TreeChangeEvent) => void;
 onWorkflowPan: (e: WorkflowPanEvent) => void;
 onWorkflowScale: (e: WorkflowScaleEvent) => void;
+onFlowModeChange: (e: FlowModeChangeEvent) => void;
 ```
 
 You are not required to initialize event responses when creating the workflow as events are emitted as native Javascript events from the Workspace, so you can subscribe to them simply with:
 
-```javascript
+```typescript
 ws.addEventListener("nodeAdd", (event) => {
   // Your logic
 });
@@ -104,10 +105,11 @@ FirJS emits these events:
 - `treeChange`
 - `workflowPan`
 - `workflowScale`
+- `flowModeChange`
 
 If you want to implement some logics during node drop or node remove, you can implement:
 
-```javascript
+```typescript
 // This is triggered whenever you move a node over a placeholder and allows you to override whether a node can be added to that placeholder or not (you can also add a custom message for the user if you want).
 canDropNode: (e) => Promise<{
 	allowed: boolean;
@@ -132,7 +134,7 @@ hasError: (e) => Promise<boolean>;
 
 When you implement your drag&drop logic, you have to inform the Workspace that you are going to drop a node on the tree:
 
-```javascript
+```typescript
 event.dataTransfer.setData("text/plain", JSON.stringify(node));
 
 ws.startDrag(
@@ -151,23 +153,26 @@ ws.startDrag(
 
 After all, you can pass some options to init for customize some data:
 
-```javascript
+```typescript
+flowMode: "vertical" | "horizontal", // Default to 'vertical'
 style: {
-    fontSize: string;
-    fontFamily: string;
+  fontSize: string;
+  fontFamily: string;
 };
 strings: {
-    "context-menu.component.actions.remove.label": string,
-    "context-menu.workspace.actions.fitandcenter.label": string,
-	"placeholder.not-allowed-to-drop.label": string,
+  "context-menu.component.actions.remove.label": string,
+  "context-menu.workspace.actions.fitandcenter.label": string,
+  "placeholder.not-allowed-to-drop.label": string,
 }
 ```
 
 ### Other useful functions:
 
-- `fitAndCenter(): void`: Call it to fit and center the tree (omg really?)
-- `setTree(tree: Node[], preservePositionAndScale: boolean = false): void`: Call it to set the tree programmatically.
-- `async draw(): Promise<void>`: Call it to force a redraw without passing a new tree.
+- `fitAndCenter(): void`: Fit and center the tree (omg really?)
+- `setTree(tree: Node[], preservePositionAndScale: boolean = false): void`: Set the tree programmatically.
+- `async draw(): Promise<void>`: Force a redraw without passing a new tree.
+- `getFlowMode(): FlowMode`: Get the current flow mode
+- `setFlowMode(mode: FlowMode): void`: Set a new flow flow mode
 
 ## Customizations 🎨️
 
@@ -208,6 +213,7 @@ You can customize the entire Workspace with only a little bit of CSS. You will f
 - [x] Better event management.
 - [ ] More customizations.
 - [ ] Better mobile.
+- [x] Horizontal mode
 
 ## How to use this repo 🛠️
 
