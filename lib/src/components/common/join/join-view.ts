@@ -1,9 +1,8 @@
 import { Context, Vector } from "../../../models";
 import { DomHelper } from "../../../utils/dom-helper";
 
-
 export class JoinView {
-    public static createVerticalStraightJoin(parent: SVGElement, start: Vector, height: number): SVGElement {
+    static createVerticalStraightJoin(parent: SVGElement, start: Vector, height: number): SVGElement {
         const line = DomHelper.svg('line', {
             class: "join-line",
             x1: start.x,
@@ -29,7 +28,7 @@ export class JoinView {
         return line;
     }
 
-    public static createConnectionJoin(parent: SVGElement, start: Vector, dimension: number, context: Context): SVGElement {
+    static createConnectionJoin(parent: SVGElement, start: Vector, dimension: number, context: Context): SVGElement {
         const line = (context.designerState.flowMode === 'vertical') ? JoinView.createVerticalStraightJoin(parent, start, dimension) : JoinView.createHorizontalStraightJoin(parent, start, dimension);
 
         if (dimension) {
@@ -39,7 +38,37 @@ export class JoinView {
         return line;
     }
 
-    public static createHorizontalJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
+    static createTwoAnglesVerticalJoins(parent: SVGElement, start: Vector, targets: Vector[], firstAngleOffset: number = 20): void {
+        const totalTarget = targets.length;
+        if (totalTarget === 0) return;
+
+        for (let i = 0; i < totalTarget; i++) {
+            const end = targets[i];
+
+            const d = `M ${start.x} ${start.y} L ${start.x} ${start.y + firstAngleOffset} L ${start.x} ${start.y + firstAngleOffset} L ${end.x} ${start.y + firstAngleOffset} L ${end.x} ${end.y}`;
+            parent.insertBefore(DomHelper.svg('path', {
+                class: "join-line",
+                d: d,
+            }), parent.firstChild);
+        }
+    }
+
+    static createTwoAnglesHorizontalJoins(parent: SVGElement, start: Vector, targets: Vector[], firstAngleOffset: number = 20): void {
+        const totalTarget = targets.length;
+        if (totalTarget === 0) return;
+
+        for (let i = 0; i < totalTarget; i++) {
+            const end = targets[i];
+
+            const d = `M ${start.x} ${start.y} L ${start.x + firstAngleOffset} ${start.y} L ${start.x + firstAngleOffset} ${end.y} L ${end.x} ${end.y}`;
+            parent.insertBefore(DomHelper.svg('path', {
+                class: "join-line",
+                d: d,
+            }), parent.firstChild);
+        }
+    }
+
+    static createOneAngleVerticalJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
         const totalTarget = targets.length;
         if (totalTarget === 0) return;
 
@@ -54,7 +83,7 @@ export class JoinView {
         }
     }
 
-    public static createVerticalJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
+    static createOneAngleHorizontalJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
         const totalTarget = targets.length;
         if (totalTarget === 0) return;
 
@@ -68,4 +97,21 @@ export class JoinView {
             }), parent.firstChild);
         }
     }
+
+    // static createCurvedJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
+    //     const totalTargets = targets.length;
+
+    //     for (let i = 0; i < totalTargets; i++) {
+    //         const end = targets[i];
+    //         const diffX = end.x - start.x;
+    //         const diffY = end.y - start.y;
+
+    //         const d = `M ${start.x}, ${start.y} L ${start.x} ${start.y + 10} C ${start.x + diffX / 3}, ${start.y} ${end.x - diffX / 2}, ${end.y} ${end.x - 20}, ${end.y - 20} L ${end.x} ${end.y}`;
+
+    //         parent.insertBefore(DomHelper.svg('path', {
+    //             class: "join-line",
+    //             d: d,
+    //         }), parent.firstChild);
+    //     }
+    // }
 }

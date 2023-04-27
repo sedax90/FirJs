@@ -1,4 +1,4 @@
-import { FlowModeChangeEvent, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from "../models";
+import { FlowModeChangeEvent, NodeAddEvent, NodeDeselectEvent, NodeHoverEvent, NodeLeaveEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent } from "../models";
 import { EventSuppressor } from "./event-suppressor";
 
 export class EventEmitter {
@@ -45,6 +45,16 @@ export class EventEmitter {
     static emitFlowModeChangeEvent(element: EventTarget, data: FlowModeChangeEvent): void {
         if (EventEmitter._suppressEvent('flowModeChange')) return;
         element.dispatchEvent(EventEmitter.createCustomEvent('flowModeChange', data));
+    }
+
+    static emitNodeHoverEvent(element: EventTarget, data: NodeHoverEvent): void {
+        if (EventEmitter._suppressEvent('nodeHover')) return;
+        element.dispatchEvent(EventEmitter.createCustomEvent('nodeHover', data));
+    }
+
+    static emitNodeLeaveEvent(element: EventTarget, data: NodeLeaveEvent): void {
+        if (EventEmitter._suppressEvent('nodeLeave')) return;
+        element.dispatchEvent(EventEmitter.createCustomEvent('nodeLeave', data));
     }
 
     private static createCustomEvent(name: string, data: unknown): CustomEvent {

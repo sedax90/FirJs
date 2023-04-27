@@ -151,8 +151,16 @@ export class MapView extends ParentView {
         }
     }
 
-
     getSelectableElement(): HTMLElement | SVGElement | null {
         return this._selectableElement;
+    }
+
+    setHover(isHover: boolean): void {
+        if (isHover) {
+            this.element.classList.add('hover');
+        }
+        else {
+            this.element.classList.remove('hover');
+        }
     }
 }

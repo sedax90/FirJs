@@ -80,6 +80,8 @@ onNodeAdd: (e: NodeAddeEvent) => void;
 onNodeMove: (e: NodeMoveEvent) => void;
 onNodeSelect: (e: NodeSelectEvent) => void;
 onNodeDeselect: (e: NodeDeselectEvent) => void;
+onNodeHover: (e: NodeHoverEvent) => void;
+onNodeLeave: (e: NodeLeaveEvent) => void;
 onNodeRemove: (e: NodeRemoveEvent) => void;
 onTreeChange: (e: TreeChangeEvent) => void;
 onWorkflowPan: (e: WorkflowPanEvent) => void;
@@ -102,6 +104,8 @@ FirJS emits these events:
 - `nodeSelect`
 - `nodeDeselect`
 - `nodeRemove`
+- `nodeHover`
+- `nodeLeave`
 - `treeChange`
 - `workflowPan`
 - `workflowScale`
@@ -111,10 +115,11 @@ If you want to implement some logics during node drop or node remove, you can im
 
 ```typescript
 // This is triggered whenever you move a node over a placeholder and allows you to override whether a node can be added to that placeholder or not (you can also add a custom message for the user if you want).
-canDropNode: (e) => Promise<{
-	allowed: boolean;
-	label?: string;
-}>;
+canDropNode: (e) =>
+  Promise<{
+    allowed: boolean;
+    label?: string;
+  }>;
 
 // This is triggered when you release a node over a placeholder. It's the last chance for you to implement a custom logic for allow/disallow node attachment.
 canAttachNode: (e) => Promise<boolean>;

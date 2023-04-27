@@ -17,56 +17,84 @@ export class TerminatorView implements ComponentView {
 
     private _selectableElement!: SVGElement;
 
-    public static async create(parent: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<TerminatorView> {
-        const element = DomHelper.svg('g', {
-            class: "terminator",
-        });
-        element.classList.add(...getNodeClasses(node));
+    static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<TerminatorView> {
+        let terminatorView!: TerminatorView;
 
-        const stepView = await StepView.create(node, context);
-        element.appendChild(stepView.element);
-
-        const connectionSize = 10;
-        const joinX = stepView.width / 2;
-        const joinY = stepView.height / 2;
-
-        const endView = await TerminatorEndView.create(element, context);
-
-        const flowMode = context.designerState.flowMode;
-        if (flowMode === 'vertical') {
-            DomHelper.translate(endView.element, joinX, stepView.height + connectionSize);
-            JoinView.createVerticalStraightJoin(element, {
-                x: joinX,
-                y: stepView.height,
-            }, connectionSize);
-        }
-        else {
-            DomHelper.translate(endView.element, stepView.width + endView.width / 2 + connectionSize, joinY - endView.height / 2);
-            JoinView.createHorizontalStraightJoin(element, {
-                x: stepView.width,
-                y: joinY,
-            }, connectionSize);
+        if (context.userDefinedOverriders?.overrideView && context.userDefinedOverriders.overrideView?.terminator) {
+            terminatorView = await context.userDefinedOverriders.overrideView.terminator({ node, parent: parentNode, parentElement }, context) as TerminatorView;
         }
 
-        parent.appendChild(element);
+        if (!terminatorView) {
+            const element = DomHelper.svg('g', {
+                class: "terminator",
+            });
+            element.classList.add(...getNodeClasses(node));
 
-        await addHasErrorIfNecessary(element, node, parentNode, context);
+            const stepView = await StepView.create(node, context);
+            element.appendChild(stepView.element);
 
-        let width;
-        let height;
+            const connectionSize = 10;
+            const joinX = stepView.width / 2;
+            const joinY = stepView.height / 2;
 
-        if (flowMode === 'vertical') {
-            width = stepView.width;
-            height = stepView.height + endView.height + connectionSize;
+            const endView = await TerminatorEndView.create(element, context);
+
+            const flowMode = context.designerState.flowMode;
+            if (flowMode === 'vertical') {
+                DomHelper.translate(endView.element, joinX, stepView.height + connectionSize);
+                JoinView.createVerticalStraightJoin(element, {
+                    x: joinX,
+                    y: stepView.height,
+                }, connectionSize);
+            }
+            else {
+                DomHelper.translate(endView.element, stepView.width + endView.width / 2 + connectionSize, joinY - endView.height / 2);
+                JoinView.createHorizontalStraightJoin(element, {
+                    x: stepView.width,
+                    y: joinY,
+                }, connectionSize);
+            }
+
+
+            let width;
+            let height;
+
+            if (flowMode === 'vertical') {
+                width = stepView.width;
+                height = stepView.height + endView.height + connectionSize;
+            }
+            else {
+                width = stepView.width + endView.width + connectionSize;
+                height = stepView.height;
+            }
+
+            terminatorView = new TerminatorView(element, width, height, joinX, joinY);
         }
-        else {
-            width = stepView.width + endView.width + connectionSize;
-            height = stepView.height;
-        }
 
-        const terminator = new TerminatorView(element, width, height, joinX, joinY);
-        terminator._selectableElement = stepView.element;
-        return terminator;
+        parentElement.appendChild(terminatorView.element);
+
+        await addHasErrorIfNecessary(terminatorView.element, node, parentNode, context);
+
+        terminatorView._selectableElement = terminatorView.element;
+        return terminatorView;
+    }
+
+    static async fromView(node: Node, parentNode: Node | null, componentView: {
+        element: SVGElement,
+        parentElement: SVGElement,
+        width: number,
+        height: number,
+        joinX: number,
+        joinY: number,
+    }, context: Context): Promise<TerminatorView> {
+        const taskView = new TerminatorView(componentView.element as SVGElement, componentView.width, componentView.height, componentView.joinX, componentView.joinY);
+
+        componentView.parentElement.appendChild(taskView.element);
+
+        await addHasErrorIfNecessary(taskView.element, node, parentNode, context);
+
+        taskView._selectableElement = taskView.element;
+        return taskView;
     }
 
     setDragging(value: boolean): void {
@@ -89,5 +117,14 @@ export class TerminatorView implements ComponentView {
 
     getSelectableElement(): HTMLElement | SVGElement | null {
         return this._selectableElement;
+    }
+
+    setHover(isHover: boolean): void {
+        if (isHover) {
+            this.element.classList.add('hover');
+        }
+        else {
+            this.element.classList.remove('hover');
+        }
     }
 }

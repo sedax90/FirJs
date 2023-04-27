@@ -75,6 +75,10 @@
   stroke-width: 2;
 }
 
+.hover > .step > .label-container {
+  stroke: var(--nodeSelectedStrokeColor);
+}
+
 .placeholder-selector {
   fill: var(--nodeSelectedStrokeColor);
 }
@@ -89,17 +93,17 @@
   stroke: var(--endStrokeColor);
 }
 
-.choice > .choices-container > .choices-container-bg {
+.choice > .choices-container-bg {
   fill: transparent;
   stroke: transparent;
 }
 
-.choice.selected > .choices-container > .choices-container-bg {
+.choice.selected > .choices-container-bg {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
 }
 
-.choice.selected > .choices-container > .choices-container-bg {
+.choice.selected > .choices-container-bg {
   opacity: 1;
 }
 

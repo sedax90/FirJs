@@ -50,6 +50,27 @@ export class Workspace implements ComponentWithView {
                 }
             }
         );
+
+        context.designerState?.hoverComponent.subscribe(
+            (data: ComponentWithNode | null) => {
+                const previousValue = context.designerState.hoverComponent.getPreviousValue();
+                if (previousValue && previousValue !== data) {
+                    EventEmitter.emitNodeLeaveEvent(this.view.workflow.view.element, {
+                        node: previousValue.node,
+                        parent: previousValue.parentNode,
+                        index: instanceOfComponentInstance(previousValue) ? previousValue.indexInSequence : null,
+                    });
+                }
+
+                if (data) {
+                    EventEmitter.emitNodeHoverEvent(this.view.workflow.view.element, {
+                        node: data.node,
+                        parent: data.parentNode,
+                        index: instanceOfComponentInstance(data) ? data.indexInSequence : null,
+                    });
+                }
+            }
+        );
     }
 
     // Public methods
@@ -68,6 +89,7 @@ export class Workspace implements ComponentWithView {
                 placeholders: [],
                 selectedComponent: new Observable<ComponentWithNode | null>(),
                 selectedPlaceholder: new Observable<Placeholder | null>(),
+                hoverComponent: new Observable<ComponentWithNode | null>(),
                 scale: 1,
                 flowMode: options.flowMode,
             },
@@ -97,6 +119,14 @@ export class Workspace implements ComponentWithView {
 
         if (initData.onNodeRemove) {
             context.userDefinedEventListeners.onNodeRemove = initData.onNodeRemove;
+        }
+
+        if (initData.onNodeHover) {
+            context.userDefinedEventListeners.onNodeHover = initData.onNodeHover;
+        }
+
+        if (initData.onNodeLeave) {
+            context.userDefinedEventListeners.onNodeLeave = initData.onNodeLeave;
         }
 
         if (initData.onWorkflowPan) {
@@ -157,6 +187,10 @@ export class Workspace implements ComponentWithView {
 
         if (initData.overrideColumnLabel) {
             context.userDefinedOverriders.overrideColumnLabel = initData.overrideColumnLabel;
+        }
+
+        if (initData.overrideView) {
+            context.userDefinedOverriders.overrideView = initData.overrideView;
         }
 
         const view = await WorkspaceView.create(initData.parent, context);
@@ -366,6 +400,18 @@ export class Workspace implements ComponentWithView {
         workspaceViewElement.addEventListener('flowModeChange', (event) => {
             if (context.userDefinedEventListeners?.onFlowModeChange) {
                 context.userDefinedEventListeners.onFlowModeChange(event.detail);
+            }
+        });
+
+        workspaceViewElement.addEventListener('nodeHover', (event) => {
+            if (context.userDefinedEventListeners?.onNodeHover) {
+                context.userDefinedEventListeners.onNodeHover(event.detail);
+            }
+        });
+
+        workspaceViewElement.addEventListener('nodeLeave', (event) => {
+            if (context.userDefinedEventListeners?.onNodeLeave) {
+                context.userDefinedEventListeners.onNodeLeave(event.detail);
             }
         });
     }

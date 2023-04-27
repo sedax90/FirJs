@@ -35,6 +35,7 @@ export interface ComponentView extends ElementView {
     getSelectableElement: () => HTMLElement | SVGElement | null;
     setSelected?: (status: boolean) => void;
     setDragging?: (status: boolean) => void;
+    setHover?: (isHover: boolean) => void;
 }
 
 export type NodeType = 'choice' | 'map' | 'start' | 'end' | 'task' | 'terminator';
@@ -76,6 +77,8 @@ interface PublicEventListeners {
     onNodeAdd?: (event: NodeAddEvent) => void;
     onNodeMove?: (event: NodeMoveEvent) => void;
     onNodeRemove?: (event: NodeRemoveEvent) => void;
+    onNodeHover?: (event: NodeHoverEvent) => void;
+    onNodeLeave?: (event: NodeLeaveEvent) => void;
     onWorkflowPan?: (event: WorkflowPanEvent) => void;
     onWorkflowScale?: (event: WorkflowScaleEvent) => void;
     onTreeChange?: (event: TreeChangeEvent) => void;
@@ -98,7 +101,29 @@ interface PublicOverriders {
     overrideLabel?: (node: Node) => Promise<string>;
     overrideIcon?: (node: Node) => Promise<string | HTMLElement | SVGElement>;
     overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
+    overrideView?: OverrideViewMap;
 }
+
+export interface OverrideViewMap {
+    task?: (creationContext: TaskViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
+    choice?: (creationContext: ChoiceViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
+    map?: (creationContext: MapViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
+    terminator?: (creationContext: TerminatorViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
+}
+
+interface ViewCreationContext {
+    node: Node;
+    parent: Node | null;
+    parentElement: SVGElement | null;
+}
+
+export interface TaskViewCreationContext extends ViewCreationContext { }
+
+export interface MapViewCreationContext extends ViewCreationContext { }
+
+export interface ChoiceViewCreationContext extends ViewCreationContext { }
+
+export interface TerminatorViewCreationContext extends ViewCreationContext { }
 
 export interface WorkspaceStyleOptions {
     fontSize: string;
@@ -136,6 +161,7 @@ export interface Context {
 export interface DesignerState {
     selectedComponent: Observable<ComponentWithNode | null>;
     selectedPlaceholder: Observable<Placeholder | null>;
+    hoverComponent: Observable<ComponentWithNode | null>;
     scale: number;
     flowMode: FlowMode;
 
@@ -200,7 +226,11 @@ export interface NodeAttachEvent extends GenericNodeEvent {
 }
 
 export interface NodeHoverEvent extends GenericNodeEvent {
-    index: number;
+    index: number | null;
+}
+
+export interface NodeLeaveEvent extends GenericNodeEvent {
+    index: number | null;
 }
 
 export interface TreeChangeEvent {
