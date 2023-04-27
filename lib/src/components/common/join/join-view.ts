@@ -97,21 +97,4 @@ export class JoinView {
             }), parent.firstChild);
         }
     }
-
-    // static createCurvedJoins(parent: SVGElement, start: Vector, targets: Vector[]): void {
-    //     const totalTargets = targets.length;
-
-    //     for (let i = 0; i < totalTargets; i++) {
-    //         const end = targets[i];
-    //         const diffX = end.x - start.x;
-    //         const diffY = end.y - start.y;
-
-    //         const d = `M ${start.x}, ${start.y} L ${start.x} ${start.y + 10} C ${start.x + diffX / 3}, ${start.y} ${end.x - diffX / 2}, ${end.y} ${end.x - 20}, ${end.y - 20} L ${end.x} ${end.y}`;
-
-    //         parent.insertBefore(DomHelper.svg('path', {
-    //             class: "join-line",
-    //             d: d,
-    //         }), parent.firstChild);
-    //     }
-    // }
 }
