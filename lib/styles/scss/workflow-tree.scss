@@ -75,6 +75,10 @@
   stroke-width: 2;
 }
 
+.hover > .step > .label-container {
+  stroke: var(--nodeSelectedStrokeColor);
+}
+
 .placeholder-selector {
   fill: var(--nodeSelectedStrokeColor);
 }
@@ -89,17 +93,17 @@
   stroke: var(--endStrokeColor);
 }
 
-.choice > .choices-container > .choices-container-bg {
+.choice > .choices-container-bg {
   fill: transparent;
   stroke: transparent;
 }
 
-.choice.selected > .choices-container > .choices-container-bg {
+.choice.selected > .choices-container-bg {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
 }
 
-.choice.selected > .choices-container > .choices-container-bg {
+.choice.selected > .choices-container-bg {
   opacity: 1;
 }
 
@@ -185,10 +189,30 @@
 
 .placeholder-area {
   opacity: 0.25;
-}
 
-.placeholder-area.hover {
-  opacity: 1;
+  &.alone {
+    visibility: visible !important;
+
+    & > .placeholder-drop-area {
+      stroke: currentColor;
+      rx: 4;
+      stroke-width: 1;
+      stroke-dasharray: 3 4;
+      fill: rgba(0, 0, 0, 0.05);
+    }
+
+    &:not(.hover) > .placeholder-selector {
+      opacity: 0;
+    }
+  }
+
+  &.hover {
+    opacity: 1;
+
+    & > .placeholder-selector {
+      opacity: 1;
+    }
+  }
 }
 
 .placeholder-area.not-allowed .placeholder-selector {

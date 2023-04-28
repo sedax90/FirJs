@@ -42,38 +42,57 @@ export class WorkflowView implements ElementView {
             fill: "transparent",
         });
 
-        const start = Start.create(workflowWrapper, context);
+        const isInfinite = context.options.infinite;
 
         const nodes = context.tree;
         const sequence = await Sequence.create(nodes, null, workflowWrapper, context);
 
         let maxJoinX = sequence.view.joinX;
         let maxJoinY = sequence.view.joinY;
+        let totalWidth = sequence.view.width;
+        let totalHeight = sequence.view.height;
+        let start!: Start;
+        let end!: End;
 
-        let totalWidth = start.view.width + sequence.view.width;
-        let totalHeight = start.view.height + sequence.view.height;
+        if (!isInfinite) {
+            start = Start.create(workflowWrapper, context);
+            totalWidth = totalWidth + start.view.width;
+            totalHeight = totalHeight + start.view.height;
 
-        const end = End.create(workflowWrapper, context);
+            end = End.create(workflowWrapper, context);
+        }
 
         if (flowMode === 'vertical') {
-            // Add last join
-            JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight }, placeholderHeight, context);
+            if (!isInfinite) {
+                // Add last join
+                JoinView.createConnectionJoin(workflowWrapper, { x: maxJoinX, y: totalHeight - placeholderHeight }, placeholderHeight, context);
+            }
 
-            DomHelper.translate(sequence.view.element, 0, start.view.height);
-            DomHelper.translate(start.view.element, maxJoinX - start.view.joinX, 0);
-            DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight);
+            if (start) {
+                DomHelper.translate(sequence.view.element, 0, start.view.height);
+                DomHelper.translate(start.view.element, maxJoinX - start.view.joinX, 0);
+            }
 
-            totalHeight = totalHeight + end.view.height;
+            if (end) {
+                DomHelper.translate(end.view.element, maxJoinX - end.view.joinX, totalHeight);
+                totalHeight = totalHeight + end.view.height;
+            }
         }
         else {
-            // Add last join
-            JoinView.createConnectionJoin(workflowWrapper, { x: totalWidth - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
+            if (!isInfinite) {
+                // Add last join
+                JoinView.createConnectionJoin(workflowWrapper, { x: totalWidth - placeholderWidth, y: maxJoinY }, placeholderWidth, context);
+            }
 
-            DomHelper.translate(sequence.view.element, start.view.width, 0);
-            DomHelper.translate(start.view.element, 0, maxJoinY - start.view.joinY);
-            DomHelper.translate(end.view.element, totalWidth, maxJoinY - end.view.joinY);
+            if (start) {
+                DomHelper.translate(sequence.view.element, start.view.width, 0);
+                DomHelper.translate(start.view.element, 0, maxJoinY - start.view.joinY);
+            }
 
-            totalWidth = totalWidth + end.view.width;
+            if (end) {
+                DomHelper.translate(end.view.element, totalWidth, maxJoinY - end.view.joinY);
+                totalWidth = totalWidth + end.view.width;
+            }
         }
 
         svg.appendChild(workflowWrapper);

@@ -21,7 +21,34 @@ export abstract class ParentComponent implements ComponentInstance {
                         this.view.setSelected(false);
                     }
                 }
+            }
+        );
+
+        context.designerState?.hoverComponent.subscribe(
+            (data) => {
+                if (data && data === this) {
+                    if (this.view.setHover) {
+                        this.view.setHover(true);
+                    }
+                }
+                else {
+                    if (this.view.setHover) {
+                        this.view.setHover(false);
+                    }
+                }
+            }
+        );
+
+        const selectableElement = view.getSelectableElement();
+        if (selectableElement) {
+            selectableElement.addEventListener('mouseover', () => {
+                context.designerState.hoverComponent.next(this);
             });
+
+            selectableElement.addEventListener('mouseleave', () => {
+                context.designerState.hoverComponent.next(null);
+            });
+        }
     }
 
     node!: Node;

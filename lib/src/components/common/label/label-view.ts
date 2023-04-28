@@ -1,10 +1,13 @@
 import { Context } from "../../../models";
 import { DomHelper } from "../../../utils/dom-helper";
+import { LabelHelper } from "../../../utils/label-helper";
 
 export class LabelView {
     private constructor(
         public element: SVGElement,
         public textLength: number,
+        public width: number,
+        public height: number,
     ) { }
 
     public static defaultWidth: number = 200;
@@ -35,26 +38,9 @@ export class LabelView {
         });
 
         parentG.appendChild(label);
-        const textLength = LabelView._calculateTextLenght(label);
+        const labelSize = LabelHelper.calculateLabelSize(label);
 
-        return new LabelView(parentG, textLength);
-    }
-
-    /**
-     * This is a workaround to pre calculate the label size.
-     */
-    private static _calculateTextLenght(label: SVGElement): number {
-        const temporarySvg = DomHelper.svg('svg', {
-            class: "label-svg",
-            width: '100%',
-        });
-
-        temporarySvg.appendChild(label.cloneNode(true));
-        document.body.appendChild(temporarySvg);
-        const textLength = (<SVGTextElement>temporarySvg.firstChild)?.getComputedTextLength();
-        document.body.removeChild(temporarySvg);
-
-        return textLength;
+        return new LabelView(parentG, labelSize.textLength, labelSize.width, labelSize.height);
     }
 }
 

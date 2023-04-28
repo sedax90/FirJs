@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { DeselectNodeRequestEvent, FlowMode, FlowModeChangeEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '@sedax90/firjs';
+import { DeselectNodeRequestEvent, FlowMode, FlowModeChangeEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeLeaveEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions, OverrideViewMap } from '@sedax90/firjs';
 
 @Component({
   selector: 'firjs',
@@ -85,6 +85,10 @@ export class NgxFirjsComponent implements OnInit {
     this._overrideColumnLabel = fn;
   }
 
+  @Input() set overrideView(overrideViewMap: OverrideViewMap) {
+    this._overrideView = overrideViewMap;
+  }
+
   getSelectedNode(): Node | null {
     if (this._workspace) {
       return this._workspace.getSelectedNode();
@@ -122,6 +126,8 @@ export class NgxFirjsComponent implements OnInit {
   @Output() onWorkflowPan: EventEmitter<WorkflowPanEvent> = new EventEmitter<WorkflowPanEvent>();
   @Output() onWorkflowScale: EventEmitter<WorkflowScaleEvent> = new EventEmitter<WorkflowScaleEvent>();
   @Output() onFlowModeChange: EventEmitter<FlowModeChangeEvent> = new EventEmitter<FlowModeChangeEvent>();
+  @Output() onNodeHover: EventEmitter<NodeHoverEvent> = new EventEmitter<NodeHoverEvent>();
+  @Output() onNodeLeave: EventEmitter<NodeLeaveEvent> = new EventEmitter<NodeLeaveEvent>();
 
   private _canDropNode!: (event: NodeHoverEvent) => Promise<{
     allowed: boolean;
@@ -135,6 +141,7 @@ export class NgxFirjsComponent implements OnInit {
   private _overrideLabel!: (node: Node) => Promise<string>;
   private _overrideIcon!: (node: Node) => Promise<string>;
   private _overrideColumnLabel!: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
+  private _overrideView!: OverrideViewMap;
 
   constructor() { }
 
@@ -172,6 +179,12 @@ export class NgxFirjsComponent implements OnInit {
       onFlowModeChange: (event: FlowModeChangeEvent) => {
         this.onFlowModeChange.emit(event);
       },
+      onNodeHover: (event: NodeHoverEvent) => {
+        this.onNodeHover.emit(event);
+      },
+      onNodeLeave: (event: NodeLeaveEvent) => {
+        this.onNodeLeave.emit(event);
+      },
       canDropNode: this._canDropNode,
       canRemoveNode: this._canRemoveNode,
       canAttachNode: this._canAttachNode,
@@ -180,6 +193,7 @@ export class NgxFirjsComponent implements OnInit {
       overrideLabel: this._overrideLabel,
       overrideIcon: this._overrideIcon,
       overrideColumnLabel: this._overrideColumnLabel,
+      overrideView: this._overrideView,
     }).then(
       (ws: Workspace) => {
         this._workspace = ws;
@@ -200,7 +214,6 @@ export class NgxFirjsComponent implements OnInit {
 
     this._workspace.startDrag(element, startPosition, node);
   }
-
 
   async draw(suppressEvents: boolean = true): Promise<void> {
     return await this._workspace.draw(suppressEvents);

@@ -1,10 +1,11 @@
-import { ComponentInstance, ComponentView, Context, Node } from "../../models";
+import { ComponentInstance, ComponentWithNode, Context, Node } from "../../models";
 import { ClickEvent } from "../../utils/event-utils";
 import { Sequence } from "../sequence/sequence";
+import { NodeTreeView } from "./node-tree-view";
 
-export abstract class ChildlessComponent implements ComponentInstance {
+export class NodeTree implements ComponentWithNode {
     constructor(
-        readonly view: ComponentView,
+        readonly view: NodeTreeView,
         readonly context: Context,
     ) {
         context.designerState?.selectedComponent.subscribe(
@@ -20,7 +21,7 @@ export abstract class ChildlessComponent implements ComponentInstance {
                     }
                 }
             }
-    );
+        );
 
         context.designerState?.hoverComponent.subscribe(
             (data) => {
@@ -55,6 +56,16 @@ export abstract class ChildlessComponent implements ComponentInstance {
     indexInSequence!: number;
 
     findByClick(click: ClickEvent): ComponentInstance | null {
+        // Check children
+        const sequences = this.view.childSequences;
+        for (const sequence of sequences) {
+            const component = sequence.findByClick(click);
+            if (component) {
+                return component;
+            }
+        }
+
+        // If no children check if is current view
         const viewContains = this.view.getSelectableElement()?.contains(click.target);
         if (viewContains) {
             return this;
@@ -64,7 +75,17 @@ export abstract class ChildlessComponent implements ComponentInstance {
     }
 
     findById(nodeId: string): ComponentInstance | null {
-        if (this.node && this.node.id === nodeId) return this;
+        const sequences = this.view.childSequences;
+        for (const sequence of sequences) {
+            const component = sequence.findById(nodeId);
+            if (component) {
+                return component;
+            }
+        }
+
+        if (this.node && this.node.id === nodeId) {
+            return this;
+        }
 
         return null;
     }

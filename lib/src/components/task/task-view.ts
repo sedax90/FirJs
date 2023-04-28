@@ -15,20 +15,48 @@ export class TaskView implements ComponentView {
 
     private _selectableElement!: SVGElement;
 
-    public static async create(parent: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<TaskView> {
-        const element = DomHelper.svg('g', {
-            class: "task",
-        });
-        element.classList.add(...getNodeClasses(node));
+    static async create(parentElement: SVGElement, node: Node, parentNode: Node | null, context: Context): Promise<TaskView> {
+        let taskView!: TaskView;
 
-        const stepView = await StepView.create(node, context);
-        element.appendChild(stepView.element);
-        parent.appendChild(element);
+        if (context.userDefinedOverriders?.overrideView && context.userDefinedOverriders.overrideView?.task) {
+            taskView = await context.userDefinedOverriders.overrideView.task({ node, parent: parentNode, parentElement }, context) as TaskView;
+        }
 
-        await addHasErrorIfNecessary(element, node, parentNode, context);
+        if (!taskView) {
+            const element = DomHelper.svg('g', {
+                class: "task",
+            });
+            element.classList.add(...getNodeClasses(node));
 
-        const taskView = new TaskView(element, stepView.width, stepView.height, stepView.width / 2, stepView.height / 2);
-        taskView._selectableElement = element;
+            const stepView = await StepView.create(node, context);
+            element.appendChild(stepView.element);
+
+            taskView = new TaskView(element, stepView.width, stepView.height, stepView.width / 2, stepView.height / 2);
+        }
+
+        parentElement.appendChild(taskView.element);
+
+        await addHasErrorIfNecessary(taskView.element, node, parentNode, context);
+
+        taskView._selectableElement = taskView.element;
+        return taskView;
+    }
+
+    static async fromView(node: Node, parentNode: Node | null, componentView: {
+        element: SVGElement,
+        parentElement: SVGElement,
+        width: number,
+        height: number,
+        joinX: number,
+        joinY: number,
+    }, context: Context): Promise<TaskView> {
+        const taskView = new TaskView(componentView.element as SVGElement, componentView.width, componentView.height, componentView.joinX, componentView.joinY);
+
+        componentView.parentElement.appendChild(taskView.element);
+
+        await addHasErrorIfNecessary(taskView.element, node, parentNode, context);
+
+        taskView._selectableElement = taskView.element;
         return taskView;
     }
 
@@ -52,5 +80,14 @@ export class TaskView implements ComponentView {
 
     getSelectableElement(): HTMLElement | SVGElement | null {
         return this._selectableElement;
+    }
+
+    setHover(isHover: boolean): void {
+        if (isHover) {
+            this.element.classList.add('hover');
+        }
+        else {
+            this.element.classList.remove('hover');
+        }
     }
 }

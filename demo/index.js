@@ -4,12 +4,16 @@ const tree = [
         id: i++,
         label: "Pass 1",
         type: "task",
+        props: {
+            custom: true,
+        }
     },
     {
         id: i++,
         label: "Choice 1",
         type: "choice",
         props: {
+            custom: true,
             choices: [
                 [
                     {
@@ -229,7 +233,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
-        flowMode: "horizontal",
+        flowMode: "vertical",
         style: {
             fontSize: "0.875em",
         },
@@ -272,6 +276,14 @@ firjs.init({
     onFlowModeChange: (e) => {
         console.debug("ON FLOW MODE CHANGE", e);
         showToast('onFlowModeChange');
+    },
+    onNodeHover: (e) => {
+        console.debug("ON NODE HOVER", e);
+        showToast("onNodeHover");
+    },
+    onNodeLeave: (e) => {
+        console.debug('ON NODE LEAVE', e);
+        showToast('onNodeLeave');
     },
     // canDropNode: (e) => {
     //     console.debug("ON CAN NODE DROP", e);
@@ -318,7 +330,7 @@ firjs.init({
     },
     overrideLabel: (node) => {
         return new Promise((resolve, reject) => {
-            resolve(node.label.toLowerCase());
+            resolve(node?.label);
         });
     },
     overrideIcon: (node) => {
@@ -348,8 +360,8 @@ firjs.init({
     overrideColumnLabel: (node, parentNode, columnIndex) => {
         return new Promise((resolve, reject) => {
             return resolve(`Rule for choice ${columnIndex + 1}`);
-        })
-    }
+        });
+    },
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");
     for (const element of elements) {
@@ -399,11 +411,6 @@ firjs.init({
     centerWorkflowBtn.addEventListener('click', () => {
         workspace.fitAndCenter();
     });
-
-    const resetBtn = document.getElementById('resetBtn');
-    resetBtn.addEventListener('click', () => {
-        workspace.setTree([...tree], true);
-    }, false);
 
     const redrawBtn = document.getElementById('redrawBtn');
     redrawBtn.addEventListener('click', () => {
@@ -458,6 +465,14 @@ function showToast(type) {
 
         case 'onFlowModeChange':
             bg = 'linear-gradient(90deg, hsla(202, 71%, 27%, 1) 0%, hsla(176, 45%, 66%, 1) 100%)';
+            break;
+
+        case 'onNodeHover':
+            bg = 'linear-gradient(90deg, hsla(260, 34%, 48%, 1) 0%, hsla(330, 53%, 77%, 1) 100%)';
+            break;
+
+        case 'onNodeLeave':
+            bg = 'linear-gradient(90deg, hsla(305, 93%, 26%, 1) 0%, hsla(346, 91%, 87%, 1) 100%)';
             break;
     }
 
