@@ -6,6 +6,8 @@ export class LabelView {
     private constructor(
         public element: SVGElement,
         public textLength: number,
+        public width: number,
+        public height: number,
     ) { }
 
     public static defaultWidth: number = 200;
@@ -38,7 +40,7 @@ export class LabelView {
         parentG.appendChild(label);
         const labelSize = LabelHelper.calculateLabelSize(label);
 
-        return new LabelView(parentG, labelSize.textLength);
+        return new LabelView(parentG, labelSize.textLength, labelSize.width, labelSize.height);
     }
 }
 

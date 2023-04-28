@@ -84,7 +84,7 @@ export class MapView extends ParentView {
 
             if (flowMode === 'vertical') {
                 totalWidth = sequenceComponent.view.width + childrenContainerBgLeftOffset;
-                totalHeight = sequenceComponent.view.height + mapLabelHeight - childrenContainerBgTopOffset;
+                totalHeight = sequenceComponent.view.height + mapLabelHeight + childrenContainerBgTopOffset;
 
                 joinX = totalWidth / 2;
                 joinY = totalHeight;
@@ -92,7 +92,7 @@ export class MapView extends ParentView {
                 childrenContainerBgWidth = totalWidth;
             }
             else {
-                totalWidth = sequenceComponent.view.width + mapLabelWidth - childrenContainerBgTopOffset;
+                totalWidth = sequenceComponent.view.width + mapLabelWidth + childrenContainerBgLeftOffset;
                 totalHeight = sequenceComponent.view.height + childrenContainerBgLeftOffset;
 
                 joinX = totalWidth;
@@ -126,7 +126,7 @@ export class MapView extends ParentView {
             else {
                 DomHelper.translate(childrenContainerBg, childrenContainerBgTopOffset, 0);
                 DomHelper.translate(stepView.element, 0, (totalHeight - stepView.height) / 2);
-                DomHelper.translate(sequenceComponent.view.element, mapLabelWidth, joinY - sequenceComponent.view.joinY);
+                DomHelper.translate(sequenceComponent.view.element, mapLabelWidth, (totalHeight - sequenceComponent.view.height) / 2);
                 DomHelper.translate(mapLabelIcon, stepView.width, stepView.height / 2);
             }
 

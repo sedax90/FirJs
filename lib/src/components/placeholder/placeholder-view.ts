@@ -41,10 +41,12 @@ export class PlaceholderView implements ComponentView {
         });
         element.appendChild(dropArea);
 
+        const selectorWidth = flowMode === 'vertical' ? placeholderWidth : 3;
+        const selectorHeight = flowMode === 'vertical' ? 6 : placeholderHeight;
         const selector = DomHelper.svg('rect', {
             class: 'placeholder-selector',
-            width: flowMode === 'vertical' ? placeholderWidth : 3,
-            height: flowMode === 'vertical' ? 6 : placeholderHeight,
+            width: selectorWidth,
+            height: selectorHeight,
             x: flowMode === 'vertical' ? 0 : (placeholderWidth - 3) / 2,
             y: flowMode === 'vertical' ? (placeholderHeight - 5) / 2 : 0,
             rx: 2,

@@ -83,6 +83,8 @@ export class SequenceView implements ComponentView {
             offsetY = 0;
         }
 
+        const totalComponents = components.length;
+
         if (flowMode === 'vertical') {
             DomHelper.translate(firstPlaceholder.view.element, offsetX, 0);
         }
@@ -93,7 +95,7 @@ export class SequenceView implements ComponentView {
         let lastTaskOffsetX = 0;
         let lastTaskOffsetY = 0;
 
-        const totalComponents = components.length;
+        const isInfinite = context.options.infinite;
         for (let i = 0; i < totalComponents; i++) {
             const component = components[i];
             const nodeView = component.view;
@@ -104,8 +106,10 @@ export class SequenceView implements ComponentView {
                 // Center component
                 DomHelper.translate(nodeView.element, offsetX, sequenceHeight);
 
-                // Add join to previous element
-                JoinView.createConnectionJoin(element, { x: maxJoinX, y: lastTaskOffsetY }, sequenceHeight - lastTaskOffsetY, context);
+                if (!isInfinite || parentNode || i > 0) {
+                    // Add join to previous element
+                    JoinView.createConnectionJoin(element, { x: maxJoinX, y: lastTaskOffsetY }, sequenceHeight - lastTaskOffsetY, context);
+                }
             }
             else {
                 const offsetY = maxJoinY - component.view.joinY;
@@ -113,8 +117,10 @@ export class SequenceView implements ComponentView {
                 // Center component
                 DomHelper.translate(nodeView.element, sequenceWidth, offsetY);
 
-                // Add join to previous element
-                JoinView.createConnectionJoin(element, { x: lastTaskOffsetX, y: maxJoinY }, sequenceWidth - lastTaskOffsetX, context);
+                if (!isInfinite || parentNode || i > 0) {
+                    // Add join to previous element
+                    JoinView.createConnectionJoin(element, { x: lastTaskOffsetX, y: maxJoinY }, sequenceWidth - lastTaskOffsetX, context);
+                }
             }
 
             sequenceWidth = sequenceWidth + nodeView.width;
@@ -141,8 +147,11 @@ export class SequenceView implements ComponentView {
             sequenceHeight = placeholderHeight;
             maxWidth = placeholderWidth;
             maxHeight = placeholderHeight;
-            maxJoinX = maxWidth / 2;
-            maxJoinY = maxHeight / 2;
+
+            if (!parentNode) {
+                // This is the only sequence in workflowz
+                firstPlaceholder.view.element.classList.add('alone');
+            }
         }
 
         parentElement.appendChild(element);

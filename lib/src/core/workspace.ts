@@ -627,7 +627,8 @@ export class Workspace implements ComponentWithView {
                 "context-menu.component.actions.remove.label": "Remove",
                 "context-menu.workspace.actions.fitandcenter.label": "Fit and center",
                 "placeholder.not-allowed-to-drop.label": "You can't attach a node here",
-            }
+            },
+            infinite: false,
         };
     }
 

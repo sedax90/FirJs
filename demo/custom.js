@@ -2,6 +2,14 @@ let = i = 0;
 const tree = [
     {
         id: i++,
+        label: "Map 1",
+        type: "map",
+        props: {
+            custom: true,
+        }
+    },
+    {
+        id: i++,
         label: "Pass 1",
         type: "task",
         props: {
@@ -76,7 +84,8 @@ firjs.init({
         },
         strings: {
             'context-menu.workspace.actions.fitandcenter.label': "Fit & center",
-        }
+        },
+        infinite: true,
     },
     overrideView: {
         task: (generatorContext, context) => drawTask(generatorContext, context),
@@ -201,6 +210,7 @@ async function drawNodeTree(generatorContext, context) {
         const domHelper = firjs.DomHelper;
 
         const node = generatorContext.node;
+        const parent = generatorContext.parent;
         const parentElement = generatorContext.parentElement;
 
         // return resolve(null);
@@ -240,7 +250,7 @@ async function drawNodeTree(generatorContext, context) {
                 domHelper.translate(row, 10, 26 * (i + 1));
 
                 // Create sequence
-                const sequence = await creationHelper.createSequence(branch, null, element);
+                const sequence = await creationHelper.createSequence(branch, node, element);
 
                 const content = domHelper.svg('g');
                 content.appendChild(sequence.view.element);

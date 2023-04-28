@@ -138,6 +138,7 @@ export interface WorkspaceOptions {
     flowMode: FlowMode;
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
+    infinite: boolean;
 }
 
 export interface WorkspaceInit extends PublicEventListeners, PublicFunctions, PublicOverriders {
