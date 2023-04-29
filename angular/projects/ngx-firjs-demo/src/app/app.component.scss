@@ -1,4 +1,11 @@
 .topbar {
-    z-index: 1;
+  z-index: 1;
+}
+
+mat-list-item {
+  cursor: pointer;
+
+  &.active {
+    color: var(--bs-primary);
   }
-  
+}

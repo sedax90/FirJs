@@ -1,0 +1,16 @@
+<app-designer [tree]="tree" [options]="options" [overrideView]="overrideView"></app-designer>
+
+<ng-template #myTpl>
+  <div class="p-3" style="width: fit-content; height: 150px; min-width: 250px;">
+    <div>Last click at: {{ lastClick }}</div>
+    <button mat-raised-button color="primary" (click)="clickBtn()">Click me</button>
+  </div>
+</ng-template>
+
+<ng-template #entityFieldsTpl let-fields="fields">
+  <div class="bg-white rounded border" style="max-width: 200px;">
+    <div *ngFor="let field of fields" class="field-row p-2 border-bottom">
+      {{ field }}
+    </div>
+  </div>
+</ng-template>

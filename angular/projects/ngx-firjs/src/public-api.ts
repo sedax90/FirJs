@@ -4,4 +4,4 @@
 
 export * from './lib/ngx-firjs.component';
 export * from './lib/ngx-firjs.module';
-export * from '@sedax90/firjs'
+export * from '@sedax90/firjs';

@@ -1,0 +1,43 @@
+<div *ngIf="tree"
+  class="topbar bg-light d-flex align-items-center justify-content-between p-2 sticky-top mat-elevation-z1 sticky-top">
+  <div class="d-flex align-items-center">
+    <span class="me-3">Drag and drop components:</span>
+
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'task')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">settings</mat-icon> <span>Task</span>
+    </button>
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'map')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">sync</mat-icon> <span>Map</span>
+    </button>
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'choice')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">alt_route</mat-icon> <span>Choice</span>
+    </button>
+    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'terminator')"
+      (dragend)="onDragEnd($event)">
+      <mat-icon class="me-1">stop</mat-icon> <span>Terminator</span>
+    </button>
+  </div>
+  <div class="d-flex justify-content-end align-items-center">
+    <button mat-raised-button (click)="changeFlowMode()">
+      <mat-icon class="me-2" *ngIf="flowMode === 'vertical'">vertical_distribute</mat-icon>
+      <mat-icon class="me-2" *ngIf="flowMode === 'horizontal'">horizontal_distribute</mat-icon>
+      <span>Change orientation</span>
+    </button>
+    <button mat-raised-button (click)="firjsWorkflow.fitAndCenter()" class="ms-2">
+      <mat-icon class="me-2">center_focus_weak</mat-icon>
+      <span>Fit & center</span>
+    </button>
+  </div>
+</div>
+
+<firjs *ngIf="tree" [tree]="tree" [options]="options" (onTreeChange)="onTreeChange($event)"
+  (onNodeAdd)="onNodeAdd($event)" (onNodeMove)="onNodeMove($event)" [canSelectNode]="canSelectNode.bind(this)"
+  (onNodeSelect)="onNodeSelect($event)" [canDeselectNode]="canDeselectNode.bind(this)"
+  (onNodeDeselect)="onNodeDeselect($event)" [canRemoveNode]="canRemoveNode.bind(this)"
+  (onNodeRemove)="onNodeRemove($event)" (onWorkflowPan)="onWorkflowPan($event)"
+  (onWorkflowScale)="onWorkflowScale($event)" (onFlowModeChange)="flowMode = $event.flowMode"
+  [overrideView]="overrideView">
+</firjs>

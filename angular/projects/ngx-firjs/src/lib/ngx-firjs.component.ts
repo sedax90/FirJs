@@ -24,10 +24,15 @@ export class NgxFirjsComponent implements OnInit {
     return this._tree;
   }
 
-  @Input() set options(options: WorkspaceOptions) {
+  @Input() set options(options: Partial<WorkspaceOptions>) {
+    this._options = options;
+
     if (this._workspace) {
       this._workspace.setOptions(options);
     }
+  }
+  get options() {
+    return this._options;
   }
 
   @Input() set canDropNode(fn: (event: NodeHoverEvent) => Promise<{
@@ -142,6 +147,7 @@ export class NgxFirjsComponent implements OnInit {
   private _overrideIcon!: (node: Node) => Promise<string>;
   private _overrideColumnLabel!: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
   private _overrideView!: OverrideViewMap;
+  private _options!: Partial<WorkspaceOptions>;
 
   constructor() { }
 
@@ -152,6 +158,7 @@ export class NgxFirjsComponent implements OnInit {
     Workspace.init({
       parent: this.workflowRoot.nativeElement,
       tree: this._tree,
+      options: this.options,
       onNodeAdd: (event: NodeAddEvent) => {
         this.onNodeAdd.emit(event);
       },

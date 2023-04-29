@@ -105,10 +105,10 @@ interface PublicOverriders {
 }
 
 export interface OverrideViewMap {
-    task?: (creationContext: TaskViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
-    choice?: (creationContext: ChoiceViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
-    map?: (creationContext: MapViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
-    terminator?: (creationContext: TerminatorViewCreationContext, workspaceContext: Context) => Promise<ComponentView>;
+    task?: (creationContext: TaskViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+    choice?: (creationContext: ChoiceViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+    map?: (creationContext: MapViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+    terminator?: (creationContext: TerminatorViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
 }
 
 interface ViewCreationContext {
