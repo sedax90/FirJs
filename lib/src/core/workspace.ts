@@ -303,6 +303,7 @@ export class Workspace implements ComponentWithView {
         this.view.bindWheel((e: WheelEvent) => this._onWheel(e));
         this.view.bindContextMenu((position: Vector, target: Element) => this._onContextMenu(position, target));
         this.view.bindKeyboard((e: KeyboardEvent) => this._onKeyboard(e));
+        this.view.bindMouseOver((position: Vector, target: Element) => this._onMouseOver(position, target));
     }
 
     private _addEventListeners(): void {
@@ -613,6 +614,17 @@ export class Workspace implements ComponentWithView {
     private _onContextMenuFitAndCenter(e: MouseEvent): void {
         e.preventDefault();
         this.fitAndCenter();
+    }
+
+    private _onMouseOver(position: Vector, target: Element): void {
+        const workflow = this.view.workflow;
+        const component = workflow.isHover(target);
+        if (component && instanceOfComponentWithNode(component)) {
+            this.context.designerState.hoverComponent.next(component);
+        }
+        else {
+            this.context.designerState.hoverComponent.next(null);
+        }
     }
 
     private static _getDefaultOptions(): WorkspaceOptions {

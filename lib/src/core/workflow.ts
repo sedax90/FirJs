@@ -17,6 +17,10 @@ export class Workflow implements ComponentWithView {
         return this.view.findById(nodeId);
     }
 
+    public isHover(target: Element): ComponentInstance | null {
+        return this.view.isHover(target);
+    }
+
     public static async create(parent: HTMLElement, context: Context): Promise<Workflow> {
         const view = await WorkflowView.create(parent, context);
         return new Workflow(view, context);

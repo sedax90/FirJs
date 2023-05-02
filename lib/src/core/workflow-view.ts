@@ -122,6 +122,10 @@ export class WorkflowView implements ElementView {
         return this.mainSequence.findById(nodeId);
     }
 
+    isHover(target: Element): ComponentInstance | null {
+        return this.mainSequence.isHover(target);
+    }
+
     // Center workflowWrapper into svg
     fitAndCenter(): void {
         const parentRect = this.parent.getBoundingClientRect();

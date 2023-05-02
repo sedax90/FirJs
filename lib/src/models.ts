@@ -19,6 +19,7 @@ export interface ComponentInstance extends ComponentWithView {
 
     findByClick: (click: ClickEvent) => ComponentInstance | null;
     findById: (nodeId: string) => ComponentInstance | null;
+    isHover: (target: Element) => ComponentInstance | null;
 }
 
 export interface ElementView {

@@ -37,17 +37,6 @@ export class NodeTree implements ComponentWithNode {
                 }
             }
         );
-
-        const selectableElement = view.getSelectableElement();
-        if (selectableElement) {
-            selectableElement.addEventListener('mouseover', () => {
-                context.designerState.hoverComponent.next(this);
-            });
-
-            selectableElement.addEventListener('mouseleave', () => {
-                context.designerState.hoverComponent.next(null);
-            });
-        }
     }
 
     node!: Node;
@@ -84,6 +73,24 @@ export class NodeTree implements ComponentWithNode {
         }
 
         if (this.node && this.node.id === nodeId) {
+            return this;
+        }
+
+        return null;
+    }
+
+    isHover(target: Element): ComponentInstance | null {
+        const sequences = this.view.childSequences;
+        for (const sequence of sequences) {
+            const component = sequence.isHover(target);
+            if (component) {
+                return component;
+            }
+        }
+
+        // If no children check if is current view
+        const viewContains = this.view.getSelectableElement()?.contains(target);
+        if (viewContains) {
             return this;
         }
 

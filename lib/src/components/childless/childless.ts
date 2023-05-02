@@ -20,7 +20,7 @@ export abstract class ChildlessComponent implements ComponentInstance {
                     }
                 }
             }
-    );
+        );
 
         context.designerState?.hoverComponent.subscribe(
             (data) => {
@@ -36,17 +36,6 @@ export abstract class ChildlessComponent implements ComponentInstance {
                 }
             }
         );
-
-        const selectableElement = view.getSelectableElement();
-        if (selectableElement) {
-            selectableElement.addEventListener('mouseover', () => {
-                context.designerState.hoverComponent.next(this);
-            });
-
-            selectableElement.addEventListener('mouseleave', () => {
-                context.designerState.hoverComponent.next(null);
-            });
-        }
     }
 
     node!: Node;
@@ -65,6 +54,15 @@ export abstract class ChildlessComponent implements ComponentInstance {
 
     findById(nodeId: string): ComponentInstance | null {
         if (this.node && this.node.id === nodeId) return this;
+
+        return null;
+    }
+
+    isHover(target: Element): ComponentInstance | null {
+        const viewContains = this.view.getSelectableElement()?.contains(target);
+        if (viewContains) {
+            return this;
+        }
 
         return null;
     }
