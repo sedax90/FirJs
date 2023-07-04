@@ -131,11 +131,16 @@ export class MapView extends ParentView {
             }
 
             mapView = new MapView(element, parent, totalWidth, totalHeight, joinX, joinY, sequenceComponent);
+
+            mapView._selectableElement = stepView.element;
         }
 
         await addHasErrorIfNecessary(mapView.element, node, parentNode, context);
 
-        mapView._selectableElement = mapView.element;
+        if (!mapView._selectableElement) {
+            mapView._selectableElement = mapView.element;
+        }
+
         return mapView;
     }
 

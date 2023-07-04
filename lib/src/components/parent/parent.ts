@@ -38,17 +38,6 @@ export abstract class ParentComponent implements ComponentInstance {
                 }
             }
         );
-
-        const selectableElement = view.getSelectableElement();
-        if (selectableElement) {
-            selectableElement.addEventListener('mouseover', () => {
-                context.designerState.hoverComponent.next(this);
-            });
-
-            selectableElement.addEventListener('mouseleave', () => {
-                context.designerState.hoverComponent.next(null);
-            });
-        }
     }
 
     node!: Node;
@@ -79,6 +68,20 @@ export abstract class ParentComponent implements ComponentInstance {
         }
 
         if (this.node && this.node.id === nodeId) {
+            return this;
+        }
+
+        return null;
+    }
+
+    isHover(target: Element): ComponentInstance | null {
+        const child = this.sequence.isHover(target);
+        if (child) {
+            return child;
+        }
+
+        const viewContains = this.view.getSelectableElement()?.contains(target);
+        if (viewContains) {
             return this;
         }
 

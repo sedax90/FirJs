@@ -57,4 +57,11 @@ export class WorkspaceView implements ElementView {
         window.addEventListener('keydown', handler, false);
         window.addEventListener('keyup', handler, false);
     }
+
+    public bindMouseOver(handler: (position: Vector, target: Element) => void) {
+        this.element.addEventListener('mouseover', (e: MouseEvent) => {
+            e.preventDefault();
+            handler(readMousePosition(e), e.target as Element);
+        });
+    }
 }

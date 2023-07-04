@@ -1,42 +1,21 @@
-<div
-  class="topbar bg-light d-flex align-items-center justify-content-between p-2 position-relative mat-elevation-z1 sticky-top">
-  <div class="d-flex align-items-center">
-    <span class="me-3">Drag and drop components:</span>
-
-    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'task')"
-      (dragend)="onDragEnd($event)">
-      <mat-icon class="me-1">settings</mat-icon> <span>Task</span>
-    </button>
-    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'map')"
-      (dragend)="onDragEnd($event)">
-      <mat-icon class="me-1">sync</mat-icon> <span>Map</span>
-    </button>
-    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'choice')"
-      (dragend)="onDragEnd($event)">
-      <mat-icon class="me-1">alt_route</mat-icon> <span>Choice</span>
-    </button>
-    <button mat-raised-button class="me-2" draggable="true" (dragstart)="onDragstart($event, 'terminator')"
-      (dragend)="onDragEnd($event)">
-      <mat-icon class="me-1">stop</mat-icon> <span>Terminator</span>
-    </button>
-  </div>
-  <div class="d-flex justify-content-end align-items-center">
-    <button mat-raised-button (click)="changeFlowMode()">
-      <mat-icon class="me-2" *ngIf="currentFlowMode === 'vertical'">vertical_distribute</mat-icon>
-      <mat-icon class="me-2" *ngIf="currentFlowMode === 'horizontal'">horizontal_distribute</mat-icon>
-      <span>Change orientation</span>
-    </button>
-    <button mat-raised-button (click)="firjsWorkflow.fitAndCenter()" class="ms-2">
-      <mat-icon class="me-2">center_focus_weak</mat-icon>
-      <span>Fit & center</span>
-    </button>
-  </div>
-</div>
-
-<firjs [tree]="tree" (onTreeChange)="onTreeChange($event)" (onNodeAdd)="onNodeAdd($event)"
-  (onNodeMove)="onNodeMove($event)" [canSelectNode]="canSelectNode.bind(this)" (onNodeSelect)="onNodeSelect($event)"
-  [canDeselectNode]="canDeselectNode.bind(this)" (onNodeDeselect)="onNodeDeselect($event)"
-  [canRemoveNode]="canRemoveNode.bind(this)" (onNodeRemove)="onNodeRemove($event)"
-  (onWorkflowPan)="onWorkflowPan($event)" (onWorkflowScale)="onWorkflowScale($event)"
-  (onFlowModeChange)="currentFlowMode = $event.flowMode">
-</firjs>
+<mat-drawer-container style="height: 100%;">
+  <mat-drawer mode="side" opened style="width: 300px;">
+    <div class="p-3">
+      <h2 class="mb-0">FirJs Demo</h2>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-list role="list">
+      <mat-list-item role="listitem" routerLink="/default" routerLinkActive="active">
+        Default
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item role="listitem" routerLink="/custom" routerLinkActive="active">
+        Custom
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>

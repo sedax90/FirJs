@@ -51,6 +51,17 @@ export class Sequence implements ComponentInstance {
         return null;
     }
 
+    isHover(target: Element): ComponentInstance | null {
+        for (const componentInstance of this.view.componentInstances) {
+            const element = componentInstance.isHover(target);
+            if (element) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
     getNodeIndex(node: Node): number {
         const id = node.id;
         return this.nodes.findIndex(e => e.id === id);
