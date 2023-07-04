@@ -1,4 +1,6 @@
 import { JoinView } from "../components/common/join/join-view";
+import { LabelView, LabelViewProps } from "../components/common/label/label-view";
+import { StepView } from "../components/common/step/step-view";
 import { NodeTreeView } from "../components/node-tree/node-tree-view";
 import { Sequence } from "../components/sequence/sequence";
 import { TaskView } from "../components/task/task-view";
@@ -26,6 +28,20 @@ export class CreationHelper {
         }
 
         return null;
+    }
+
+    /**
+     * StepView is the minimun basic component view.
+     */
+    async createStepView(node: Node): Promise<StepView> {
+        return await StepView.create(node, this.context);
+    }
+
+    /**
+     * A simple label view.
+     */
+    async createLabelView(text: string, props?: LabelViewProps): Promise<LabelView> {
+        return await LabelView.create(text, this.context, props);
     }
 
     async createTaskComponent(node: Node, parentNode: Node | null, view: {
