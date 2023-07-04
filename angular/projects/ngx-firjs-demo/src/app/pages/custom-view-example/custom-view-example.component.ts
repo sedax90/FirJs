@@ -170,6 +170,7 @@ export class CustomViewExampleComponent implements OnInit, AfterViewInit {
   private _drawChoice(generatorContext: ChoiceViewCreationContext, context: Context): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const creationHelper = CreationHelper.getInstance(context);
+      creationHelper?.createSequence
 
       if (creationHelper) {
         const node = generatorContext.node;
