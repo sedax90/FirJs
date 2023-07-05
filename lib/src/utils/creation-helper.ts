@@ -164,6 +164,16 @@ export class CreationHelper {
 
         let previousOffsetX = 0;
         let previousOffsetY = 0;
+
+        if (flowMode === "vertical") {
+            if (maxWidth > totalBranchesWidth) {
+                previousOffsetX = (maxWidth - totalBranchesWidth) / 2;
+            }
+        }
+        else {
+            // NOOP
+        }
+
         for (let i = 0; i < branches.length; i++) {
             const branch: ProcessedBranch = { ...branches[i], offsetX: 0, offsetY: 0, hasTerminator: false };
             const sequence = branch.sequence;

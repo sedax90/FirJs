@@ -117,12 +117,21 @@ export class ChoiceView extends NodeTreeView {
                     columnWidth = sequence.view.width;
                     columnHeight = sequence.view.height + choiceInfoLabel.height;
 
+                    if (choiceInfoLabel.width > columnWidth) {
+                        columnWidth = choiceInfoLabel.width;
+                    }
+
                     joinX = columnWidth / 2;
                     joinY = columnHeight - placeholderHeight;
 
                     const choiceInfoLabelOffsetX = (columnWidth - choiceInfoLabel.width) / 2;
                     DomHelper.translate(choiceInfoLabel.element, choiceInfoLabelOffsetX, 0);
-                    DomHelper.translate(sequence.view.element, 0, choiceInfoLabel.height);
+
+                    let sequenceOffsetX = 0;
+                    if (columnWidth > sequence.view.width) {
+                        sequenceOffsetX = (columnWidth - sequence.view.width) / 2;
+                    }
+                    DomHelper.translate(sequence.view.element, sequenceOffsetX, choiceInfoLabel.height);
                 }
                 else {
                     columnWidth = sequence.view.width + choiceInfoLabel.width + placeholderWidth;
