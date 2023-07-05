@@ -1,4 +1,4 @@
-import { Context, Vector } from "../models";
+import { Vector } from "../models";
 
 export function readMousePosition(e: MouseEvent | WheelEvent): Vector {
     const vector: Vector = {

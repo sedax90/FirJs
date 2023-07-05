@@ -90,6 +90,7 @@ export class Workspace implements ComponentWithView {
                 selectedComponent: new Observable<ComponentWithNode | null>(),
                 selectedPlaceholder: new Observable<Placeholder | null>(),
                 hoverComponent: new Observable<ComponentWithNode | null>(),
+                contextMenuOpenedComponent: new Observable<ComponentWithNode | null>(),
                 scale: 1,
                 flowMode: options.flowMode,
             },
@@ -191,6 +192,10 @@ export class Workspace implements ComponentWithView {
 
         if (initData.overrideView) {
             context.userDefinedOverriders.overrideView = initData.overrideView;
+        }
+
+        if (initData.overrideComponentMethods) {
+            context.userDefinedOverriders.overrideComponentMethods = initData.overrideComponentMethods;
         }
 
         const view = await WorkspaceView.create(initData.parent, context);
@@ -567,7 +572,12 @@ export class Workspace implements ComponentWithView {
 
         let contextMenu!: any;
         if (componentInstance && instanceOfComponentWithNode(componentInstance)) {
-            this.context.designerState?.selectedComponent.next(componentInstance);
+            if (this.context.options.events.emitSelectedOnContextMenu) {
+                this.context.designerState?.selectedComponent.next(componentInstance);
+            }
+
+            this.context.designerState.contextMenuOpenedComponent.next(componentInstance);
+
             contextMenu = ComponentContextMenuView.create(position, this.context, {
                 'remove': {
                     label: this.context.options.strings['context-menu.component.actions.remove.label'],
@@ -604,6 +614,7 @@ export class Workspace implements ComponentWithView {
         contextMenus.forEach(e => {
             e.remove();
         });
+        this.context.designerState.contextMenuOpenedComponent.next(null);
     }
 
     private _onContextMenuRemoveAction(e: MouseEvent, componentInstance: ComponentInstance): void {
@@ -641,6 +652,9 @@ export class Workspace implements ComponentWithView {
                 "placeholder.not-allowed-to-drop.label": "You can't attach a node here",
             },
             infinite: false,
+            events: {
+                emitSelectedOnContextMenu: false,
+            }
         };
     }
 

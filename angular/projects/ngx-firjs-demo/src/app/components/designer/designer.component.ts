@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { DeselectNodeRequestEvent, FlowMode, NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, OverrideViewMap, SelectNodeRequestEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '../../../../../ngx-firjs/src/public-api';
+import { DeselectNodeRequestEvent, FlowMode, NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, OverrideComponentMethodsMap, OverrideViewMap, SelectNodeRequestEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '../../../../../ngx-firjs/src/public-api';
 
 
 @Component({
@@ -20,6 +20,7 @@ export class DesignerComponent implements OnInit {
   }
 
   @Input() overrideView!: OverrideViewMap;
+  @Input() overrideComponentMethods!: OverrideComponentMethodsMap;
 
   flowMode: FlowMode = 'vertical';
 

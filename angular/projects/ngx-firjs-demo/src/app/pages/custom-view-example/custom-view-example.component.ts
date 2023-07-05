@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EmbeddedViewRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ChoiceProps, ChoiceViewCreationContext, ComponentView, Context, CreationHelper, DomHelper, LabelHelper, NgxFirjsComponent, Node, OverrideViewMap, TaskViewCreationContext, WorkspaceOptions } from '../../../../../ngx-firjs/src/public-api';
+import { ChoiceProps, ChoiceViewCreationContext, ComponentInstance, ComponentWithNode, Context, CreationHelper, DomHelper, LabelHelper, NgxFirjsComponent, Node, OverrideComponentMethodsMap, OverrideViewMap, TaskViewCreationContext, WorkspaceOptions } from '../../../../../ngx-firjs/src/public-api';
 import { DesignerComponent } from '../../components/designer/designer.component';
 
 @Component({
@@ -29,6 +29,13 @@ export class CustomViewExampleComponent implements OnInit, AfterViewInit {
   overrideView: OverrideViewMap = {
     task: this._drawTask.bind(this),
     choice: this._drawChoice.bind(this),
+  };
+  overrideComponentMethods: OverrideComponentMethodsMap = {
+    task: {
+      findByClick: (instance: ComponentInstance & ComponentWithNode) => {
+        return null;
+      }
+    }
   };
 
   ngAfterViewInit(): void {

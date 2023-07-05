@@ -32,6 +32,15 @@ export class NodeTreeView implements ComponentView {
         }
     }
 
+    setContextMenuOpened?(status: boolean) {
+        if (status) {
+            this.element.classList.add('context-menu-opened');
+        }
+        else {
+            this.element.classList.remove('context-menu-opened');
+        }
+    }
+
     getSelectableElement(): HTMLElement | SVGElement | null {
         return this.selectableElement;
     }

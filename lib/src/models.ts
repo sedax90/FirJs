@@ -36,6 +36,7 @@ export interface ComponentView extends ElementView {
     getSelectableElement: () => HTMLElement | SVGElement | null;
     setSelected?: (status: boolean) => void;
     setDragging?: (status: boolean) => void;
+    setContextMenuOpened?: (status: boolean) => void;
     setHover?: (isHover: boolean) => void;
 }
 
@@ -103,6 +104,7 @@ interface PublicOverriders {
     overrideIcon?: (node: Node) => Promise<string | HTMLElement | SVGElement>;
     overrideColumnLabel?: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
     overrideView?: OverrideViewMap;
+    overrideComponentMethods?: OverrideComponentMethodsMap;
 }
 
 export interface OverrideViewMap {
@@ -110,6 +112,27 @@ export interface OverrideViewMap {
     choice?: (creationContext: ChoiceViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
     map?: (creationContext: MapViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
     terminator?: (creationContext: TerminatorViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+}
+
+interface PublicComponentInstanceOverridableFns {
+    findByClick?: (componentInstance: ComponentInstance & ComponentWithNode) => ((click: ClickEvent, componentInstance: ComponentInstance & ComponentWithNode) => ComponentInstance | null) | null;
+    findById?: (componentInstance: ComponentInstance & ComponentWithNode) => ((nodeId: string, componentInstance: ComponentInstance & ComponentWithNode) => ComponentInstance | null) | null;
+    isHover?: (componentInstance: ComponentInstance & ComponentWithNode) => ((target: Element, componentInstance: ComponentInstance & ComponentWithNode) => ComponentInstance | null) | null;
+};
+
+export interface ComponentInstanceContext {
+    view: ComponentView;
+    node: Node;
+    parentNode: Node | null;
+    parentSequence: Sequence | null;
+    indexInSequence: number;
+}
+
+export interface OverrideComponentMethodsMap {
+    task?: PublicComponentInstanceOverridableFns,
+    choice?: PublicComponentInstanceOverridableFns,
+    map?: PublicComponentInstanceOverridableFns,
+    terminator?: PublicComponentInstanceOverridableFns
 }
 
 interface ViewCreationContext {
@@ -140,6 +163,9 @@ export interface WorkspaceOptions {
     style: WorkspaceStyleOptions;
     strings: Record<string, string>;
     infinite: boolean;
+    events: {
+        emitSelectedOnContextMenu: boolean;
+    }
 }
 
 export interface WorkspaceInit extends PublicEventListeners, PublicFunctions, PublicOverriders {
@@ -164,6 +190,7 @@ export interface DesignerState {
     selectedComponent: Observable<ComponentWithNode | null>;
     selectedPlaceholder: Observable<Placeholder | null>;
     hoverComponent: Observable<ComponentWithNode | null>;
+    contextMenuOpenedComponent: Observable<ComponentWithNode | null>;
     scale: number;
     flowMode: FlowMode;
 
