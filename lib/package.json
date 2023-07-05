@@ -1,13 +1,13 @@
 {
     "name": "@sedax90/firjs",
-    "version": "0.0.18-dev",
+    "version": "0.0.19-dev",
     "author": {
         "name": "Cristian Sedaboni"
     },
     "scripts": {
         "clean": "rm -rf lib && rm -rf build && rm -rf dist",
-        "start": "npm run sass-dev & rollup -c --watch",
-        "build": "npm run sass-prod && npm run clean && rollup -c",
+        "start": "npm run sass-dev & prod=0 rollup -c --watch",
+        "build": "npm run sass-prod && npm run clean && prod=1 rollup -c",
         "sass-dev": "sass --watch --update --style=expanded styles/scss:styles/css",
         "sass-prod": "sass --no-source-map --style=compressed styles/scss:styles/css"
     },

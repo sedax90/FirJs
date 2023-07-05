@@ -62,6 +62,17 @@ const tree = [
     },
     {
         id: i++,
+        label: "Choice with a very very very very looooooooooooooooooooooooooooooooooooong label...",
+        type: "choice",
+        props: {
+            choices: [
+                [],
+                [],
+            ]
+        }
+    },
+    {
+        id: i++,
         label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec pretium nisi, in bibendum dui. Nunc id porttitor ipsum.",
         type: "task",
     },
