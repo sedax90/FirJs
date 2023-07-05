@@ -37,6 +37,21 @@ export class NodeTree implements ComponentWithNode {
                 }
             }
         );
+
+        context.designerState?.contextMenuOpenedComponent.subscribe(
+            (data) => {
+                if (data && data === this) {
+                    if (this.view.setContextMenuOpened) {
+                        this.view.setContextMenuOpened(true);
+                    }
+                }
+                else {
+                    if (this.view.setContextMenuOpened) {
+                        this.view.setContextMenuOpened(false);
+                    }
+                }
+            }
+        );
     }
 
     node!: Node;
@@ -45,6 +60,15 @@ export class NodeTree implements ComponentWithNode {
     indexInSequence!: number;
 
     findByClick(click: ClickEvent): ComponentInstance | null {
+        // Method overrider
+        const methodsOverride = this.context.userDefinedOverriders?.overrideComponentMethods?.choice?.findByClick;
+        if (methodsOverride) {
+            const overridedFn = methodsOverride(this);
+            if (overridedFn) {
+                return overridedFn(click, this);
+            }
+        }
+
         // Check children
         const sequences = this.view.childSequences;
         for (const sequence of sequences) {
@@ -64,6 +88,15 @@ export class NodeTree implements ComponentWithNode {
     }
 
     findById(nodeId: string): ComponentInstance | null {
+        // Method overrider
+        const methodsOverride = this.context.userDefinedOverriders?.overrideComponentMethods?.choice?.findById;
+        if (methodsOverride) {
+            const overridedFn = methodsOverride(this);
+            if (overridedFn) {
+                return overridedFn(nodeId, this);
+            }
+        }
+
         const sequences = this.view.childSequences;
         for (const sequence of sequences) {
             const component = sequence.findById(nodeId);
@@ -80,6 +113,15 @@ export class NodeTree implements ComponentWithNode {
     }
 
     isHover(target: Element): ComponentInstance | null {
+        // Method overrider
+        const methodsOverride = this.context.userDefinedOverriders?.overrideComponentMethods?.choice?.isHover;
+        if (methodsOverride) {
+            const overridedFn = methodsOverride(this);
+            if (overridedFn) {
+                return overridedFn(target, this);
+            }
+        }
+
         const sequences = this.view.childSequences;
         for (const sequence of sequences) {
             const component = sequence.isHover(target);

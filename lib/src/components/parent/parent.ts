@@ -38,6 +38,21 @@ export abstract class ParentComponent implements ComponentInstance {
                 }
             }
         );
+
+        context.designerState?.contextMenuOpenedComponent.subscribe(
+            (data) => {
+                if (data && data === this) {
+                    if (this.view.setContextMenuOpened) {
+                        this.view.setContextMenuOpened(true);
+                    }
+                }
+                else {
+                    if (this.view.setContextMenuOpened) {
+                        this.view.setContextMenuOpened(false);
+                    }
+                }
+            }
+        );
     }
 
     node!: Node;

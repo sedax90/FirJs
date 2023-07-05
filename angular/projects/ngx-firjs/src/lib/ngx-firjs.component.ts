@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { DeselectNodeRequestEvent, FlowMode, FlowModeChangeEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeLeaveEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions, OverrideViewMap } from '@sedax90/firjs';
+import { DeselectNodeRequestEvent, FlowMode, FlowModeChangeEvent, Node, NodeAddEvent, NodeAttachEvent, NodeDeselectEvent, NodeHoverEvent, NodeLeaveEvent, NodeMoveEvent, NodeRemoveEvent, NodeSelectEvent, SelectNodeRequestEvent, TreeChangeEvent, Vector, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions, OverrideViewMap, OverrideComponentMethodsMap } from '@sedax90/firjs';
 
 @Component({
   selector: 'firjs',
@@ -94,6 +94,10 @@ export class NgxFirjsComponent implements OnInit {
     this._overrideView = overrideViewMap;
   }
 
+  @Input() set overrideComponentMethods(overrideComponentMethods: OverrideComponentMethodsMap) {
+    this._overrideComponentMethods = overrideComponentMethods;
+  }
+
   getSelectedNode(): Node | null {
     if (this._workspace) {
       return this._workspace.getSelectedNode();
@@ -147,6 +151,7 @@ export class NgxFirjsComponent implements OnInit {
   private _overrideIcon!: (node: Node) => Promise<string>;
   private _overrideColumnLabel!: (node: Node, parent: Node | null, columnIndex: number) => Promise<string>;
   private _overrideView!: OverrideViewMap;
+  private _overrideComponentMethods!: OverrideComponentMethodsMap;
   private _options!: Partial<WorkspaceOptions>;
 
   constructor() { }
@@ -201,6 +206,7 @@ export class NgxFirjsComponent implements OnInit {
       overrideIcon: this._overrideIcon,
       overrideColumnLabel: this._overrideColumnLabel,
       overrideView: this._overrideView,
+      overrideComponentMethods: this._overrideComponentMethods,
     }).then(
       (ws: Workspace) => {
         this._workspace = ws;

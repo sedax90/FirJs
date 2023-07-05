@@ -70,6 +70,12 @@
     stroke-width: 2;
   }
 }
+
+.context-menu-opened > .step > .label-container {
+  stroke: var(--nodeSelectedStrokeColor);
+  stroke-width: 1;
+}
+
 .selected > .step > .label-container {
   stroke: var(--nodeSelectedStrokeColor);
   stroke-width: 2;
@@ -151,14 +157,14 @@
 }
 
 .context-menu {
-  padding: 0;
+  padding: 5px;
   background-color: #fff;
   box-shadow: rgba(0, 28, 36, 0.3) 0px 1px 1px 0px,
     rgba(0, 28, 36, 0.15) 1px 1px 1px 0px,
     rgba(0, 28, 36, 0.15) -1px 1px 1px 0px;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 2px;
-  min-width: 150px;
+  border-radius: 3px;
+  min-width: 175px;
 }
 
 .context-menu > ul {
@@ -172,6 +178,7 @@
   line-height: 1;
   cursor: pointer;
   text-align: left;
+  border-radius: 3px;
 }
 
 .context-menu > ul > li:hover {

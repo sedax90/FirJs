@@ -36,6 +36,21 @@ export abstract class ChildlessComponent implements ComponentInstance {
                 }
             }
         );
+
+        context.designerState?.contextMenuOpenedComponent.subscribe(
+            (data) => {
+                if (data && data === this) {
+                    if (this.view.setContextMenuOpened) {
+                        this.view.setContextMenuOpened(true);
+                    }
+                }
+                else {
+                    if (this.view.setContextMenuOpened) {
+                        this.view.setContextMenuOpened(false);
+                    }
+                }
+            }
+        );
     }
 
     node!: Node;
@@ -44,6 +59,15 @@ export abstract class ChildlessComponent implements ComponentInstance {
     indexInSequence!: number;
 
     findByClick(click: ClickEvent): ComponentInstance | null {
+        // Method overrider
+        const methodsOverride = this.context.userDefinedOverriders?.overrideComponentMethods?.task?.findByClick;
+        if (methodsOverride) {
+            const overridedFn = methodsOverride(this);
+            if (overridedFn) {
+                return overridedFn(click, this);
+            }
+        }
+
         const viewContains = this.view.getSelectableElement()?.contains(click.target);
         if (viewContains) {
             return this;
@@ -53,12 +77,30 @@ export abstract class ChildlessComponent implements ComponentInstance {
     }
 
     findById(nodeId: string): ComponentInstance | null {
+        // Method overrider
+        const methodsOverride = this.context.userDefinedOverriders?.overrideComponentMethods?.task?.findById;
+        if (methodsOverride) {
+            const overridedFn = methodsOverride(this);
+            if (overridedFn) {
+                return overridedFn(nodeId, this);
+            }
+        }
+
         if (this.node && this.node.id === nodeId) return this;
 
         return null;
     }
 
     isHover(target: Element): ComponentInstance | null {
+        // Method overrider
+        const methodsOverride = this.context.userDefinedOverriders?.overrideComponentMethods?.task?.isHover;
+        if (methodsOverride) {
+            const overridedFn = methodsOverride(this);
+            if (overridedFn) {
+                return overridedFn(target, this);
+            }
+        }
+
         const viewContains = this.view.getSelectableElement()?.contains(target);
         if (viewContains) {
             return this;

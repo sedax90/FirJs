@@ -362,6 +362,29 @@ firjs.init({
             return resolve(`Rule for choice ${columnIndex + 1}`);
         });
     },
+    overrideComponentMethods: {
+        task: {
+            findByClick: (instance) => {
+                if (instance.node.id === 0) {
+                    return (click, instance) => {
+                        const node = instance.node;
+                        console.debug('findByClick', node);
+
+                        const view = instance.view;
+                        const viewContains = view.getSelectableElement()?.contains(click.target);
+                        if (viewContains) {
+                            return instance;
+                        }
+
+                        return null;
+                    };
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+    }
 }).then((workspace) => {
     const elements = document.getElementsByClassName("draggable");
     for (const element of elements) {
