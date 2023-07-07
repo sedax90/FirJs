@@ -41,7 +41,7 @@ export class DragExternalInteraction implements ClickInteraction {
         newPosition = subtract(newPosition, this._mouseClickOffsetFromComponent);
 
         // We must compensate the element position with the workspace offset
-        const workspaceRect = this.context.designerState.workspaceRect;
+        const workspaceRect = this.context.designerState.getWorkspaceRect();
         if (workspaceRect) {
             newPosition.x = newPosition.x - workspaceRect.left;
             newPosition.y = newPosition.y - workspaceRect.top;

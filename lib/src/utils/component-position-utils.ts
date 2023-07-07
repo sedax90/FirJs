@@ -10,7 +10,7 @@ export function getElementPositionInWorkspace(element: HTMLElement | SVGElement,
     let componentClientRectX = componentClientRect.x;
     let componentClientRectY = componentClientRect.y;
 
-    const workspaceRect = context.designerState.workspaceRect;
+    const workspaceRect = context.designerState.getWorkspaceRect();
     if (workspaceRect) {
         componentClientRectX = componentClientRectX - workspaceRect.left;
         componentClientRectY = componentClientRectY - workspaceRect.top;
@@ -23,7 +23,7 @@ export function getElementPositionInWorkspace(element: HTMLElement | SVGElement,
 }
 
 export function getVectorPositionInWorkspace(startPosition: Vector, context: Context): Vector {
-    const workspaceRect = context.designerState.workspaceRect;
+    const workspaceRect = context.designerState.getWorkspaceRect();
     if (workspaceRect) {
         startPosition.x = startPosition.x - workspaceRect.left;
         startPosition.y = startPosition.y - workspaceRect.top;

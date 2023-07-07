@@ -1,4 +1,4 @@
-import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions, FlowMode } from "../models";
+import { Vector, ComponentInstance, ComponentWithView, Context, ClickInteraction, WorkspaceInit, Node, ComponentWithNode, WorkspaceOptions, FlowMode, DesignerState } from "../models";
 import { ClickEvent, MouseButton } from "../utils/event-utils";
 import { SelectComponentInteraction } from "../interactions/select-component-interaction";
 import { UserInteractionController } from "../interactions/user-interaction-controller";
@@ -93,6 +93,7 @@ export class Workspace implements ComponentWithView {
                 contextMenuOpenedComponent: new Observable<ComponentWithNode | null>(),
                 scale: 1,
                 flowMode: options.flowMode,
+                getWorkspaceRect: () => new DOMRect(),
             },
             options: options,
             componentCreator: new ComponentCreator(),
@@ -198,12 +199,13 @@ export class Workspace implements ComponentWithView {
             context.userDefinedOverriders.overrideComponentMethods = initData.overrideComponentMethods;
         }
 
-        const view = await WorkspaceView.create(initData.parent, context);
-        const workspace = new Workspace(view, context, initData.parent);
+        const view = await WorkspaceView.create(initData.parent, context as Context);
+        const workspace = new Workspace(view, context as Context, initData.parent);
         workspace._setViewBinds();
         workspace._addEventListeners();
 
         context.designerState.workspaceRect = workspace.view.element.getBoundingClientRect();
+        context.designerState.getWorkspaceRect = () => workspace._getWorkspaceRect();
 
         workspace._rebuildPlaceholderCache();
 
@@ -679,5 +681,9 @@ export class Workspace implements ComponentWithView {
                 height: 45,
             };
         }
+    }
+
+    private _getWorkspaceRect(): DOMRect {
+        return this.view.element.getBoundingClientRect();
     }
 }

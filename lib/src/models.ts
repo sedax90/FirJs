@@ -1,6 +1,7 @@
 import { ContextMenuView } from "./components/common/context-menu/context-menu-view";
 import { Placeholder } from "./components/placeholder/placeholder";
 import { Sequence } from "./components/sequence/sequence";
+import { WorkspaceView } from "./core/workspace-view";
 import { ComponentCreator } from "./utils/component-creator";
 import { ClickEvent } from "./utils/event-utils";
 import { Observable } from "./utils/observable";
@@ -196,11 +197,14 @@ export interface DesignerState {
 
     placeholders?: Placeholder[];
     draggedNode?: Node;
+    /** @deprecated Use getWorkspaceRect() instead. */
     workspaceRect?: DOMRect;
     isDragging?: boolean;
     isPressingCtrl?: boolean;
     wasMoving?: boolean; // Set when a user move a node or the workflow.
     workflowPositionInWorkspace?: Vector;
+
+    getWorkspaceRect: () => DOMRect;
 }
 
 export interface ClickInteraction {
