@@ -47,7 +47,7 @@ export class WorkflowScaleInteraction implements WheelInteraction {
             return;
         }
 
-        const workspaceRect = this.context.designerState.workspaceRect;
+        const workspaceRect = this.context.designerState.getWorkspaceRect();
         if (workspaceRect) {
             mousePosition.x = mousePosition.x - workspaceRect.left;
             mousePosition.y = mousePosition.y - workspaceRect.top;

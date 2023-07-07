@@ -121,8 +121,12 @@
                 </div>
             </nav>
 
-            <main id="main-col" class="col overflow-hidden">
-                <div id="root" class="root"></div>
+            <main id="main-col" class="col overflow-hidden d-flex flex-column position-relative"
+                style="height: calc(100vh - 56px);">
+                <div class="top-bar bg-white w-100" style="height: 50px; top: 0; z-index: 1;"></div>
+                <div class="position-relative">
+                    <div id="root" class="root"></div>
+                </div>
             </main>
         </div>
     </div>
