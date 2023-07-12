@@ -16,7 +16,7 @@ export class DragExternalInteraction implements ClickInteraction {
     private _startPosition!: Vector;
 
     static create(element: HTMLElement | SVGElement, context: Context): DragExternalInteraction {
-        const placeholderFinder = PlaceholderFinder.getInstance();
+        const placeholderFinder = PlaceholderFinder.getInstance(context);
         return new DragExternalInteraction(element, context, placeholderFinder);
     }
 

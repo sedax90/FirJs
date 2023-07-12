@@ -61,10 +61,12 @@ export class PlaceholderView implements ComponentView {
 
     showPlaceholder(): void {
         this._placeholderGroup.setAttribute('visibility', 'visible');
+        this._placeholderGroup.classList.add('visible');
     }
 
     hidePlaceholder(): void {
         this._placeholderGroup.setAttribute('visibility', 'hidden');
+        this._placeholderGroup.classList.remove('visible');
     }
 
     setCanDrop(canDrop: boolean): void {

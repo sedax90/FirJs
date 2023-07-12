@@ -208,8 +208,10 @@
       fill: rgba(0, 0, 0, 0.05);
     }
 
-    &:not(.hover) > .placeholder-selector {
-      opacity: 0;
+    &:not(.hover):not(.visible) {
+      & > .placeholder-selector {
+        opacity: 0;
+      }
     }
   }
 
@@ -248,8 +250,4 @@
 
 // .placeholder-area {
 //   visibility: visible !important;
-// }
-
-// .choice-column-bg {
-//   stroke: red;
 // }

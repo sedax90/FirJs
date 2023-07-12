@@ -155,7 +155,7 @@ export class WorkflowView implements ElementView {
 
         this.wrapper.setAttribute('transform', `translate(${workflowPosition.x}, ${workflowPosition.y}) scale(${scale})`);
 
-        PlaceholderFinder.getInstance().recalculatePositions();
+        PlaceholderFinder.getInstance(this.context).recalculatePositions();
     }
 
     private static _addSvgDefs(svg: SVGElement): void {

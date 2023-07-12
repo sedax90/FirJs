@@ -118,7 +118,7 @@ export class MapView extends ParentView {
             if (flowMode === 'vertical') {
                 DomHelper.translate(childrenContainerBg, 0, childrenContainerBgTopOffset);
                 DomHelper.translate(stepView.element, (totalWidth - mapLabelWidth) / 2, 0);
-                DomHelper.translate(sequenceComponent.view.element, childrenContainerBgLeftOffset / 2, context.options.style.placeholder.height);
+                DomHelper.translate(sequenceComponent.view.element, childrenContainerBgLeftOffset / 2, context.options.style.placeholder.height + childrenContainerBgTopOffset);
                 DomHelper.translate(mapLabelIcon, stepView.width / 2, stepView.height);
 
                 totalHeight = totalHeight + childrenContainerBgTopOffset;
@@ -126,7 +126,7 @@ export class MapView extends ParentView {
             else {
                 DomHelper.translate(childrenContainerBg, childrenContainerBgTopOffset, 0);
                 DomHelper.translate(stepView.element, 0, (totalHeight - stepView.height) / 2);
-                DomHelper.translate(sequenceComponent.view.element, mapLabelWidth, (totalHeight - sequenceComponent.view.height) / 2);
+                DomHelper.translate(sequenceComponent.view.element, mapLabelWidth + childrenContainerBgLeftOffset, (totalHeight - sequenceComponent.view.height) / 2);
                 DomHelper.translate(mapLabelIcon, stepView.width, stepView.height / 2);
             }
 
