@@ -663,7 +663,7 @@ export class Workspace implements ComponentWithView {
     private _rebuildPlaceholderCache(): void {
         const placeholders = this.context.designerState.placeholders;
         if (placeholders != null) {
-            const placeholderFinder = PlaceholderFinder.getInstance();
+            const placeholderFinder = PlaceholderFinder.getInstance(this.context);
             placeholderFinder.buildCache(placeholders);
         }
     }

@@ -31,7 +31,7 @@ export class StartView implements ComponentView {
         const label = LabelView.create('Start', context);
         DomHelper.translate(label.element, radius, radius);
 
-        parent.appendChild(element);
+        parent.insertBefore(element, parent.firstChild);
         element.appendChild(circle);
         element.appendChild(label.element);
 

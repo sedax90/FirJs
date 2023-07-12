@@ -415,14 +415,17 @@ firjs.init({
 
             ghost = originaElement.cloneNode(true);
             ghost.classList.add("ghost");
+            ghost.classList.remove('bg-white');
+            ghost.classList.remove('border');
             ghost.style.width = rect.width + 'px';
             ghost.style.height = rect.height + 'px';
+            ghost.style.background = 'lightsteelblue';
 
             document.body.appendChild(ghost);
-            // var offsetX = (event.clientX - rect.left);
-            // var offsetY = (event.clientY - rect.top);
+            var offsetX = (event.clientX - rect.left);
+            var offsetY = (event.clientY - rect.top);
 
-            event.dataTransfer.setDragImage(ghost, 0, 0);
+            event.dataTransfer.setDragImage(ghost, offsetX, offsetY);
             event.dataTransfer?.setData('text/plain', JSON.stringify(node));
 
             workspace.startDrag(originaElement, {

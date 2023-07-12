@@ -147,9 +147,11 @@ export class SequenceView implements ComponentView {
             sequenceHeight = placeholderHeight;
             maxWidth = placeholderWidth;
             maxHeight = placeholderHeight;
+            maxJoinX = placeholderWidth / 2;
+            maxJoinY = placeholderHeight / 2;
 
-            if (!parentNode) {
-                // This is the only sequence in workflowz
+            if (nodes.length === 0) {
+                // This is the only sequence in workflow
                 firstPlaceholder.view.element.classList.add('alone');
             }
         }

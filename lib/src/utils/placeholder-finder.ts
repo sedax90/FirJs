@@ -1,10 +1,11 @@
 import { Placeholder } from "../components/placeholder/placeholder";
-import { Vector } from "../models";
+import { Context, Vector } from "../models";
 import { getComponentPositionInWorkspace } from "./component-position-utils";
 
 export class PlaceholderFinder {
     private constructor(
-        private placeholders: Placeholder[]
+        private placeholders: Placeholder[],
+        private context: Context,
     ) { }
 
     private static _instance: PlaceholderFinder;
@@ -14,9 +15,9 @@ export class PlaceholderFinder {
         bottomRightPosition: Vector;
     }[] = [];
 
-    static getInstance(): PlaceholderFinder {
+    static getInstance(context: Context): PlaceholderFinder {
         if (!PlaceholderFinder._instance) {
-            PlaceholderFinder._instance = new PlaceholderFinder([]);
+            PlaceholderFinder._instance = new PlaceholderFinder([], context);
         }
 
         return PlaceholderFinder._instance;
@@ -32,10 +33,24 @@ export class PlaceholderFinder {
     recalculatePositions(): void {
         for (const placeholder of this.placeholders) {
             const position = getComponentPositionInWorkspace(placeholder);
+
+            const currentScale = this.context.designerState.scale;
+            const placeholderElementWidthScaled = placeholder.view.width * currentScale;
+            const placeholderElementHeightScaled = placeholder.view.height * currentScale;
+
+            const leftTopPosition = {
+                x: position.x,
+                y: position.y,
+            };
+            const rightBottomPosition = {
+                x: position.x + placeholderElementWidthScaled,
+                y: position.y + placeholderElementHeightScaled,
+            };
+
             this._cache.push({
                 placeholder,
-                letTopPosition: { x: position.x, y: position.y },
-                bottomRightPosition: { x: position.x + placeholder.view.width, y: position.y + placeholder.view.height }
+                letTopPosition: leftTopPosition,
+                bottomRightPosition: rightBottomPosition,
             });
         }
 
