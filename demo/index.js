@@ -2,6 +2,41 @@ let = i = 0;
 const tree = [
     {
         id: i++,
+        label: "Map (node-4)",
+        type: "map",
+        props: {
+            children: [
+
+            ],
+        }
+    },
+    {
+        id: i++,
+        label: "Choice 1",
+        type: "choice",
+        props: {
+            custom: true,
+            choices: [
+                [
+                    {
+                        id: i++,
+                        label: "Map (node-4)",
+                        type: "map",
+                        props: {
+                            children: [
+
+                            ],
+                        }
+                    },
+                ],
+                [
+
+                ]
+            ]
+        }
+    },
+    {
+        id: i++,
         label: "Pass 1",
         type: "task",
         props: {
@@ -244,7 +279,7 @@ firjs.init({
     parent: root,
     tree: [...tree],
     options: {
-        flowMode: "vertical",
+        flowMode: "horizontal",
         style: {
             fontSize: "0.875em",
         },
@@ -363,6 +398,11 @@ firjs.init({
                 element.classList.add('bi', 'bi-shuffle');
                 return resolve(element);
             }
+            else if (node.type === 'map') {
+                const element = document.createElement('i');
+                element.classList.add('bi', 'bi-shuffle');
+                return resolve(element);
+            }
             else {
                 resolve('');
             }
@@ -411,7 +451,7 @@ firjs.init({
             };
 
             const originaElement = event.target;
-            const rect = event.target.getBoundingClientRect();
+            const rect = originaElement.getBoundingClientRect();
 
             ghost = originaElement.cloneNode(true);
             ghost.classList.add("ghost");

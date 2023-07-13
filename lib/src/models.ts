@@ -1,7 +1,6 @@
 import { ContextMenuView } from "./components/common/context-menu/context-menu-view";
 import { Placeholder } from "./components/placeholder/placeholder";
 import { Sequence } from "./components/sequence/sequence";
-import { WorkspaceView } from "./core/workspace-view";
 import { ComponentCreator } from "./utils/component-creator";
 import { ClickEvent } from "./utils/event-utils";
 import { Observable } from "./utils/observable";
