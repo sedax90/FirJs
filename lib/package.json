@@ -1,6 +1,6 @@
 {
     "name": "@sedax90/firjs",
-    "version": "0.0.21-dev",
+    "version": "0.0.22-dev",
     "author": {
         "name": "Cristian Sedaboni"
     },
@@ -21,9 +21,9 @@
         "tslib": "^2.4.1",
         "typescript": "^4.9.4"
     },
-    "main": "./index.js",
-    "types": "./index.d.ts",
-    "module": "./es/index.js",
+    "main": "./firjs.js",
+    "types": "./firjs.d.ts",
+    "module": "./es/firjs.js",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/sedax90/FirJs.git"

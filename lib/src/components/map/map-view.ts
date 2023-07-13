@@ -75,40 +75,48 @@ export class MapView extends ParentView {
             const childrenContainerBgLeftOffset = 30;
             const childrenContainerBgTopOffset = 10;
 
+            let maxWidth = sequenceComponent.view.width;
+            if (mapLabelWidth > maxWidth) {
+                maxWidth = mapLabelWidth
+            }
+
             let totalWidth = 0;
             let totalHeight = 0;
             let joinX;
             let joinY;
 
-            let childrenContainerBgWidth;
+            let childrenContainerBgWidth = 0;
+            let childrenContainerBgHeight = 0;
 
             if (flowMode === 'vertical') {
-                totalWidth = sequenceComponent.view.width + childrenContainerBgLeftOffset;
+                totalWidth = maxWidth + childrenContainerBgLeftOffset;
                 totalHeight = sequenceComponent.view.height + mapLabelHeight + childrenContainerBgTopOffset;
 
                 joinX = totalWidth / 2;
                 joinY = totalHeight;
 
                 childrenContainerBgWidth = totalWidth;
+                childrenContainerBgHeight = totalHeight - childrenContainerBgTopOffset;
             }
             else {
-                totalWidth = sequenceComponent.view.width + mapLabelWidth + childrenContainerBgLeftOffset;
+                totalWidth = maxWidth + mapLabelWidth + childrenContainerBgLeftOffset;
                 totalHeight = sequenceComponent.view.height + childrenContainerBgLeftOffset;
 
                 joinX = totalWidth;
                 joinY = totalHeight / 2;
 
                 childrenContainerBgWidth = totalWidth - childrenContainerBgTopOffset;
+                childrenContainerBgHeight = totalHeight;
             }
 
             childrenContainerBg.setAttribute('width', `${childrenContainerBgWidth}px`);
-            childrenContainerBg.setAttribute('height', `${totalHeight}px`);
+            childrenContainerBg.setAttribute('height', `${childrenContainerBgHeight}px`);
 
             // Output connection dot
             const endConnection = DomHelper.svg('circle', {
                 r: 5,
                 cx: joinX,
-                cy: flowMode === 'vertical' ? (joinY + childrenContainerBgTopOffset) : joinY,
+                cy: joinY,
                 class: 'output',
                 fill: "black",
                 stroke: "black",
@@ -118,10 +126,8 @@ export class MapView extends ParentView {
             if (flowMode === 'vertical') {
                 DomHelper.translate(childrenContainerBg, 0, childrenContainerBgTopOffset);
                 DomHelper.translate(stepView.element, (totalWidth - mapLabelWidth) / 2, 0);
-                DomHelper.translate(sequenceComponent.view.element, childrenContainerBgLeftOffset / 2, context.options.style.placeholder.height + childrenContainerBgTopOffset);
+                DomHelper.translate(sequenceComponent.view.element, (totalWidth - sequenceComponent.view.width) / 2, mapLabelHeight);
                 DomHelper.translate(mapLabelIcon, stepView.width / 2, stepView.height);
-
-                totalHeight = totalHeight + childrenContainerBgTopOffset;
             }
             else {
                 DomHelper.translate(childrenContainerBg, childrenContainerBgTopOffset, 0);

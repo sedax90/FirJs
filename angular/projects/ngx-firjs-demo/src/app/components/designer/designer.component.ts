@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DeselectNodeRequestEvent, FlowMode, NgxFirjsComponent, Node, NodeAddEvent, NodeDeselectEvent, NodeMoveEvent, NodeRemoveEvent, NodeRemoveRequestEvent, NodeSelectEvent, NodeType, OverrideComponentMethodsMap, OverrideViewMap, SelectNodeRequestEvent, TreeChangeEvent, WorkflowPanEvent, WorkflowScaleEvent, Workspace, WorkspaceOptions } from '../../../../../ngx-firjs/src/public-api';
 
 
@@ -8,7 +8,7 @@ import { DeselectNodeRequestEvent, FlowMode, NgxFirjsComponent, Node, NodeAddEve
   styleUrls: ['./designer.component.scss']
 })
 export class DesignerComponent implements OnInit {
-
+  @ViewChild('ghostContainer') ghostContainer!: ElementRef<any>;
   @ViewChild(NgxFirjsComponent) firjsWorkflow!: NgxFirjsComponent;
 
   @Input() tree: Node[] = [];
@@ -83,25 +83,27 @@ export class DesignerComponent implements OnInit {
   }
 
   onDragstart(event: DragEvent, type: NodeType): void {
-    const element = event.target as HTMLElement;
-    const rect = element.getBoundingClientRect();
-
-    this._ghost = element.cloneNode(true) as HTMLElement;
-    this._ghost.classList.add("ghost");
-    this._ghost.style.width = rect.width + 'px';
-    this._ghost.style.height = rect.height + 'px';
-
-    document.body.appendChild(this._ghost);
-
     const node = {
       id: new Date().getTime().toString(),
       type: type,
     };
 
-    event.dataTransfer?.setDragImage(this._ghost, 0, 0);
+    const originaElement = (<HTMLElement>event.target);
+    const rect = originaElement.getBoundingClientRect();
+
+    this._ghost = originaElement.cloneNode(true) as HTMLElement;
+    this._ghost.classList.add("ghost");
+    this._ghost.style.width = rect.width + 'px';
+    this._ghost.style.height = rect.height + 'px';
+
+    this.ghostContainer.nativeElement.appendChild(this._ghost);
+    const offsetX = (event.clientX - rect.left);
+    const offsetY = (event.clientY - rect.top);
+
+    event.dataTransfer?.setDragImage(this._ghost, offsetX, offsetY);
     event.dataTransfer?.setData('text/plain', JSON.stringify(node));
 
-    this.firjsWorkflow.startDrag(element as HTMLElement, {
+    this.firjsWorkflow.startDrag(originaElement as HTMLElement, {
       x: event.pageX,
       y: event.pageY,
     }, node);

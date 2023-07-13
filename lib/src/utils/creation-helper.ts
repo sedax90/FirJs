@@ -263,7 +263,7 @@ export class CreationHelper {
 
                 lastJoinTargets.push({
                     x: branchJoinX,
-                    y: processedBranch.joinY + choiceLabelHeight + placeholderHeight / 2,
+                    y: processedBranch.joinY + choiceLabelHeight + placeholderHeight / 2 + padding,
                 });
             }
 

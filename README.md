@@ -163,11 +163,15 @@ flowMode: "vertical" | "horizontal", // Default to 'vertical'
 style: {
   fontSize: string;
   fontFamily: string;
-};
+},
 strings: {
   "context-menu.component.actions.remove.label": string,
   "context-menu.workspace.actions.fitandcenter.label": string,
   "placeholder.not-allowed-to-drop.label": string,
+},
+infinite: boolean;
+events: {
+    emitSelectedOnContextMenu: boolean;
 }
 ```
 
@@ -185,7 +189,7 @@ strings: {
 
 FirJs provide this methods to override your data:
 
-```javascript
+```typescript
 // to override your label.
 overrideLabel(node: Node): Promise<string>;
 
@@ -194,6 +198,27 @@ overrideIcon(node: Node): Promise<string>;
 
 // to assign a label for each choice column.
 overrideColumnLabel(node: Node, parent: Node | null, columnIndex: number): Promise<string | HtmlElement | SvgElement>;
+
+/**
+ * It allows you to override the view of a node type however you like.
+ * To help you with the more complex views you can take advantage of the CreationHelper utility class.
+ */
+overrideView: {
+    task?: (creationContext: TaskViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+    choice?: (creationContext: ChoiceViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+    map?: (creationContext: MapViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+    terminator?: (creationContext: TerminatorViewCreationContext, workspaceContext: Context) => Promise<ComponentView | null>;
+};
+
+/**
+ * It allows you to override the public methods behavior (normally used combined with overrideView).
+ */
+overrideComponentMethods: {
+    task?: PublicComponentInstanceOverridableFns,
+    choice?: PublicComponentInstanceOverridableFns,
+    map?: PublicComponentInstanceOverridableFns,
+    terminator?: PublicComponentInstanceOverridableFns
+}
 ```
 
 All of this functions are executed when a node is drawed.
@@ -216,7 +241,7 @@ You can customize the entire Workspace with only a little bit of CSS. You will f
 - [x] Angular module.
 - [ ] React component.
 - [x] Better event management.
-- [ ] More customizations.
+- [x] More customizations.
 - [ ] Better mobile.
 - [x] Horizontal mode
 
